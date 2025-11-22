@@ -1,0 +1,48 @@
+Guia de Execução do Projeto SIMME-AI
+===================================
+
+1. Ativar o ambiente virtual
+----------------------------
+
+Windows:
+    venv\Scripts\activate
+
+Linux/Mac:
+    source venv/bin/activate
+
+
+2. Iniciar o backend FastAPI
+----------------------------
+
+Dentro da pasta onde está o ficheiro main.py:
+
+    uvicorn main:app --reload
+
+A API ficará disponível em:
+    http://127.0.0.1:8000
+
+Documentação automática (Swagger):
+    http://127.0.0.1:8000/docs
+
+
+3. Testar o upload
+------------------
+
+Usa o endpoint:
+    POST /upload
+
+Podes testar diretamente no Swagger.
+
+
+4. Instalar dependências
+------------------------
+
+Sempre que precisares instalar algo:
+
+    pip install fastapi uvicorn[standard] python-multipart paddleocr spacy
+
+
+5. Desativar ambiente virtual
+-----------------------------
+
+    deactivate
