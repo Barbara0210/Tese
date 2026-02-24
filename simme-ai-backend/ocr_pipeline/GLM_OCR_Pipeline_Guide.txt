@@ -1,0 +1,110 @@
+GLM-OCR + OLLAMA PIPELINE SETUP GUIDE
+
+PROJECT STRUCTURE
+
+simme-ai-backend/ ocr_pipeline/ data/ pdfs/ images/ outputs/ src/
+pdf_to_images.py preprocess_image.py test_glm_ocr.py requirements.txt
+
+  ------------------------------
+  1) INSTALLATION REQUIREMENTS
+  ------------------------------
+
+A)  PYTHON (inside venv) Activate venv:
+
+PowerShell: .env.ps1
+
+Install requirements: pip install pdf2image pillow requests ollama
+
+requirements.txt should contain: pdf2image pillow requests ollama
+
+  ------------------------------------------
+  B) POPPLER (for PDF -> image conversion)
+  ------------------------------------------
+
+1.  Download Poppler for Windows
+2.  Extract to: C:
+3.  Add to PATH: C:
+
+Test: pdfinfo -v
+
+  -----------
+  C) OLLAMA
+  -----------
+
+Install Ollama from: https://ollama.com/download
+
+Verify: ollama –version
+
+Install model: ollama pull glm-ocr
+
+Verify model: ollama list
+
+  ----------------------------
+  2) PDF -> IMAGE CONVERSION
+  ----------------------------
+
+python ._pipeline_to_images.py
+
+This creates: ocr_pipeline/data/images//page_01.png
+
+  --------------------------------------------------
+  3) PREPROCESS IMAGE (IMPORTANT - avoids crashes)
+  --------------------------------------------------
+
+python ._pipeline_image.py
+
+This: - Converts PNG to RGB - Resizes max side to 1700px - Saves as
+page_01_1700.jpg
+
+  --------------------------
+  4) TEST OCR VIA TERMINAL
+  --------------------------
+
+ollama run glm-ocr Text Recognition: “FULL_PATH_TO_IMAGE.jpg”
+
+Example: ollama run glm-ocr Text Recognition:
+“C:-ai-backend_pipeline..._01_1700.jpg”
+
+  ------------------------------
+  5) TEST OCR VIA PYTHON (SDK)
+  ------------------------------
+
+Example test_glm_ocr.py:
+
+from pathlib import Path from ollama import chat
+
+MODEL = “glm-ocr”
+
+BASE = Path(file).resolve().parents[1] IMG = BASE / “data” / “images” /
+“your_folder” / “page_01_1700.jpg”
+
+r = chat( model=MODEL, messages=[{ “role”: “user”, “content”: “Text
+Recognition:”, “images”: [str(IMG)] }] )
+
+print(r[“message”][“content”])
+
+Run: python ._pipeline_glm_ocr.py
+
+  --------------------
+  6) TROUBLESHOOTING
+  --------------------
+
+Problem: GGML_ASSERT error Solution: Ensure image max dimension <=
+1700px and RGB JPEG.
+
+Problem: Empty markdown blocks Solution: Use correct format: Text
+Recognition: “absolute_path.jpg”
+
+Problem: ollama not recognized Solution: Add to PATH: C:<username>
+
+  ------------------
+  PIPELINE SUMMARY
+  ------------------
+
+PDF ↓ pdf2image (Poppler) ↓ PNG ↓ Preprocess (RGB + resize) ↓ JPG ↓
+Ollama glm-ocr ↓ Extracted text / tables ↓ JSON structuring (next step)
+
+------------------------------------------------------------------------
+
+You now have a fully working local OCR pipeline using GLM-OCR via
+Ollama.
