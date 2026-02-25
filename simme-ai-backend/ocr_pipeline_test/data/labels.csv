@@ -1,0 +1,6 @@
+doc_id,lab_class,equipment_type,dimensions_mm,weight_g,humidity_pct,force_iso7500
+"Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",CATIM,paquimetro,1,0,0,0
+"Paquimetro MITUTOYO sn B22268348 - M.A. SILVA.pdf",CATIM,paquimetro,1,0,0,0
+"Medcork 065.pdf",CATIM,medcork,1,1,1,0
+"CITC_004_EQUIPAR.pdf",CITC,unknown,0,0,0,0
+...

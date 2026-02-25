@@ -1,0 +1,203 @@
+{
+  "doc_id": "Paquimetro MITUTOYO sn B22268348 - M.A. SILVA",
+  "iso17025_min": {
+    "header": {
+      "certificate_number": "LMD20255006594/10",
+      "date": "",
+      "title": "Certificado de Calibração"
+    },
+    "laboratory": {
+      "lab_name": "catim",
+      "lab_unit": "Laboratório de Metrologia - Dimensional"
+    },
+    "equipment": {
+      "designation": "Paquimetro",
+      "brand": "",
+      "model": "",
+      "serial_number": "",
+      "range": "",
+      "resolution": ""
+    },
+    "measurements": [
+      {
+        "raw_line": "DATA DE EMISSÃO 2025-04-14 Certificado n°: LMD20255006594/10 PÁGINA 1 DE 3",
+        "values": [
+          "2025",
+          "-04",
+          "-14",
+          "20255006594",
+          "10",
+          "1",
+          "3"
+        ]
+      },
+      {
+        "raw_line": "Modelo 500-161-30 Resolução 0.01 mm",
+        "values": [
+          "500",
+          "-161",
+          "-30",
+          "0.01"
+        ]
+      },
+      {
+        "raw_line": "Anexo Técnico de Acreditação M0003-1 Humidade (30 e 65)%",
+        "values": [
+          "0003",
+          "-1",
+          "30",
+          "65"
+        ]
+      },
+      {
+        "raw_line": "ISO 13385-1:2019 e LMD P02 11 Rev.A6 de 2025-03-19",
+        "values": [
+          "13385",
+          "-1",
+          "2019",
+          "02",
+          "11",
+          "6",
+          "2025",
+          "-03"
+        ]
+      },
+      {
+        "raw_line": "A incerteza expandida apresentada, está expressa pela incerteza-padrão multiplicada pelo factor de expansão k = k', o qual para uma distribuição -t com vef = v'ef graus de liberdade efectivos corresponde a uma probabilidade de expansão de aproximadamente 95%. A incerteza foi calculada de acordo com o documento EA-4/02M.",
+        "values": [
+          "95",
+          "-4",
+          "02"
+        ]
+      },
+      {
+        "raw_line": "2025-04-14",
+        "values": [
+          "2025",
+          "-04",
+          "-14"
+        ]
+      },
+      {
+        "raw_line": "DATA DE EMISSÃO 2025-04-14 Certificado n°: LMD20255006594/10 PÁGINA 2 DE 3",
+        "values": [
+          "2025",
+          "-04",
+          "-14",
+          "20255006594",
+          "10",
+          "2",
+          "3"
+        ]
+      },
+      {
+        "raw_line": "mm Zona 1 mm Zona 2 mm Zona 3 mm $k'$ $v'ef$ $U$ mm",
+        "values": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      {
+        "raw_line": "2.500 2.50 2.50 2.50 0.000 2.02 150 0.011",
+        "values": [
+          "2.500",
+          "2.50",
+          "2.50",
+          "2.50",
+          "0.000",
+          "2.02",
+          "150",
+          "0.011"
+        ]
+      },
+      {
+        "raw_line": "7.700 7.70 7.70 7.70 0.000 2.02 150 0.011",
+        "values": [
+          "7.700",
+          "7.70",
+          "7.70",
+          "7.70",
+          "0.000",
+          "2.02",
+          "150",
+          "0.011"
+        ]
+      },
+      {
+        "raw_line": "20.200 20.20 20.20 20.20 0.000 2.02 150 0.011",
+        "values": [
+          "20.200",
+          "20.20",
+          "20.20",
+          "20.20",
+          "0.000",
+          "2.02",
+          "150",
+          "0.011"
+        ]
+      },
+      {
+        "raw_line": "50.000 50.00 50.00 50.00 0.000 2.02 153 0.011",
+        "values": [
+          "50.000",
+          "50.00",
+          "50.00",
+          "50.00",
+          "0.000",
+          "2.02",
+          "153",
+          "0.011"
+        ]
+      },
+      {
+        "raw_line": "99.999 99.99 99.99 99.99 -0.009 2.02 165 0.011",
+        "values": [
+          "99.999",
+          "99.99",
+          "99.99",
+          "99.99",
+          "-0.009",
+          "2.02",
+          "165",
+          "0.011"
+        ]
+      },
+      {
+        "raw_line": "149.999 149.99 149.98 149.98 -0.019 2.01 182 0.011",
+        "values": [
+          "149.999",
+          "149.99",
+          "149.98",
+          "149.98",
+          "-0.019",
+          "2.01",
+          "182",
+          "0.011"
+        ]
+      },
+      {
+        "raw_line": "0.0 15.0 30.0 45.0 60.0 75.0 90.0 105.0 120.0 135.0 150.0",
+        "values": [
+          "0.0",
+          "15.0",
+          "30.0",
+          "45.0",
+          "60.0",
+          "75.0",
+          "90.0",
+          "105.0"
+        ]
+      },
+      {
+        "raw_line": "DATA DE EMISSÃO 2025-04-14",
+        "values": [
+          "2025",
+          "-04",
+          "-14"
+        ]
+      }
+    ]
+  },
+  "raw_text_path": "C:\\Projetos\\Tese\\simme-ai-backend\\ocr_pipeline\\data\\ocr_text\\Paquimetro MITUTOYO sn B22268348 - M.A. SILVA.txt"
+}

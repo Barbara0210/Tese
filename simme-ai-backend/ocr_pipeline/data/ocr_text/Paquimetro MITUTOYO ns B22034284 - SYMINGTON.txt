@@ -1,0 +1,316 @@
+
+
+=== page_01.jpg ===
+
+catim
+centro de apoio tecnológico à industria metalomecânica
+CERTIFICADO DE CALIBRAÇÃO
+LABORATÓRIO DE METROLOGIA - DIMENSIONAL
+DATA: 2022-05-18
+CERTIFICADO N.º: LMD20225006488/10
+PÁGINA 1 DE 3
+CLIENTE
+EGITRON - ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA
+RUA CENTRAL DA VERGADA - 1280 MOZELOS
+4535 166 MOZELOS VFR
+DESCRIÇÃO
+Equipamento: Paquimetro
+Marca: MITUTOYO
+Intervalo de medição: 0-150 mm
+Modelo: 500-161-30
+Indicação: Digital
+Número de Série: B22034284
+Resolução: 0.01 mm
+Referência Interna:
+PRINCIPAL EQUIPAMENTO UTILIZADO
+Padrão
+Calibrador de Paquimetros 360 mm
+Blocos Padrão - Caixa 10 blocos padrão
+Anel Liso Padrão 4.8 mm
+Anel Liso Padrão 50 mm
+Cavilha Padrão - 10 mm
+CATIM Nº
+99.50416
+02.50542
+06.50818
+03.50575
+5.092/03
+Rastreabilidade
+ZEISS (DAkkS)
+KOBA (DAkkS)
+NPL (UKAS)
+NPL (UKAS)
+NPL (UKAS)
+OPERAÇÕES EFECTUADAS
+Calibração efetuada segundo a norma ISO 13385-1:2019 e procedimento interno LMD P02 11 Rev.A3 de 2021-03-29
+Todas as medições foram efectuadas em ambiente controlado a (20 ±1)°C e humidade relativa entre (30 e 65%), nas instalações do Porto.
+EXAME VISUAL
+Não foram identificadas condições inadequadas que afetem os resultados
+INCERTEZA DE CALIBRAÇÃO
+A incerteza expandida apresentada, esta expressa pela incerteza-padrão multiplicada pelo factor de expansão k = k', o qual para uma distribuição -t com vef = v'ef graus de liberdade efectivos corresponde a uma probabilidade de expansão de aproximadamente 95%. A incerteza foi calculada de acordo com o documento EA-4/02.
+O IPAC é um dos signatários do Acordo de reconhecimento múltuo da EA e do ILAC para calibrações.
+Data de calibração: 2022-05-18
+Técnico
+Responsável Técnico
+Iac-MRA
+João Carvalho
+Isabel Perfeito
+Rua dos Plátanos, 197
+4100-414 Porto - Portugal
+Estrada do Paco do Lumiar, Campus do Lumiar - Edificio O
+1649-038 Lisboa - Portugal
+Rua Cidade do Porto, Campus do APTIV - edificio 4
+4705-086 Braga - Portugal
+
+
+=== page_02.jpg ===
+
+catim
+CERTIFICADO DE CALIBRACÃO
+LABORATORIO DE METROLOGIA - DIMENSIONAL
+centro de apoio tecnológico à industria metalomecânica
+DATA: 2022-05-18
+CERTIFICADO N.º: LMD20225006488/10
+PAGINA 2 DE 3
+RESULTADOS
+Indicação no ponto de referência (zero)
+Maxilas de Medição
+Leitura no Equipamento
+Exteriores
+0.00 mm
+Valor Padrão
+mm
+Zona 1
+mm
+2.50
+7.70
+20.20
+2.50
+7.70
+20.20
+20.20
+20.20
+Erro E
+mm
+0.000
+0.000
+0.000
+0.011
+0.011
+0.011
+Incerteza Expandida
+mm
+2.02
+150
+150
+150
+150
+Exteriores
+50.000
+50.00
+50.00
+49.99
+-0.010
+0.012
+2.02
+153
+164
+150.000
+100.000
+100.00
+99.99
+-0.010
+0.013
+2.02
+179
+150.000
+149.99
+149.99
+149.99
+-0.010
+0.014
+Erro
+0.05
+0.04
+0.03
+0.02
+0
+-0.01
+-0.02
+-0.03
+-0.04
+-0.05
+0
+Pontos de medição, mm
+125
+150
+175
+Figura 1 - Exemplo de zonas de medição para determinação do erro de indicação com contato parcial
+Rua dos Plátanos, 197
+4100-414 Porto - Portugal
+Estrada do Paco do Lumiar, Campus do Lumiar - Edificio O
+1649-038 Lisboa - Portugal
+Rua Cidade do Porto, Campus do APTIV - edificio O
+4705-086 Braga - Portugal
+
+
+=== page_03.jpg ===
+
+CATIM
+CERTIFICADO DE CALIBRACÃO
+LABORATÓRIO DE METROLOGIA - DIMENSIONAL
+DATA: 2022-05-18
+CERTIFICADO N.: LMD20225006488/10
+PÁGINA 3 DE 3
+RESULTADOS
+Erro de Indicação troca de escala, S
+Maxilas de Medição
+Valor Padrão mm
+Leitura no Equipamento mm
+Erro S mm
+Incerteza Expandida mm
+k' ef
+Interiores tipo faça
+Φ < 5 mm
+4.802
+4.80
+-0.002
+0.011
+2.02
+150
+Interiores
+20.002
+20.00
+-0.002
+0.011
+2.02
+150
+50.002
+50.00
+-0.002
+0.012
+2.02
+153
+Haste de profundidades
+25.000
+24.97
+-0.030
+0.011
+2.02
+150
+Degrau de profundidades
+25.000
+24.98
+-0.020
+0.011
+2.02
+150
+Erro de Indicação com contacto em linha, L
+Maxilas de Medição
+Valor Padrão mm
+Valor máximo mm
+Valor mínimo mm
+Erro L mm
+Incerteza Expandida mm
+k' ef
+v'ef
+Maxilas de exteriores
+10.000
+10.00
+9.99
+0.010
+0.011
+2.02
+150
+Figura 6 - Exemplo de zonas de medição para determinação do erro com contacto em linha, L
+OBSERVAÇÕES:
+Rua dos Plátanos, 197
+4100-414 Porto - Portugal
+Estrada do Paco do Lumiar, Campus do Lumiar - Edificio O
+1649-038 Lisboa - Portugal
+Rua Cidade do Porto, Campus do APTIV - edificio 4
+4705-086 Braga - Portugal
+
+
+=== page_04.jpg ===
+
+Assunto: Calibração de Paquímetros - Atualização do Procedimento Interno de calibração no seguimento da alteração normativa ISO 13385-1:2019 e ISO 13385-2:2020
+
+Exmos. Senhores
+
+No seguimento da calibração do(s) paquímetro(s), informamos que o Procedimento Interno de calibração foi revisto no seguimento da alteração normativa ISO 13385-1:2019 e ISO 13385-2:2020.
+Na expectativa que seja um esclarecimento adicional, assinalamos as principais diferenças na versão atualizada (LMD P02 11 Rev. A3 2021-03-29) relativamente às versões anteriores:
+
+Ensaios constantes no Certificados de Calibração de Paquímetros
+
+Versão Anterior
+- Norma ISO 13385-1:2011
+- Procedimento Interno LMD P02 11, Rev. A1
+
+Versão Atual
+- Normas ISO 13385-1:2019
+- Procedimento Interno LMD P02 11 Rev. A3 2021-03-29
+
+Erro de Indicação com contacto parcial, E (maxilas de medição de exteriores)
+• Apresentação dos valores medidos em cada uma das 3 zonas. O Erro E corresponde ao maior erro encontrada nas 3 zonas (não é permitida a média de múltiplas indicações para o cálculo do erro E)
+
+Erro devido à distância entre as maxilas de interiores tipo faca, K (1)
+• Passa a estar incluído no Ensaio do Erro de Troca de Escala S contudo sem alteração de método de medição
+
+Erro de Indicação de troca de escala, S
+Erro determinado quando utilizadas de forma parcial ou total (2), qualquer face de medição que não as faces de medição de exteriores. A aplicabilidade deste ensaio depende do modelo do paquímetro. Tipicamente é aplicado a:
+• faces de medição de interiores tipo faca (paquímetros ≤ 300 mm) (1)
+• maxilas de medição de interiores inferiores
+• haste de profundidades
+• degrau de profundidades
+• Outras: maxilas de medição de exteriores superiores
+- Ensaio efetuado separadamente para cada maxila e em pelo menos um ponto.
+- Para as maxilas de medição de interiores o ensaio deve ser efetuado por defeito com padrões de referência entre 20 mm e 50 mm.
+- Para a haste de profundidades e degrau o ensaio deve ser efetuado por defeito com padrões de referência < 50 mm.
+- Para paquímetros com múltiplas maxilas de medição de exteriores, para um dos pares de maxilas será determinado o erro E, e para as restantes o erro S. Tipicamente, o erro E será determinado para as maxilas de medições inferiores, salvo indicação contrária.
+
+Erro de Indicação com contacto em linha, L
+• Sem alteração de método de medição
+
+Repetibilidade do Erro de Indicação com contacto parcial, R
+• Retirado
+
+Erro de Indicação com contacto total, J
+• Retirado enquanto ensaio independente (2)
+
+
+=== page_05.jpg ===
+
+Ensaios constantes no Certificados de Calibração Paquímetros de Profundidade
+
+Versão Anterior
+- Norma ISO 13385-2:2011
+- Procedimento Interno LMD P02 11, Rev. A1
+
+Versão Atual
+- Normas ISO 13385-2:2020
+- Procedimento Interno LMD P02 11 Rev. A3 2021-03-29
+
+Erro de Indicação com contacto parcial, E (maxilas de medição de exteriores)
+
+• Apresentação dos valores medidos em cada uma das 3 zonas. O Erro E corresponde ao maior erro encontrada nas 3 zonas (não é permitida a média de múltiplas indicações para o cálculo do erro E)
+
+Erro de Indicação de troca de escala, S Não existia na edição da norma de 2011
+
+Erro de Indicação de troca de escala, S - Ensaio Novo na edição da norma de 2020
+
+Erro determinado quando utilizadas de forma parcial ou total, qualquer face de medição que não as faces de medição com que o zero do equipamento foi efetuado. A aplicabilidade deste ensaio depende do modelo do paquímetro. Tipicamente é aplicado a:
+• paquímetro de profundidade com gancho
+
+- Ensaio efetuado separadamente para cada maxila e em pelo menos um ponto.
+- Para paquímetros com múltiplas faces de medição, para uma das faces será determinado o erro E, e para as restantes o erro S. Tipicamente, o erro E será determinado para as maxilas de medições efetuadas considerando a face de medição da base, salvo indicação contrária.
+
+Repetibilidade do Erro de Indicação com contacto parcial, R
+
+• Retirado
+
+Estamos ao dispor para esclarecimentos adicionais,
+
+Isabel Perfeito
+Metrologia - Responsável da Qualidade
+Catim - centro de apoio tecnológico à indústria metalomecânica

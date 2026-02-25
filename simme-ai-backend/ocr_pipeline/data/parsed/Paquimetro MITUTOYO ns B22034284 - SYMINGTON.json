@@ -1,0 +1,198 @@
+{
+  "doc_id": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON",
+  "iso17025_min": {
+    "header": {
+      "certificate_number": "LMD20225006488/10",
+      "date": "2022-05-18",
+      "title": "CERTIFICADO DE CALIBRAÇÃO"
+    },
+    "laboratory": {
+      "lab_name": "catim",
+      "lab_unit": "LABORATÓRIO DE METROLOGIA - DIMENSIONAL"
+    },
+    "equipment": {
+      "designation": "Paquimetro",
+      "brand": "MITUTOYO",
+      "model": "500-161-30",
+      "serial_number": "",
+      "range": "",
+      "resolution": "0.01 mm"
+    },
+    "measurements": [
+      {
+        "raw_line": "DATA: 2022-05-18",
+        "values": [
+          "2022",
+          "-05",
+          "-18"
+        ]
+      },
+      {
+        "raw_line": "Modelo: 500-161-30",
+        "values": [
+          "500",
+          "-161",
+          "-30"
+        ]
+      },
+      {
+        "raw_line": "Calibração efetuada segundo a norma ISO 13385-1:2019 e procedimento interno LMD P02 11 Rev.A3 de 2021-03-29",
+        "values": [
+          "13385",
+          "-1",
+          "2019",
+          "02",
+          "11",
+          "3",
+          "2021",
+          "-03"
+        ]
+      },
+      {
+        "raw_line": "Todas as medições foram efectuadas em ambiente controlado a (20 ±1)°C e humidade relativa entre (30 e 65%), nas instalações do Porto.",
+        "values": [
+          "20",
+          "1",
+          "30",
+          "65"
+        ]
+      },
+      {
+        "raw_line": "A incerteza expandida apresentada, esta expressa pela incerteza-padrão multiplicada pelo factor de expansão k = k', o qual para uma distribuição -t com vef = v'ef graus de liberdade efectivos corresponde a uma probabilidade de expansão de aproximadamente 95%. A incerteza foi calculada de acordo com o documento EA-4/02.",
+        "values": [
+          "95",
+          "-4",
+          "02"
+        ]
+      },
+      {
+        "raw_line": "Data de calibração: 2022-05-18",
+        "values": [
+          "2022",
+          "-05",
+          "-18"
+        ]
+      },
+      {
+        "raw_line": "DATA: 2022-05-18",
+        "values": [
+          "2022",
+          "-05",
+          "-18"
+        ]
+      },
+      {
+        "raw_line": "DATA: 2022-05-18",
+        "values": [
+          "2022",
+          "-05",
+          "-18"
+        ]
+      },
+      {
+        "raw_line": "Assunto: Calibração de Paquímetros - Atualização do Procedimento Interno de calibração no seguimento da alteração normativa ISO 13385-1:2019 e ISO 13385-2:2020",
+        "values": [
+          "13385",
+          "-1",
+          "2019",
+          "13385",
+          "-2",
+          "2020"
+        ]
+      },
+      {
+        "raw_line": "No seguimento da calibração do(s) paquímetro(s), informamos que o Procedimento Interno de calibração foi revisto no seguimento da alteração normativa ISO 13385-1:2019 e ISO 13385-2:2020.",
+        "values": [
+          "13385",
+          "-1",
+          "2019",
+          "13385",
+          "-2",
+          "2020"
+        ]
+      },
+      {
+        "raw_line": "Na expectativa que seja um esclarecimento adicional, assinalamos as principais diferenças na versão atualizada (LMD P02 11 Rev. A3 2021-03-29) relativamente às versões anteriores:",
+        "values": [
+          "02",
+          "11",
+          "3",
+          "2021",
+          "-03",
+          "-29"
+        ]
+      },
+      {
+        "raw_line": "- Norma ISO 13385-1:2011",
+        "values": [
+          "13385",
+          "-1",
+          "2011"
+        ]
+      },
+      {
+        "raw_line": "- Procedimento Interno LMD P02 11, Rev. A1",
+        "values": [
+          "02",
+          "11",
+          "1"
+        ]
+      },
+      {
+        "raw_line": "- Normas ISO 13385-1:2019",
+        "values": [
+          "13385",
+          "-1",
+          "2019"
+        ]
+      },
+      {
+        "raw_line": "- Procedimento Interno LMD P02 11 Rev. A3 2021-03-29",
+        "values": [
+          "02",
+          "11",
+          "3",
+          "2021",
+          "-03",
+          "-29"
+        ]
+      },
+      {
+        "raw_line": "- Norma ISO 13385-2:2011",
+        "values": [
+          "13385",
+          "-2",
+          "2011"
+        ]
+      },
+      {
+        "raw_line": "- Procedimento Interno LMD P02 11, Rev. A1",
+        "values": [
+          "02",
+          "11",
+          "1"
+        ]
+      },
+      {
+        "raw_line": "- Normas ISO 13385-2:2020",
+        "values": [
+          "13385",
+          "-2",
+          "2020"
+        ]
+      },
+      {
+        "raw_line": "- Procedimento Interno LMD P02 11 Rev. A3 2021-03-29",
+        "values": [
+          "02",
+          "11",
+          "3",
+          "2021",
+          "-03",
+          "-29"
+        ]
+      }
+    ]
+  },
+  "raw_text_path": "C:\\Projetos\\Tese\\simme-ai-backend\\ocr_pipeline\\data\\ocr_text\\Paquimetro MITUTOYO ns B22034284 - SYMINGTON.txt"
+}
