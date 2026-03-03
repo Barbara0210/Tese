@@ -1,0 +1,151 @@
+PIPELINE OCR (PaddleOCR) — Certificados de Calibração (CATIM)
+============================================================
+
+Objectivo
+---------
+Processar PDFs (certificados de calibração) e extrair informação estruturada:
+- Cabeçalho do certificado (nº certificado, datas, cliente, equipamento, condições, norma)
+- Resultados (tabelas E / S / L) — ainda por concluir
+
+Estrutura do projecto
+---------------------
+paddle_ocr_pipeline/
+  data/
+    raw_pdfs/      -> colocar aqui os PDFs de entrada
+    images/        -> imagens geradas (uma pasta por PDF)
+    ocr_text/      -> texto OCR (um .txt por PDF)
+    parsed/        -> JSON estruturado (um .json por PDF)
+  src/
+    01_pdf_to_images.py
+    02_ocr_paddle.py
+    03_parse_phase0.py
+
+Pré-requisitos
+--------------
+1) Conda (Miniconda/Anaconda) instalado.
+2) Python (recomendado 3.10.x dentro do ambiente conda).
+3) Poppler no Windows (necessário para pdf2image):
+   - Instalar Poppler e garantir que o binário está no PATH.
+   - Alternativa: configurar o caminho do Poppler no script 01_pdf_to_images.py.
+
+Ambiente conda
+--------------
+Activar o ambiente:
+  conda activate paddle_tese
+
+Confirmar que estás no Python do ambiente:
+  python --version
+  python -c "import sys; print(sys.executable)"
+
+Instalação de dependências
+--------------------------
+A partir da raiz do projecto paddle_ocr_pipeline:
+
+  pip install -r requirements.txt
+
+Notas de compatibilidade importantes:
+- paddleocr==2.7.0.3 (Windows) é sensível a versões:
+  - numpy deve ficar em 1.26.4
+  - opencv-python e opencv-contrib-python devem ficar em 4.6.0.66
+Se trocares versões, é comum aparecer erro de ABI do numpy / import do cv2.
+
+Como correr o pipeline (ordem recomendada)
+------------------------------------------
+1) Colocar PDFs em:
+   data/raw_pdfs/
+
+2) Converter PDFs em imagens:
+   python .\src\01_pdf_to_images.py
+
+   Saída esperada:
+   - data/images/<nome_do_pdf>/page_01.png, page_02.png, ...
+
+3) Fazer OCR às imagens (PaddleOCR):
+   python .\src\02_ocr_paddle.py
+
+   Saída esperada:
+   - data/ocr_text/<nome_do_pdf>.txt
+   O ficheiro .txt inclui separadores do tipo:
+   === page_01.png ===
+   ... texto ...
+   === page_02.png ===
+   ... texto ...
+
+4) Parsing fase 0 (extrair cabeçalho + preparar resultados):
+   python .\src\03_parse_phase0.py
+
+   Saída esperada:
+   - data/parsed/<nome_do_pdf>.json
+
+O que está feito (estado actual)
+--------------------------------
+✅ Pipeline funcional de ponta a ponta:
+- 01_pdf_to_images.py: converte PDFs em PNGs e guarda por pasta.
+- 02_ocr_paddle.py: executa OCR com PaddleOCR e guarda um TXT por PDF.
+- 03_parse_phase0.py: gera JSON por PDF com:
+  - certificate_number (já está a apanhar bem nos exemplos)
+  - issue_date / calibration_date (quando aparecem de forma clara)
+  - customer_name / customer_address (já está ok no caso M.A. SILVA)
+  - equipamento: designação/marca/modelo/serial (parcial)
+  - condições: local/temperatura/humidade (ok no caso M.A. SILVA)
+
+Exemplo (M.A. SILVA) — já obténs:
+- certificate_number: LMD20255006594/10
+- datas: 2025-04-14
+- cliente e morada
+- modelo: 500-161-30
+- (ainda falta corrigir serial_number para "B22268348")
+
+O que falta fazer (próximas tarefas)
+------------------------------------
+1) Melhorar extração do cabeçalho no caso SYMINGTON
+   - O OCR do SYMINGTON vem muito "colado" e ruidoso.
+   - Ajustes possíveis:
+     a) pré-processamento de imagem (binarização, deskew, resize)
+     b) testar lang="pt" vs modelos "latin" e configurações do OCR
+     c) normalização mais agressiva do texto antes de regex
+     d) procurar campos por padrões alternativos (ex: "DATA:" em vez de "DATA DE EMISSAO")
+
+2) Extrair correctamente campos do equipamento (principalmente):
+   - serial_number: hoje aparece só "B" no M.A. SILVA
+     -> objectivo: "B22268348" (remover espaços e apanhar o número completo)
+   - range (ex: "0 a 150 mm")
+   - resolution (ex: "0.01 mm")
+   - indication (ex: "Digital")
+   - brand (quando não aparece por causa do OCR)
+
+3) Extrair as tabelas de resultados (E / S / L)
+   - Neste momento results.* estão vazios.
+   - Objectivo:
+     - Encontrar as secções “Erro de Indicação com contacto parcial, E”, “troca de escala, S”, “contacto em linha, L”
+     - Transformar linhas OCR em registos estruturados (listas de dicts) com:
+       * valor_padrão, leituras por zona (quando existem), erro, incerteza (U), k', v'ef, etc.
+   - Sugestão: parser por “janelas” entre títulos e fim da tabela + regex para linhas numéricas.
+
+4) Validação e qualidade
+   - Regras de sanidade:
+     - datas em ISO
+     - certificado no formato LMD###########/##
+     - unidades (mm, °C, %)
+   - Guardar também um “confidence/quality score” por documento (opcional).
+
+5) Persistência / integração (opcional)
+   - Guardar resultados em BD (Postgres/SQLite) ou expor via API.
+   - Criar script 04_load_to_db.py se fizer sentido.
+
+Dicas rápidas de troubleshooting
+--------------------------------
+- Se o OCR falhar com erros de numpy/cv2:
+  - confirmar:
+    python -c "import numpy, cv2; print(numpy.__version__, cv2.__version__)"
+  - deve ser:
+    numpy 1.26.4
+    cv2 4.6.0
+
+- Se o 01_pdf_to_images.py falhar:
+  - é quase sempre Poppler não instalado / não encontrado.
+
+Contacto / notas
+----------------
+- Correr sempre a partir da raiz do projecto paddle_ocr_pipeline.
+- Garantir que o conda env paddle_tese está activo antes de correr scripts.
