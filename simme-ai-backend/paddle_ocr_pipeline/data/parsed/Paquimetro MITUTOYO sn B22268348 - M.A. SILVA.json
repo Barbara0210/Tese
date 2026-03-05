@@ -1,6 +1,6 @@
 {
   "source_file": "Paquimetro MITUTOYO sn B22268348 - M.A. SILVA.txt",
-  "extracted_at": "2026-03-05T11:16:17",
+  "extracted_at": "2026-03-05T12:02:39",
   "header": {
     "certificate_number": "LMD20255006594/10",
     "issue_date": "2025-04-14",
@@ -8,7 +8,7 @@
     "customer_name": "M.A.SILVA CORTICAS, SA",
     "customer_address": "Rua Central Regadas, n° 49 - Apartado 62 | 4536-902 MOZELOS VFR",
     "equipment": {
-      "designation": "CALIBRADO",
+      "designation": "Näo foram identificadas condicöes inadequadas que afetem os resultados",
       "brand": null,
       "model": "500-161-30 | Resolugäo | 0.01 mm | N° Série",
       "serial_number": null,
@@ -17,12 +17,12 @@
       "indication": null
     },
     "conditions": {
-      "location": null,
-      "temperature": "(20 1)°C | Anexo Técnico de Acreditagäo",
+      "location": "CATIM-Porto",
+      "temperature": "(20 1)°C",
       "humidity": "(30 e 65)%"
     },
     "reference": {
-      "standard_or_procedure": "ISO"
+      "standard_or_procedure": "13385-1:2019"
     }
   },
   "results": {
