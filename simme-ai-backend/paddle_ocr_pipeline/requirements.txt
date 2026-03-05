@@ -1,33 +1,33 @@
-{
-  "source_file": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.txt",
-  "extracted_at": "2026-03-03T23:48:37",
-  "header": {
-    "certificate_number": "LMD20225006488/10",
-    "issue_date": null,
-    "calibration_date": null,
-    "customer_name": null,
-    "customer_address": null,
-    "equipment": {
-      "designation": "a.Paquimetro",
-      "brand": null,
-      "model": "500-161-30",
-      "serial_number": null,
-      "range": null,
-      "resolution": null,
-      "indication": null
-    },
-    "conditions": {
-      "location": null,
-      "temperature": null,
-      "humidity": null
-    },
-    "reference": {
-      "standard_or_procedure": null
-    }
-  },
-  "results": {
-    "E_contact_partial_rows": [],
-    "S_scale_change_rows": [],
-    "L_line_contact_rows": []
-  }
-}
+# OCR pipeline (Windows) — ambiente conda com Python 3.10
+# Fixado para evitar conflitos numpy/cv2/paddle
+
+# --- base / utils ---
+tqdm==4.67.1
+python-dateutil==2.9.0.post0
+regex==2024.11.6
+pillow==10.4.0
+
+# --- pdf -> images ---
+pdf2image==1.17.0
+
+# --- stack compatível PaddleOCR 2.7.x em Windows ---
+numpy==1.26.4
+opencv-python==4.6.0.66
+opencv-contrib-python==4.6.0.66
+
+# Motor Paddle (CPU) + OCR
+paddlepaddle==2.6.2
+paddleocr==2.7.0.3
+
+# --- networking deps puxadas por paddle (fixar para estabilidade) ---
+httpx==0.28.1
+httpcore==1.0.9
+h11==0.16.0
+anyio==4.12.1
+exceptiongroup==1.3.1
+
+# --- security / model files ---
+safetensors==0.7.0
+opt-einsum==3.3.0
+
+

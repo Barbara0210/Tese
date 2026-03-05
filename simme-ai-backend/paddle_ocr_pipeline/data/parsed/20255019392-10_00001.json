@@ -1,0 +1,31 @@
+{
+  "source_file": "20255019392-10_00001.txt",
+  "extracted_at": "2026-03-05T11:16:17",
+  "header": {
+    "certificate_number": "LMP20255019392/10",
+    "issue_date": "2025-11-06",
+    "calibration_date": "2025-11-06",
+    "customer_name": null,
+    "customer_address": "Via desderi, 15/E - Asti-piemonte | 14100-000 Itälia",
+    "equipment": {
+      "designation": "CALIBRADO",
+      "brand": null,
+      "model": "Resolugäo | 0.2 bar | N° Série | Resolucäo estimada",
+      "serial_number": "Resolucäo estimada | 0.04 bar",
+      "range": null,
+      "resolution": null,
+      "indication": null
+    },
+    "conditions": {
+      "location": "(20 2)°C | Anexo Técnico de Acreditagäo",
+      "temperature": null,
+      "humidity": "(35 e 65)%hr"
+    },
+    "reference": {
+      "standard_or_procedure": "EN"
+    }
+  },
+  "results": {
+    "rows_near_results": []
+  }
+}

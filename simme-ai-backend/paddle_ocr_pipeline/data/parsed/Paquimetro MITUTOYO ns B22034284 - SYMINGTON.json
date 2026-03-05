@@ -1,16 +1,16 @@
 {
   "source_file": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.txt",
-  "extracted_at": "2026-03-03T23:48:37",
+  "extracted_at": "2026-03-05T11:16:17",
   "header": {
-    "certificate_number": "LMD20225006488/10",
-    "issue_date": null,
+    "certificate_number": null,
+    "issue_date": "2021-03-29",
     "calibration_date": null,
-    "customer_name": null,
+    "customer_name": "SYMINGTON",
     "customer_address": null,
     "equipment": {
-      "designation": "a.Paquimetro",
+      "designation": null,
       "brand": null,
-      "model": "500-161-30",
+      "model": null,
       "serial_number": null,
       "range": null,
       "resolution": null,
@@ -19,15 +19,13 @@
     "conditions": {
       "location": null,
       "temperature": null,
-      "humidity": null
+      "humidity": "relativa entre (30e 65)%nasTALomE"
     },
     "reference": {
       "standard_or_procedure": null
     }
   },
   "results": {
-    "E_contact_partial_rows": [],
-    "S_scale_change_rows": [],
-    "L_line_contact_rows": []
+    "rows_near_results": []
   }
 }

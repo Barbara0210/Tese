@@ -1,0 +1,169 @@
+
+
+=== page_01.png ===
+
+IPac
+catim
+acreditacao
+IaC-MRA
+M0003
+centro de apoio tecnológicc
+ISO/IEC 17025
+á indústria metalomecänica
+ Calibracäo
+Certificado de Calibracao
+Laboratório de Metrologia - Pressöes
+DATA DE EMISSAO
+2025-11-06
+Certificado n°: LMP20255019392/10
+PAGINA 1 DE 2
+CLIENTE
+Nome
+CORK SUPPLY ITALIA S.R.L
+Morada
+Via desderi, 15/E - Asti-piemonte
+14100-000 Itälia
+EQUIPAMENTO CALIBRADO
+Designagäo
+ Manómetro analógico
+ Marca
+WIKA
+ Intervalo de indicagäo
+-1 a 3 bar
+Modelo
+Resolugäo
+0.2 bar
+N° Série
+ Resolucäo estimada
+0.04 bar
+Ref Interna
+037
+Classe
+1.6
+Estado do equipamento
+Náo foram identificadas condiges inadequadas que afetem os resultados
+CONDICÖES DO TRABALHO REALIZADO
+Porto
+Temperatura
+Local
+(20  2)°C
+Anexo Técnico de Acreditagäo
+M0003-1
+Humidade
+(35 e 65)%hr
+DESCRICAO
+Calibragáo segundo documentos normativos:
+NP EN 837-1:2003 e LMP P01 02 REV.B1 de 2013-05-31
+RASTREABILIDADE
+Os resultados apresentados neste certificado estäo rastreados a padres nacionais ou internacionais que realizam as unidades de
+INCERTEZA
+A incerteza expandida apresentada, está expressa pela incerteza-padráo multiplicada pelo factor de expansäo k = k', o qual para uma
+distribuicao -t com vef = v'ef graus de liberdade efectivos corresponde a uma probabilidade de expansao de aproximadamente 95%. A
+incerteza foi calculada de acordo com o documento EA-4/02M
+DATA CALIBRACAO
+2025-11-06
+O IPAC é um dos signatários do Acordo de Reconhecimento Mütuo da EA e do ILAC para calibrages e ensaios.
+Responsável Técnico
+( Pedro Seixas )
+( Bruno Frontoura )
+Os resultados apresentados refere
+s itens calibrados ou ensaiados
+Este documento nao pode ser reproduzido, exeto integralmente, sem
+autorizacao por escrito do CATIM
+Rua dos Plätanos, 197
+Rua Cidade do Porto, Campus do APTIV - Edifcio 4
+Estrada do Pago do Lumiar, Campus do Lumiar - Edificio Q
+4100-414 Porto - Portugal
+ 4705-086 Braga - Portugal
+1649-038 Lisboa - Portugal
+
+
+=== page_02.png ===
+
+catim
+centro de apoio tecnológicc
+á indüstria metalomecänica
+Certificado de Calibracao
+Laboratório de Metrologia - Pressao
+DATA DE EMISSAO
+2025-11-06
+Certificado n°: LMP20255019392/10
+PAGINA 2 DE 2
+RESULTADOS
+Erro
+Equipamento
+Incerteza Expandida
+Erro
+bar
+ bar
+ bar
+% F.E.
+-0.80
+0.018
+2.01
+200
+0.033
+0.45
+0.00
+0.000
+2.01
+200
+0.033
+0.00
+1.00
+-0.025
+2.01
+200
+0.033
+0.63
+2.00
+-0.031
+2.01
+200
+0.033
+-0.77
+3.00
+-0.015
+2.01
+201
+0.033
+-0.38
+Erro mäximo de histerese: 0.008 bar
+0.03
+0.02
+0.01
+Erro / bar
+0
+-0.8
+-0.01 
+-0.02
+-0.03 1
+-0.04
+Pressáo / bar
+CONDICOES AMBIENTAIS
+Temperatura (°C)
+Humidade (%hr)
+ Pressäo Atmosférica (bar)
+Densidade do Ar (kg.m)
+20.50
+60.0
+1.0050
+1.188
+55.0
+20.00
+50.0
+1.0045
+1.184
+OBSERVACOES
+ Pressao gerada com Azoto. O equipamento foi calibrado com o mostrador na vertical.
+É considerada a tomada de pressäo como a referéncia do equipamento
+(ed 0odd0d = dea i) ieosed 0 (is) sepepiun ap leuoddeaaasu! eaasis 0 aoo opaooe ap oessaad ap apepsea v
+Os resultados apresentados referer
+s itens calibrados ou ensaiados
+a autorizagäo por escrito do CATIM
+Rua dos Plätanos, 197
+Rua Cidade do Porto, Campus do APTIV - Edificio 4
+Estrada do Pago do Lumiar, Campus do Lumiar - Edificio Q
+4100-414 Porto - Portugal
+ 4705-086 Braga - Portugal
+1649-038 Lisboa - Portugal
