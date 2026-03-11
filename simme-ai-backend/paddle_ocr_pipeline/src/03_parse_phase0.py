@@ -1,4 +1,3 @@
-# 03_parse_phase0.py
 import json
 import re
 from pathlib import Path
@@ -19,6 +18,18 @@ def read_text(path: Path) -> str:
 # -------------------------
 # Helpers: text cleanup
 # -------------------------
+def remove_watermark_spam(t: str) -> str:
+    patterns = [
+        r"(CENTRO\s*DE\s*APOIO\s*TECNOL[ÓO]GICO.*?METALOMEC[ÂA]NICA){2,}",
+        r"(CENTRODEAPOIOTECNOLOGICOAINDUSTRIAMETALOMECANICACEN){2,}",
+        r"(AINDUSTRIAMETALOMECANICACENTRODEAPOIOTECNOLOGICO){2,}",
+    ]
+    out = t
+    for p in patterns:
+        out = re.sub(p, " ", out, flags=re.IGNORECASE | re.DOTALL)
+    return out
+
+
 def normalize_text(raw: str) -> str:
     """
     Normalização leve para facilitar extração por rótulos.
@@ -39,27 +50,20 @@ def normalize_text(raw: str) -> str:
     # colapsar espaços/tabs (mantém \n)
     t = re.sub(r"[ \t]+", " ", t)
 
-    # remover alguns blocos repetidos do watermark quando o OCR enlouquece
     t = remove_watermark_spam(t)
-
     return t
 
 
-def remove_watermark_spam(t: str) -> str:
-    patterns = [
-        r"(CENTRO\s*DE\s*APOIO\s*TECNOL[ÓO]GICO.*?METALOMEC[ÂA]NICA){2,}",
-        r"(CENTRODEAPOIOTECNOLOGICOAINDUSTRIAMETALOMECANICACEN){2,}",
-        r"(AINDUSTRIAMETALOMECANICACENTRODEAPOIOTECNOLOGICO){2,}",
-    ]
-    out = t
-    for p in patterns:
-        out = re.sub(p, " ", out, flags=re.IGNORECASE | re.DOTALL)
-    return out
+# -------------------------
+# Helpers: generic utils
+# -------------------------
+def clean_spaces(s: str | None) -> str | None:
+    if not s:
+        return None
+    s = re.sub(r"\s+", " ", s).strip()
+    return s or None
 
 
-# -------------------------
-# Helpers: regex extraction
-# -------------------------
 def safe_date(s: str | None) -> str | None:
     if not s:
         return None
@@ -85,34 +89,67 @@ def extract_first(pattern: str, text: str, flags=0) -> str | None:
 
 
 # -------------------------
-# Helpers: label/value extraction (GENÉRICO)
+# Section extraction
 # -------------------------
-def clean_spaces(s: str | None) -> str | None:
-    if not s:
-        return None
+def _norm_key(s: str) -> str:
+    # normalização leve para comparar headers (tolerante ao OCR)
+    s = s.upper()
+    s = s.replace("Ç", "C").replace("Ã", "A").replace("Á", "A").replace("Â", "A")
+    s = s.replace("Õ", "O").replace("Ó", "O").replace("Ô", "O")
+    s = s.replace("É", "E").replace("Ê", "E")
+    s = s.replace("Í", "I")
+    s = s.replace("Ú", "U")
     s = re.sub(r"\s+", " ", s).strip()
-    return s or None
+    return s
 
 
+def extract_section(text: str, start_labels: list[str], end_labels: list[str]) -> str:
+    """
+    Extrai um bloco de texto entre um start_label e o próximo end_label.
+    Trabalha por linhas e é tolerante a variações do OCR.
+    """
+    lines = text.splitlines()
+    start_idx = None
+
+    start_labels_n = [_norm_key(x) for x in start_labels]
+    end_labels_n = [_norm_key(x) for x in end_labels]
+
+    for i, ln in enumerate(lines):
+        k = _norm_key(ln)
+        if any(lbl in k for lbl in start_labels_n):
+            start_idx = i
+            break
+
+    if start_idx is None:
+        return ""
+
+    end_idx = len(lines)
+    for j in range(start_idx + 1, len(lines)):
+        k = _norm_key(lines[j])
+        if any(lbl in k for lbl in end_labels_n):
+            end_idx = j
+            break
+
+    block = "\n".join(lines[start_idx:end_idx]).strip()
+    return block
+
+
+# -------------------------
+# Label/value extraction (inside a section)
+# -------------------------
 def _label_regex(label: str) -> str:
-    """
-    Gera um regex tolerante a OCR para um rótulo:
-    - aceita ":" "-" opcionais
-    - aceita espaços variados
-    """
     lab = re.escape(label.strip())
     lab = lab.replace(r"\ ", r"\s*")
     return rf"(?i)\b{lab}\b\s*[:\-]?\s*"
 
 
-def extract_label_value(label: str, text: str, *, max_lines: int = 4) -> str | None:
+def extract_label_value(label: str, text: str, *, max_lines: int = 3) -> str | None:
     """
-    Extrai valor para um rótulo (label) de forma genérica.
+    Extrai valor para um rótulo (label) dentro de um bloco/section.
     Suporta:
       - "LABEL: valor"
       - "LABEL\nvalor"
       - "LABEL - valor"
-    Também tenta apanhar valores multi-linha (até max_lines).
     """
     lines = [ln.strip() for ln in text.splitlines()]
     if not lines:
@@ -120,11 +157,11 @@ def extract_label_value(label: str, text: str, *, max_lines: int = 4) -> str | N
 
     lab_pat = re.compile(_label_regex(label))
 
+    # palavras que indicam "mudança de secção"
     stop_words = {
         "EQUIPAMENTO CALIBRADO",
         "CONDICOES DO TRABALHO REALIZADO",
         "CONDIÇÕES DO TRABALHO REALIZADO",
-        "CONDICÖES DO TRABALHO REALIZADO",
         "DESCRICAO",
         "DESCRIÇÃO",
         "RESULTADOS",
@@ -135,21 +172,29 @@ def extract_label_value(label: str, text: str, *, max_lines: int = 4) -> str | N
         "CLIENTE",
         "PAGINA",
         "PÁGINA",
-        "CONDICOES AMBIENTAIS",
-        "CONDIÇÕES AMBIENTAIS",
     }
+
+    # se dentro do mesmo bloco aparecer outro label conhecido (linha curta), para
+    def looks_like_label_line(s: str) -> bool:
+        s2 = s.strip()
+        if not s2:
+            return False
+        if len(s2) > 32:
+            return False
+        # "Marca", "Modelo", "Local", "Temperatura", etc.
+        return bool(re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][A-Za-zÁÀÂÃÉÊÍÓÔÕÚÇ0-9 ()/%\.\-]{0,28}\s*[:\-]?$", s2))
 
     for i, ln in enumerate(lines):
         m = lab_pat.search(ln)
         if not m:
             continue
 
-        # 1) tenta valor na MESMA linha
+        # 1) valor na mesma linha (pode vir seguido de outros labels)
         after = ln[m.end():].strip()
         if after:
             return clean_spaces(after)
 
-        # 2) tenta nas linhas seguintes (multi-linha)
+        # 2) valor nas linhas seguintes
         out = []
         for j in range(i + 1, min(i + 1 + max_lines, len(lines))):
             cur = lines[j].strip()
@@ -159,9 +204,7 @@ def extract_label_value(label: str, text: str, *, max_lines: int = 4) -> str | N
             cur_up = re.sub(r"[:\-]\s*$", "", cur).strip().upper()
             if cur_up in stop_words:
                 break
-
-            # se a linha PARECE outro rótulo curto, pára
-            if re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][A-Za-zÁÀÂÃÉÊÍÓÔÕÚÇ0-9 ()/%\.\-]{0,25}\s*[:\-]?$", cur) and len(cur) <= 28:
+            if looks_like_label_line(cur):
                 break
 
             out.append(cur)
@@ -171,165 +214,44 @@ def extract_label_value(label: str, text: str, *, max_lines: int = 4) -> str | N
     return None
 
 
-# -------------------------
-# Helpers: sections + conditions (Fase 1 só para condições)
-# -------------------------
-def extract_section(text: str, start_labels: list[str], end_labels: list[str]) -> str:
+def extract_inline_value_between_labels(line: str, label: str, next_labels: list[str]) -> str | None:
     """
-    Extrai o bloco de texto entre um dos start_labels e o próximo end_label.
+    Para casos tipo:
+      "Marca WIKA Intervalo de indicação -1 a 3 bar"
+    Extrai "WIKA" (corta no próximo label).
     """
-    lines = [ln.rstrip() for ln in text.splitlines()]
-
-    start_pats = [re.compile(rf"(?i)^\s*{re.escape(lbl)}\s*$") for lbl in start_labels]
-    end_pats = [re.compile(rf"(?i)^\s*{re.escape(lbl)}\s*$") for lbl in end_labels]
-
-    start_idx = None
-    for i, ln in enumerate(lines):
-        s = ln.strip()
-        if any(p.search(s) for p in start_pats):
-            start_idx = i + 1
-            break
-
-    if start_idx is None:
-        return ""
-
-    out = []
-    for ln in lines[start_idx:]:
-        s = ln.strip()
-        if not s:
-            continue
-        if any(p.search(s) for p in end_pats):
-            break
-        out.append(s)
-
-    return "\n".join(out).strip()
+    # montar lookahead para "próximo label"
+    next_pat = "|".join([re.escape(x) for x in next_labels])
+    # label + valor até próximo label ou fim
+    pat = rf"(?i)\b{re.escape(label)}\b\s*[:\-]?\s*(.+?)(?=\s+\b(?:{next_pat})\b|$)"
+    return extract_first(pat, line, flags=re.IGNORECASE)
 
 
-def is_labelish(line: str) -> bool:
+def extract_label_value_smart(label: str, section_text: str, next_labels: list[str]) -> str | None:
     """
-    Heurística: linha curta com aspeto de rótulo (ex: 'Modelo', 'Marca', 'Temperatura').
+    Primeiro tenta extração normal (linha/linhas seguintes).
+    Se falhar, tenta a extração inline cortando no próximo label.
     """
-    s = (line or "").strip()
-    if not s:
-        return False
-    if len(s) > 28:
-        return False
-    return bool(re.match(r"^[A-Za-zÀ-ÿ0-9 ()/%\.\-]+:?$", s))
+    v = extract_label_value(label, section_text)
+    if v:
+        # se o OCR colou outros labels na mesma "value", tenta limpar
+        # Ex: "WIKA Intervalo de indicação -1 a 3 bar" -> "WIKA"
+        v2 = extract_inline_value_between_labels(v, label, next_labels)
+        if v2:
+            return clean_spaces(v2)
+        return clean_spaces(v)
 
+    # tentar procurar inline em qualquer linha
+    for ln in section_text.splitlines():
+        v_inline = extract_inline_value_between_labels(ln, label, next_labels)
+        if v_inline:
+            return clean_spaces(v_inline)
 
-def looks_like_temperature(s: str) -> bool:
-    if not s:
-        return False
-    return bool(re.search(r"\(\s*\d{1,2}\s*\d?\s*\)\s*°?C|\b\d{1,2}[.,]\d+\s*°?C\b|\b\d{1,2}\s*°?C\b", s))
-
-
-def looks_like_humidity(s: str) -> bool:
-    if not s:
-        return False
-    return bool(re.search(r"\(\s*\d{1,2}\s*e\s*\d{1,2}\s*\)\s*%|\b\d{1,2}[.,]\d+\s*%|\b\d{1,2}\s*%\s*(?:hr)?\b", s, re.IGNORECASE))
-
-
-def parse_conditions_block(block: str) -> dict:
-    """
-    Devolve SEMPRE campos separados e prontos para mapear:
-      - location
-      - temperature
-      - humidity
-
-    Aguenta casos onde NÃO há "Local" e aparece só "Porto" (pressões).
-    E aguenta ruído tipo:
-      Temperatura
-      Local
-      (20 2)°C
-    """
-    if not block:
-        return {"location": None, "temperature": None, "humidity": None}
-
-    lines = [ln.strip() for ln in block.splitlines() if ln.strip()]
-
-    location = None
-    temperature = None
-    humidity = None
-
-    # 1) Local (se houver rótulo)
-    for i, ln in enumerate(lines):
-        if ln.lower() == "local":
-            for j in range(i + 1, min(i + 8, len(lines))):
-                cand = lines[j].strip()
-                if not cand:
-                    continue
-                if is_labelish(cand) and cand.lower() in {"temperatura", "humidade", "umidade"}:
-                    continue
-                if looks_like_temperature(cand) or looks_like_humidity(cand):
-                    continue
-                location = cand
-                break
-            if location:
-                break
-
-    # 2) Fallback: primeira linha "não rótulo" e que não seja temp/hum
-    if not location:
-        for ln in lines:
-            if is_labelish(ln) and ln.lower() in {"temperatura", "humidade", "umidade"}:
-                continue
-            if looks_like_temperature(ln) or looks_like_humidity(ln):
-                continue
-            # "Porto" / "CATIM-Porto" / "Braga" etc
-            location = ln
-            break
-
-    # 3) Temperatura (por rótulo primeiro)
-    for i, ln in enumerate(lines):
-        if ln.lower() == "temperatura":
-            for j in range(i + 1, min(i + 10, len(lines))):
-                cand = lines[j].strip()
-                if not cand:
-                    continue
-                # ignora ruído de rótulos trocados
-                if cand.lower() in {"local", "humidade", "umidade"}:
-                    continue
-                if looks_like_temperature(cand):
-                    temperature = cand
-                    break
-            break
-
-    # fallback: primeiro padrão de temperatura
-    if not temperature:
-        for ln in lines:
-            if looks_like_temperature(ln):
-                temperature = ln
-                break
-
-    # 4) Humidade (por rótulo primeiro)
-    for i, ln in enumerate(lines):
-        if ln.lower() in {"humidade", "umidade"}:
-            for j in range(i + 1, min(i + 10, len(lines))):
-                cand = lines[j].strip()
-                if not cand:
-                    continue
-                if cand.lower() in {"local", "temperatura"}:
-                    continue
-                if looks_like_humidity(cand):
-                    humidity = cand
-                    break
-            break
-
-    # fallback: primeiro padrão de humidade
-    if not humidity:
-        for ln in lines:
-            if looks_like_humidity(ln):
-                humidity = ln
-                break
-
-    return {
-        "location": clean_spaces(location),
-        "temperature": clean_spaces(temperature),
-        "humidity": clean_spaces(humidity),
-    }
+    return None
 
 
 # -------------------------
-# Header parsing (GENÉRICO)
+# Header parsing (GENÉRICO, por secções)
 # -------------------------
 def parse_header_fields(text: str, source_name: str | None = None) -> dict:
     # certificado (genérico)
@@ -340,24 +262,42 @@ def parse_header_fields(text: str, source_name: str | None = None) -> dict:
     if cert:
         cert = re.sub(r"\s+", "", cert)
 
-    # datas (universais)
-    issue = extract_first(r"(?i)\bDATA\s+DE\s+EMISS[ÃA]O\s*[:\-]?\s*(20\d{2}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4})\b", text)
-    calib = extract_first(r"(?i)\bDATA\s+CALIBRAC[AÃ]O\s*[:\-]?\s*(20\d{2}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4})\b", text)
-
+    issue = extract_first(
+        r"(?i)\bDATA\s+DE\s+EMISS[ÃA]O\s*[:\-]?\s*(20\d{2}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4})\b",
+        text,
+    )
+    calib = extract_first(
+        r"(?i)\bDATA\s+CALIBRAC[AÃ]O\s*[:\-]?\s*(20\d{2}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4})\b",
+        text,
+    )
     if not issue:
         issue = extract_first(r"\b(20\d{2}-\d{2}-\d{2})\b", text)
 
-    # -------------------------
-    # Cliente
-    # -------------------------
-    # tentar dentro do bloco CLIENTE primeiro (muito mais estável)
-    cliente_block = extract_section(
+    # secções
+    cliente_sec = extract_section(
         text,
         start_labels=["CLIENTE"],
-        end_labels=["EQUIPAMENTO CALIBRADO", "CONDICÖES DO TRABALHO REALIZADO", "CONDIÇÕES DO TRABALHO REALIZADO", "DESCRICAO", "DESCRIÇÃO"],
+        end_labels=["EQUIPAMENTO CALIBRADO", "CONDICOES DO TRABALHO REALIZADO", "DESCRICAO", "RESULTADOS"],
     )
-    customer_name = extract_label_value("Nome", cliente_block) or extract_label_value("Nome", text)
-    customer_address = extract_label_value("Morada", cliente_block) or extract_label_value("Morada", text)
+    equip_sec = extract_section(
+        text,
+        start_labels=["EQUIPAMENTO CALIBRADO"],
+        end_labels=["CONDICOES DO TRABALHO REALIZADO", "DESCRICAO", "RESULTADOS", "RASTREABILIDADE"],
+    )
+    cond_sec = extract_section(
+        text,
+        start_labels=["CONDICOES DO TRABALHO REALIZADO", "CONDIÇÕES DO TRABALHO REALIZADO"],
+        end_labels=["DESCRICAO", "RESULTADOS", "RASTREABILIDADE", "INCERTEZA"],
+    )
+    descr_sec = extract_section(
+        text,
+        start_labels=["DESCRICAO", "DESCRIÇÃO"],
+        end_labels=["RASTREABILIDADE", "INCERTEZA", "RESULTADOS"],
+    )
+
+    # cliente (somente dentro da secção CLIENTE)
+    customer_name = extract_label_value("Nome", cliente_sec) or extract_label_value("Cliente", cliente_sec)
+    customer_address = extract_label_value("Morada", cliente_sec) or extract_label_value("Endereço", cliente_sec) or extract_label_value("Endereco", cliente_sec)
 
     # fallback leve: nome do cliente pelo nome do ficheiro
     if not customer_name and source_name:
@@ -365,104 +305,76 @@ def parse_header_fields(text: str, source_name: str | None = None) -> dict:
         if m:
             customer_name = clean_spaces(m.group(1))
 
-    # -------------------------
-    # Equipamento (genérico, sem defaults)
-    # -------------------------
-    equip_block = extract_section(
-        text,
-        start_labels=["EQUIPAMENTO CALIBRADO"],
-        end_labels=["CONDICÖES DO TRABALHO REALIZADO", "CONDIÇÕES DO TRABALHO REALIZADO", "DESCRICAO", "DESCRIÇÃO", "RESULTADOS", "RASTREABILIDADE", "INCERTEZA"],
-    )
+    # equipamento (somente dentro da secção EQUIPAMENTO CALIBRADO)
+    # lista de "próximos labels" para cortar inline
+    equip_next = [
+        "Modelo", "Nº Série", "N° Série", "No Série", "Número de Série", "Numero de Serie",
+        "Intervalo", "Intervalo de indicação", "Intervalo de indicacao",
+        "Alcance", "Resolução", "Resolucao", "Resolução estimada", "Resolucao estimada",
+        "Indicação", "Indicacao", "Classe", "Ref Interna", "Ref. Interna", "Ref",
+        "Estado do equipamento",
+    ]
 
     designation = (
-        extract_label_value("Designação", equip_block)
-        or extract_label_value("Designacao", equip_block)
-        or extract_label_value("Equipamento", equip_block)
-        or extract_label_value("Instrumento", equip_block)
-        or extract_label_value("Designação", text)
-        or extract_label_value("Designacao", text)
+        extract_label_value_smart("Designação", equip_sec, equip_next)
+        or extract_label_value_smart("Designacao", equip_sec, equip_next)
+        or extract_label_value_smart("Equipamento", equip_sec, equip_next)
+        or extract_label_value_smart("Instrumento", equip_sec, equip_next)
     )
 
-    brand = extract_label_value("Marca", equip_block) or extract_label_value("Marca", text)
-    model = extract_label_value("Modelo", equip_block) or extract_label_value("Modelo", text)
+    brand = extract_label_value_smart("Marca", equip_sec, equip_next)
+    model = extract_label_value_smart("Modelo", equip_sec, equip_next)
 
     serial = (
-        extract_label_value("Nº Série", equip_block)
-        or extract_label_value("N° Série", equip_block)
-        or extract_label_value("No Série", equip_block)
-        or extract_label_value("Número de Série", equip_block)
-        or extract_label_value("Numero de Serie", equip_block)
-        or extract_label_value("Serial", equip_block)
-        or extract_label_value("Nº Série", text)
-        or extract_label_value("N° Série", text)
-        or extract_label_value("No Série", text)
-        or extract_label_value("Número de Série", text)
-        or extract_label_value("Numero de Serie", text)
-        or extract_label_value("Serial", text)
+        extract_label_value_smart("Nº Série", equip_sec, equip_next)
+        or extract_label_value_smart("N° Série", equip_sec, equip_next)
+        or extract_label_value_smart("No Série", equip_sec, equip_next)
+        or extract_label_value_smart("Número de Série", equip_sec, equip_next)
+        or extract_label_value_smart("Numero de Serie", equip_sec, equip_next)
+        or extract_label_value_smart("Serial", equip_sec, equip_next)
     )
 
     meas_range = (
-        extract_label_value("Alcance", equip_block)
-        or extract_label_value("Alcance de medição", equip_block)
-        or extract_label_value("Alcance de medicao", equip_block)
-        or extract_label_value("Intervalo de indicação", equip_block)
-        or extract_label_value("Intervalo de indicacao", equip_block)
-        or extract_label_value("Intervalo de medição", equip_block)
-        or extract_label_value("Intervalo de medicao", equip_block)
-        or extract_label_value("Alcance", text)
-        or extract_label_value("Intervalo de indicação", text)
-        or extract_label_value("Intervalo de medição", text)
+        extract_label_value_smart("Alcance", equip_sec, equip_next)
+        or extract_label_value_smart("Alcance de medição", equip_sec, equip_next)
+        or extract_label_value_smart("Alcance de medicao", equip_sec, equip_next)
+        or extract_label_value_smart("Intervalo de indicação", equip_sec, equip_next)
+        or extract_label_value_smart("Intervalo de indicacao", equip_sec, equip_next)
+        or extract_label_value_smart("Intervalo de medição", equip_sec, equip_next)
+        or extract_label_value_smart("Intervalo de medicao", equip_sec, equip_next)
     )
 
     resolution = (
-        extract_label_value("Resolução", equip_block)
-        or extract_label_value("Resolucao", equip_block)
-        or extract_label_value("Resolução estimada", equip_block)
-        or extract_label_value("Resolucao estimada", equip_block)
-        or extract_label_value("Resolução", text)
-        or extract_label_value("Resolucao", text)
-        or extract_label_value("Resolução estimada", text)
-        or extract_label_value("Resolucao estimada", text)
+        extract_label_value_smart("Resolução", equip_sec, equip_next)
+        or extract_label_value_smart("Resolucao", equip_sec, equip_next)
+        or extract_label_value_smart("Resolução estimada", equip_sec, equip_next)
+        or extract_label_value_smart("Resolucao estimada", equip_sec, equip_next)
     )
 
-    indication = extract_label_value("Indicação", equip_block) or extract_label_value("Indicacao", equip_block) or extract_label_value("Indicação", text) or extract_label_value("Indicacao", text)
+    indication = extract_label_value_smart("Indicação", equip_sec, equip_next) or extract_label_value_smart("Indicacao", equip_sec, equip_next)
 
-    # -------------------------
-    # Condições (usa bloco + heurística; devolve SEMPRE location/temperature/humidity separados)
-    # -------------------------
-    cond_block = extract_section(
-        text,
-        start_labels=["CONDICÖES DO TRABALHO REALIZADO", "CONDIÇÕES DO TRABALHO REALIZADO", "CONDICOES DO TRABALHO REALIZADO"],
-        end_labels=["DESCRICAO", "DESCRIÇÃO", "RESULTADOS", "RASTREABILIDADE", "INCERTEZA", "OBSERVACOES", "OBSERVAÇÕES"],
-    )
-    conds = parse_conditions_block(cond_block)
+    # condições (somente dentro da secção CONDIÇÕES)
+    # aqui NÃO agrupamos labels: cada campo é extraído pelo seu label
+    cond_next = ["Temperatura", "Humidade", "Umidade", "Anexo", "Anexo Técnico", "Anexo Técnico de Acreditação", "DESCRIÇÃO", "DESCRICAO"]
+    location = extract_label_value_smart("Local", cond_sec, cond_next)
 
-    # fallback por rótulos se falhar tudo
-    if not any(conds.values()):
-        conds = {
-            "location": clean_spaces(extract_label_value("Local", text)),
-            "temperature": clean_spaces(extract_label_value("Temperatura", text)),
-            "humidity": clean_spaces(extract_label_value("Humidade", text) or extract_label_value("Umidade", text)),
-        }
+    # alguns OCRs metem: "Local Porto Temperatura (20 ± 2)°C" tudo na mesma linha
+    if not location:
+        for ln in cond_sec.splitlines():
+            v = extract_inline_value_between_labels(ln, "Local", ["Temperatura", "Humidade", "Umidade"])
+            if v:
+                location = clean_spaces(v)
+                break
 
-    # -------------------------
-    # Norma / procedimento (na descrição costuma vir)
-    # -------------------------
-    desc_block = extract_section(
-        text,
-        start_labels=["DESCRICAO", "DESCRIÇÃO"],
-        end_labels=["RASTREABILIDADE", "INCERTEZA", "DATA CALIBRACAO", "DATA CALIBRAÇÃO", "RESULTADOS"],
-    )
+    temperature = extract_label_value("Temperatura", cond_sec)
+    humidity = extract_label_value("Humidade", cond_sec) or extract_label_value("Umidade", cond_sec)
 
+    # norma / procedimento (preferir "DESCRIÇÃO" se existir)
     standard = (
-        extract_label_value("Calibração segundo", desc_block)
-        or extract_label_value("Calibracao segundo", desc_block)
-        or extract_label_value("Calibração segundo", text)
-        or extract_label_value("Calibracao segundo", text)
-        or extract_first(r"(?i)\b(?:NP\s*)?(?:EN\s*)?\d{3,6}[-–]?\d*\s*:\s*\d{4}\b", desc_block or text)
-        or extract_first(r"(?i)\b(ISO|EN)\s*\d{3,6}[-–]?\d*\s*(?::\s*\d{4})?\b", desc_block or text)
+        extract_first(r"(?i)\b(NP\s*EN\s*\d{2,6}[-–]?\d*\s*(?::\s*\d{4})?)\b", descr_sec)
+        or extract_first(r"(?i)\b(ISO\s*\d{3,6}[-–]?\d*\s*(?::\s*\d{4})?)\b", descr_sec)
+        or extract_first(r"(?i)\b(EN\s*\d{3,6}[-–]?\d*\s*(?::\s*\d{4})?)\b", descr_sec)
     )
-    standard = clean_spaces(standard)
 
     return {
         "certificate_number": clean_spaces(cert),
@@ -480,13 +392,12 @@ def parse_header_fields(text: str, source_name: str | None = None) -> dict:
             "indication": clean_spaces(indication),
         },
         "conditions": {
-            # IMPORTANTe: separado em campos (como pediste)
-            "location": conds.get("location"),
-            "temperature": conds.get("temperature"),
-            "humidity": conds.get("humidity"),
+            "location": clean_spaces(location),
+            "temperature": clean_spaces(temperature),
+            "humidity": clean_spaces(humidity),
         },
         "reference": {
-            "standard_or_procedure": standard,
+            "standard_or_procedure": clean_spaces(standard),
         },
     }
 
@@ -513,14 +424,14 @@ def parse_results(text: str) -> dict:
 
         for ln in lines[idx: idx + 800]:
             nums = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", ln)
-            if len(nums) >= 6:
+            if len(nums) >= 5:
                 out.append(ln)
                 if len(out) >= max_rows:
                     break
         return out
 
     return {
-        "rows_near_results": collect_after("RESULTADOS", max_rows=60),
+        "rows_near_results": collect_after("RESULTADOS", max_rows=80),
     }
 
 
