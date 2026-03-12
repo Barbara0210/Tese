@@ -32,7 +32,7 @@ Ambiente conda
 --------------
 Activar o ambiente:
   conda activate paddle_tese
-
+no trabalho C:\Users\barbaramartins\AppData\Local\miniconda3\Scripts\activate.bat paddle_tese
 Confirmar que estás no Python do ambiente:
   python --version
   python -c "import sys; print(sys.executable)"
