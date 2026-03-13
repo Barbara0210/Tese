@@ -6,7 +6,7 @@ PDF_DIR = BASE / "data" / "pdfs"
 IMG_DIR = BASE / "data" / "images"
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 
-DPI = 350  # bom compromisso; podes subir para 400 se precisares mais detalhe
+DPI = 450  # bom compromisso; podes subir para 400 se precisares mais detalhe
 
 def main():
     pdfs = list(PDF_DIR.glob("*.pdf"))

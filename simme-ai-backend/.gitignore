@@ -1,0 +1,89 @@
+########################################
+# Python
+########################################
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+########################################
+# Virtual environments
+########################################
+
+.venv/
+venv/
+env/
+ENV/
+
+########################################
+# Conda
+########################################
+
+conda-meta/
+*.conda
+
+########################################
+# Node / React
+########################################
+
+node_modules/
+dist/
+build/
+*.log
+
+########################################
+# OS
+########################################
+
+.DS_Store
+Thumbs.db
+
+########################################
+# IDE
+########################################
+
+.vscode/
+.idea/
+
+########################################
+# PaddleOCR models
+########################################
+
+.paddleocr/
+
+########################################
+# Pipeline data (NÃO subir para git)
+########################################
+
+paddle_ocr_pipeline/data/raw_pdfs/
+paddle_ocr_pipeline/data/images/
+paddle_ocr_pipeline/data/ocr_text/
+paddle_ocr_pipeline/data/sections/
+paddle_ocr_pipeline/data/tables/
+paddle_ocr_pipeline/data/parsed/
+paddle_ocr_pipeline/data/metrics/
+paddle_ocr_pipeline/data/evaluation/
+
+########################################
+# Backend runtime
+########################################
+
+paddle_ocr_pipeline/backend/uploads/
+paddle_ocr_pipeline/backend/outputs/
+
+########################################
+# React
+########################################
+
+paddle_ocr_pipeline/frontend/node_modules/
+paddle_ocr_pipeline/frontend/dist/
+paddle_ocr_pipeline/frontend/build/
+
+########################################
+# Logs
+########################################
+
+*.log
+logs/

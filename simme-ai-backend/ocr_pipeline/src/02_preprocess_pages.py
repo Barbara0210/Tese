@@ -6,7 +6,7 @@ IMG_DIR = BASE / "data" / "images"
 OUT_DIR = BASE / "data" / "preprocessed"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-MAX_SIDE = 1700      # chave para evitar crashes do glm-ocr no Ollama
+MAX_SIDE = 2400 
 JPEG_QUALITY = 92
 
 def preprocess_image(inp: Path, outp: Path):
@@ -18,7 +18,7 @@ def preprocess_image(inp: Path, outp: Path):
         img = img.resize((int(w * scale), int(h * scale)), Image.LANCZOS)
 
     outp.parent.mkdir(parents=True, exist_ok=True)
-    img.save(outp, "JPEG", quality=JPEG_QUALITY)
+    img.save(outp, "PNG")
     return img.size
 
 def main():
@@ -30,7 +30,7 @@ def main():
     for doc in doc_folders:
         for png in sorted(doc.glob("page_*.png")):
             rel = png.relative_to(IMG_DIR)
-            outp = OUT_DIR / rel.with_suffix(".jpg")
+            outp = OUT_DIR / rel.with_suffix(".png")
             size = preprocess_image(png, outp)
             print("preprocessed:", outp, "size:", size)
 

@@ -1,0 +1,156 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6fb;
+  color: #1f2937;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.app-header {
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  margin: 0 0 8px;
+}
+
+.app-header p {
+  margin: 0;
+  color: #4b5563;
+}
+
+.upload-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.upload-form input[type="file"] {
+  padding: 10px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
+.upload-form button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.upload-form button:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.status-box {
+  margin: 16px 0 24px;
+  padding: 14px 16px;
+  background: white;
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.result-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.info-card,
+.table-card,
+.result-box {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.info-card h3,
+.table-card h3,
+.result-box h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.info-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.info-label {
+  font-weight: 700;
+  color: #374151;
+}
+
+.info-value {
+  color: #111827;
+  word-break: break-word;
+}
+
+.tables-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #f9fafb;
+  font-weight: 700;
+}
+
+.result-box pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 13px;
+  line-height: 1.45;
+}

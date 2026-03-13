@@ -1,0 +1,80 @@
+{
+  "n_documents": 2,
+  "coverage": {
+    "certificate_number": 0.0,
+    "issue_date": 0.0,
+    "lab_name": 0.0,
+    "lab_unit": 0.0,
+    "client_name": 0.0,
+    "designation": 0.0,
+    "brand": 0.0,
+    "model": 0.0,
+    "serial_number": 1.0,
+    "range": 0.0,
+    "resolution": 0.0,
+    "standards": 0.0,
+    "results_tables": 0.0
+  },
+  "documents": [
+    {
+      "doc_id": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON",
+      "present": [
+        "serial_number"
+      ],
+      "missing": [
+        "certificate_number",
+        "issue_date",
+        "lab_name",
+        "lab_unit",
+        "client_name",
+        "designation",
+        "brand",
+        "model",
+        "range",
+        "resolution",
+        "standards",
+        "results_tables"
+      ],
+      "completeness_score": 0.077,
+      "results_rows": {
+        "E_partial_contact": 0,
+        "S_scale_change": 0,
+        "L_line_contact": 0
+      },
+      "page_limit_detected": null,
+      "pages_kept": [
+        "page_01"
+      ]
+    },
+    {
+      "doc_id": "Paquimetro MITUTOYO sn B22268348 - M.A. SILVA",
+      "present": [
+        "serial_number"
+      ],
+      "missing": [
+        "certificate_number",
+        "issue_date",
+        "lab_name",
+        "lab_unit",
+        "client_name",
+        "designation",
+        "brand",
+        "model",
+        "range",
+        "resolution",
+        "standards",
+        "results_tables"
+      ],
+      "completeness_score": 0.077,
+      "results_rows": {
+        "E_partial_contact": 0,
+        "S_scale_change": 0,
+        "L_line_contact": 0
+      },
+      "page_limit_detected": null,
+      "pages_kept": [
+        "page_01"
+      ]
+    }
+  ]
+}

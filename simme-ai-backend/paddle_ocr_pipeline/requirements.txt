@@ -1,33 +1,50 @@
 # OCR pipeline (Windows) — ambiente conda com Python 3.10
-# Fixado para evitar conflitos numpy/cv2/paddle
+# Fixado para estabilidade com PaddleOCR 2.7.x e backend FastAPI
 
-# --- base / utils ---
+# -------------------------
+# Base / utils
+# -------------------------
 tqdm==4.67.1
 python-dateutil==2.9.0.post0
 regex==2024.11.6
 pillow==10.4.0
 
-# --- pdf -> images ---
+# -------------------------
+# PDF -> imagens
+# -------------------------
 pdf2image==1.17.0
 
-# --- stack compatível PaddleOCR 2.7.x em Windows ---
+# -------------------------
+# Stack compatível PaddleOCR 2.7.x em Windows
+# -------------------------
 numpy==1.26.4
 opencv-python==4.6.0.66
 opencv-contrib-python==4.6.0.66
 
+# -------------------------
 # Motor Paddle (CPU) + OCR
+# -------------------------
 paddlepaddle==2.6.2
 paddleocr==2.7.0.3
 
-# --- networking deps puxadas por paddle (fixar para estabilidade) ---
+# -------------------------
+# Backend API
+# -------------------------
+fastapi==0.115.0
+uvicorn==0.30.6
+python-multipart==0.0.9
+
+# -------------------------
+# Networking / deps auxiliares
+# -------------------------
 httpx==0.28.1
 httpcore==1.0.9
 h11==0.16.0
 anyio==4.12.1
 exceptiongroup==1.3.1
 
-# --- security / model files ---
+# -------------------------
+# Segurança / modelos
+# -------------------------
 safetensors==0.7.0
 opt-einsum==3.3.0
-
-
