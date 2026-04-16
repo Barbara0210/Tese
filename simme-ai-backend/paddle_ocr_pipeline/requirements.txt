@@ -13,6 +13,8 @@ pillow==10.4.0
 # PDF -> imagens
 # -------------------------
 pdf2image==1.17.0
+pdfplumber==0.11.5
+ultralytics==8.3.146
 
 # -------------------------
 # Stack compatível PaddleOCR 2.7.x em Windows

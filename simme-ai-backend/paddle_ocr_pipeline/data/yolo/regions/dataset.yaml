@@ -1,0 +1,11 @@
+path: /content/yolo_regions
+train: images/train
+val: images/val
+
+names:
+  0: metadata_block
+  1: customer_block
+  2: equipment_block
+  3: work_conditions_block
+  4: reference_block
+  5: results_table

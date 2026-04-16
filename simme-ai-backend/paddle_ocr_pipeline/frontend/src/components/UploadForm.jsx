@@ -1,7 +1,13 @@
 import { useState } from "react";
 import api from "../api/client";
 
-export default function UploadForm({ onResult, onStatus }) {
+export default function UploadForm({
+  methods,
+  selectedMethod,
+  onMethodChange,
+  onResult,
+  onStatus,
+}) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -10,6 +16,11 @@ export default function UploadForm({ onResult, onStatus }) {
 
     if (!file) {
       onStatus("Seleciona um ficheiro PDF primeiro.");
+      return;
+    }
+
+    if (!selectedMethod) {
+      onStatus("Seleciona um método de processamento.");
       return;
     }
 
@@ -27,13 +38,17 @@ export default function UploadForm({ onResult, onStatus }) {
 
       const fileId = uploadResponse.data.file_id;
 
-      onStatus("Ficheiro enviado. A processar pipeline...");
+      onStatus(`Ficheiro enviado. A processar com o método "${selectedMethod}"...`);
 
-      await api.post(`/process/${fileId}`);
+      await api.post(`/process/${fileId}`, null, {
+        params: { method: selectedMethod },
+      });
 
       onStatus("Pipeline concluído. A obter resultado...");
 
-      const resultResponse = await api.get(`/result/${fileId}`);
+      const resultResponse = await api.get(`/result/${fileId}`, {
+        params: { method: selectedMethod },
+      });
 
       onResult(resultResponse.data);
       onStatus("Processamento concluído com sucesso.");
@@ -51,6 +66,22 @@ export default function UploadForm({ onResult, onStatus }) {
 
   return (
     <form onSubmit={handleSubmit} className="upload-form">
+      <label className="field-group">
+        <span>Método</span>
+        <select
+          value={selectedMethod}
+          onChange={(e) => onMethodChange(e.target.value)}
+          disabled={loading || methods.length === 0}
+        >
+          {methods.map((method) => (
+            <option key={method.key} value={method.key}>
+              {method.label}
+              {!method.implemented ? " (planeado)" : ""}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <input
         type="file"
         accept=".pdf"

@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.routes.upload import router as upload_router
+from backend.routes.methods import router as methods_router
 from backend.routes.process import router as process_router
 from backend.routes.result import router as result_router
+from backend.routes.upload import router as upload_router
 
 app = FastAPI(
     title="Paddle OCR Pipeline API",
@@ -21,6 +22,7 @@ app.add_middleware(
 app.include_router(upload_router, prefix="", tags=["upload"])
 app.include_router(process_router, prefix="", tags=["process"])
 app.include_router(result_router, prefix="", tags=["result"])
+app.include_router(methods_router, prefix="", tags=["methods"])
 
 
 @app.get("/health")

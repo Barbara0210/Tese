@@ -36,6 +36,22 @@ body {
   flex-wrap: wrap;
 }
 
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field-group select {
+  min-width: 220px;
+  padding: 10px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
 .upload-form input[type="file"] {
   padding: 10px;
   background: white;
@@ -123,6 +139,27 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.metric-pill {
+  padding: 14px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-pill-label {
+  font-size: 13px;
+  color: #6b7280;
 }
 
 .table-wrapper {

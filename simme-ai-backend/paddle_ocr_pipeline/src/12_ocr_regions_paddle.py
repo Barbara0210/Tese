@@ -1,0 +1,95 @@
+import json
+from datetime import datetime
+from pathlib import Path
+
+from PIL import Image
+from paddleocr import PaddleOCR
+
+
+BASE = Path(__file__).resolve().parents[1]
+
+IMAGES_DIR = BASE / "data" / "images"
+REGIONS_DIR = BASE / "data" / "regions"
+CROPS_DIR = BASE / "data" / "crops"
+OCR_TEXT_DIR = BASE / "data" / "ocr_text"
+
+CROPS_DIR.mkdir(parents=True, exist_ok=True)
+OCR_TEXT_DIR.mkdir(parents=True, exist_ok=True)
+
+ocr = PaddleOCR(lang="pt", use_angle_cls=True)
+
+
+def _ocr_image(image_path: Path) -> str:
+    result = ocr.ocr(str(image_path), cls=True)
+    if not result:
+        return ""
+
+    lines = []
+    for item in result[0]:
+        try:
+            text = item[1][0]
+            if text:
+                lines.append(text)
+        except Exception:
+            continue
+
+    return "\n".join(lines)
+
+
+def main():
+    region_files = sorted(REGIONS_DIR.glob("*_regions.json"))
+    if not region_files:
+        print(f"Sem ficheiros de regiões em: {REGIONS_DIR} (corre 11_detect_regions_yolo.py)")
+        return
+
+    for region_file in region_files:
+        data = json.loads(region_file.read_text(encoding="utf-8"))
+        doc_name = region_file.name.replace("_regions.json", "")
+        image_dir = IMAGES_DIR / doc_name
+        crop_doc_dir = CROPS_DIR / doc_name
+        crop_doc_dir.mkdir(parents=True, exist_ok=True)
+
+        page_results = {}
+        for page_name, regions in data.get("pages", {}).items():
+            image_path = image_dir / page_name
+            if not image_path.exists():
+                continue
+
+            page_results[page_name] = []
+            with Image.open(image_path) as image:
+                for idx, region in enumerate(regions, start=1):
+                    bbox = region["bbox"]
+                    crop = image.crop((bbox["x1"], bbox["y1"], bbox["x2"], bbox["y2"]))
+                    crop_name = f"{Path(page_name).stem}__region_{idx:02d}.png"
+                    crop_path = crop_doc_dir / crop_name
+                    crop.save(crop_path)
+
+                    text = _ocr_image(crop_path)
+                    page_results[page_name].append(
+                        {
+                            "region_index": idx,
+                            "label": region.get("label"),
+                            "confidence": region.get("confidence"),
+                            "bbox": bbox,
+                            "crop_path": str(crop_path),
+                            "text": text,
+                        }
+                    )
+
+        payload = {
+            "source_file": data.get("source_file"),
+            "extracted_at": datetime.now().isoformat(timespec="seconds"),
+            "detector": data.get("detector", {}),
+            "pages": page_results,
+        }
+
+        out_path = OCR_TEXT_DIR / f"{doc_name}_regions.json"
+        out_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        print("saved:", out_path)
+
+
+if __name__ == "__main__":
+    main()

@@ -12,6 +12,7 @@ Nesta fase, o pipeline já suporta:
 - parsing de campos principais
 - parsing de tabelas para alguns tipos de instrumento
 - backend FastAPI para upload, processamento e consulta de resultados
+- frontend React para upload, processamento e visualização dos resultados
 
 Tipos de documento já testados
 ------------------------------
@@ -44,12 +45,19 @@ paddle_ocr_pipeline/
     metrics/       -> métricas intermédias, se aplicável
 
   frontend/
-    -> interface React (a criar / em desenvolvimento)
+    src/
+      api/
+      components/
+      App.jsx
+      main.jsx
+      App.css
+    public/
+    package.json
 
   src/
     01_pdf_to_images.py
     02_ocr_paddle.py
-    03_section_split.py
+    03_segment_sections.py
     04_parse_fields.py
     05_parse_tables.py
     06_metrics_phase1.py
@@ -71,7 +79,7 @@ Resumo das fases
   ...
   === page_02.png ===
 
-03_section_split.py
+03_segment_sections.py
 - Lê os ficheiros OCR em TXT
 - Divide o conteúdo por páginas e secções semânticas
 - Gera ficheiros em data/sections/
@@ -83,7 +91,9 @@ Resumo das fases
   - description
   - traceability
   - uncertainty
+  - calibration_meta
   - results
+  - environmental_conditions
   - observations
 
 04_parse_fields.py
@@ -142,7 +152,26 @@ Fluxo:
 3) Backend copia o PDF para data/raw_pdfs/
 4) Corre o pipeline completo (01 a 06)
 5) Guarda o resultado final em backend/outputs/{file_id}.json
-6) O frontend poderá depois consumir esse resultado
+6) O frontend consome esse resultado
+
+Frontend React
+--------------
+Já existe um frontend funcional em:
+  frontend/
+
+O frontend permite:
+- selecionar um PDF
+- fazer upload para o backend
+- disparar o processamento
+- mostrar estado do processamento
+- visualizar os blocos estruturados:
+  - header
+  - customer
+  - equipment
+  - work_conditions
+  - reference
+- visualizar tabelas extraídas
+- mostrar JSON bruto para debug
 
 Pré-requisitos
 --------------
@@ -150,7 +179,7 @@ Pré-requisitos
 2) Conda (Miniconda/Anaconda)
 3) Ambiente conda com Python 3.10.x
 4) Poppler instalado e acessível no PATH
-5) Node.js (para o frontend React, quando for usado)
+5) Node.js + npm instalados (para o frontend React)
 
 Ambiente conda
 --------------
@@ -218,8 +247,8 @@ Na raiz do projecto:
   uvicorn backend.app:app --reload
 
 URLs úteis:
-- API:   http://127.0.0.1:8000
-- Docs:  http://127.0.0.1:8000/docs
+- API:    http://127.0.0.1:8000
+- Docs:   http://127.0.0.1:8000/docs
 - Health: http://127.0.0.1:8000/health
 
 Fluxo via backend
@@ -230,6 +259,39 @@ Fluxo via backend
    POST /process/{file_id}
 4) Consultar resultado:
    GET /result/{file_id}
+
+Como correr o frontend
+----------------------
+Na pasta frontend/:
+
+  npm install
+  npm run dev
+
+URL típica do frontend:
+  http://127.0.0.1:5173
+
+Fluxo via frontend
+------------------
+1) Abrir a aplicação React
+2) Selecionar um PDF
+3) Clicar em "Enviar e Processar"
+4) O frontend:
+   - envia o ficheiro para /upload
+   - chama /process/{file_id}
+   - consulta /result/{file_id}
+5) Mostra os dados extraídos em interface visual
+
+Para correr a aplicação completa
+--------------------------------
+1) Abrir terminal 1:
+   conda activate paddle_tese
+   cd C:\Projetos\Tese\simme-ai-backend\paddle_ocr_pipeline
+   uvicorn backend.app:app --reload
+
+2) Abrir terminal 2:
+   cd C:\Projetos\Tese\simme-ai-backend\paddle_ocr_pipeline\frontend
+   npm install
+   npm run dev
 
 Estado actual do projecto
 -------------------------
@@ -242,6 +304,7 @@ Estado actual do projecto
 - Extração de tabelas para paquímetro
 - Extração de tabelas para manómetro
 - Backend FastAPI funcional
+- Frontend React funcional
 - Suporte inicial a avaliação com ground truth
 
 ✅ Exemplos com bom resultado:
@@ -253,21 +316,20 @@ Estado actual do projecto
 - Alguns campos continuam dependentes da qualidade do OCR
 - Parsing de tabelas ainda é específico por tipo de instrumento
 - Nem todos os tipos de certificados estão ainda cobertos
-- Falta interface React
+- Backend ainda pode ser melhorado para suportar múltiplos ficheiros em paralelo
 
 Próximas tarefas recomendadas
 -----------------------------
-1) Frontend React
-- Upload de PDF
-- Botão para processar
-- Visualização dos blocos estruturados
-- Visualização das tabelas
-- Eventual edição manual dos campos
-
-2) Melhorar generalização
+1) Melhorar generalização
 - Mais tipos de instrumento
 - Regras mais genéricas por secção
 - Melhor deteção de modelos, número de série e condições
+
+2) Melhorar frontend
+- Edição manual dos campos extraídos
+- Mostrar OCR bruto por página
+- Mostrar tabelas com melhor formatação
+- Exportação de JSON final
 
 3) Melhorar avaliação
 - Criar mais ficheiros gold
@@ -296,9 +358,19 @@ Se o backend arrancar mas / der Not Found:
 - é normal
 - usar /docs ou /health
 
+Se o backend der erro "No module named backend":
+- garantir que o comando foi corrido na raiz do projecto
+- usar:
+  uvicorn backend.app:app --reload
+
+Se o frontend não arrancar:
+- confirmar Node.js e npm:
+  node -v
+  npm -v
+
 Notas finais
 ------------
 - Correr sempre os scripts a partir da raiz do projecto
 - Garantir que o ambiente conda paddle_tese está activo
-- Para demonstração, o caminho recomendado passa agora pelo backend FastAPI
-  e, na próxima fase, pelo frontend React
+- Para demonstração, o caminho recomendado passa agora por:
+  frontend React -> backend FastAPI -> pipeline OCR -> JSON estruturado
