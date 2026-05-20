@@ -48,8 +48,15 @@ body {
   min-width: 220px;
   padding: 10px;
   background: white;
+  color: #111827;
   border: 1px solid #d1d5db;
   border-radius: 10px;
+  appearance: auto;
+}
+
+.field-group select option {
+  color: #111827;
+  background: white;
 }
 
 .upload-form input[type="file"] {
@@ -135,6 +142,11 @@ body {
   word-break: break-word;
 }
 
+.info-value-multiline {
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+
 .tables-grid {
   display: flex;
   flex-direction: column;
@@ -164,6 +176,19 @@ body {
 
 .table-wrapper {
   overflow-x: auto;
+}
+
+.table-meta {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.table-meta p {
+  margin: 0;
 }
 
 table {

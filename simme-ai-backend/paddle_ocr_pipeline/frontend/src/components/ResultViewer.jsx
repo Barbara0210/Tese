@@ -5,16 +5,27 @@ function MetricPill({ label, value }) {
   return (
     <div className="metric-pill">
       <span className="metric-pill-label">{label}</span>
-      <strong>{value ?? "—"}</strong>
+      <strong>{value ?? "â€”"}</strong>
     </div>
   );
+}
+
+function buildTableEntries(documentData) {
+  return Object.entries(documentData?.tables || {}).filter(([, tableValue]) => {
+    if (Array.isArray(tableValue)) return tableValue.length > 0;
+    if (tableValue && typeof tableValue === "object") {
+      if (Array.isArray(tableValue.rows)) return tableValue.rows.length > 0;
+      return Object.keys(tableValue).length > 0;
+    }
+    return Boolean(tableValue);
+  });
 }
 
 export default function ResultViewer({ data }) {
   if (!data) {
     return (
       <div className="result-box">
-        <p>Ainda não há resultados.</p>
+        <p>Ainda nÃ£o hÃ¡ resultados.</p>
       </div>
     );
   }
@@ -24,25 +35,23 @@ export default function ResultViewer({ data }) {
   const summary = data?.processing_summary || null;
   const documentMetrics = data?.metrics?.document || null;
   const globalMetrics = data?.metrics?.global || null;
-  const tableEntries = Object.entries(documentData?.tables || {}).filter(([, rows]) => {
-    if (Array.isArray(rows)) return rows.length > 0;
-    if (rows && typeof rows === "object") return Object.keys(rows).length > 0;
-    return Boolean(rows);
-  });
+  const rawBlocks = data?.raw?.parsed?.raw_blocks || null;
+  const pageSections = data?.raw?.sections?.page_sections || null;
+  const tableEntries = buildTableEntries(documentData);
 
   return (
     <div className="result-layout">
       <div className="cards-grid">
         <div className="info-card">
-          <h3>Método</h3>
+          <h3>MÃ©todo</h3>
           <div className="info-card-body">
             <div className="info-row">
               <span className="info-label">Nome</span>
-              <span className="info-value">{method?.label || "—"}</span>
+              <span className="info-value">{method?.label || "â€”"}</span>
             </div>
             <div className="info-row">
-              <span className="info-label">Descrição</span>
-              <span className="info-value">{method?.description || "—"}</span>
+              <span className="info-label">DescriÃ§Ã£o</span>
+              <span className="info-value info-value-multiline">{method?.description || "â€”"}</span>
             </div>
             <div className="info-row">
               <span className="info-label">Estado</span>
@@ -54,42 +63,50 @@ export default function ResultViewer({ data }) {
         </div>
 
         <div className="info-card">
-          <h3>Resumo da execução</h3>
+          <h3>Resumo da execuÃ§Ã£o</h3>
           <div className="metrics-grid">
             <MetricPill
               label="Tempo"
               value={
                 summary?.elapsed_seconds !== undefined
                   ? `${summary.elapsed_seconds}s`
-                  : "—"
+                  : "â€”"
               }
             />
-            <MetricPill label="Scripts" value={summary?.scripts_executed?.length ?? "—"} />
-            <MetricPill label="Campos preenchidos" value={documentMetrics?.fields?.filled_fields ?? "—"} />
-            <MetricPill label="Tabelas encontradas" value={documentMetrics?.tables?.found_tables ?? "—"} />
+            <MetricPill label="Scripts" value={summary?.scripts_executed?.length ?? "â€”"} />
+            <MetricPill label="Campos preenchidos" value={documentMetrics?.fields?.filled_fields ?? "â€”"} />
+            <MetricPill label="Tabelas encontradas" value={documentMetrics?.tables?.found_tables ?? "â€”"} />
           </div>
         </div>
       </div>
 
       {(documentMetrics || globalMetrics) && (
         <div className="info-card">
-          <h3>Métricas</h3>
+          <h3>MÃ©tricas</h3>
           <div className="metrics-grid">
             <MetricPill
               label="Completude do documento"
-              value={documentMetrics?.fields?.completeness_score ?? "—"}
+              value={documentMetrics?.fields?.completeness_score ?? "â€”"}
             />
             <MetricPill
-              label="Extração de tabelas"
-              value={documentMetrics?.tables?.table_extraction_score ?? "—"}
+              label="ExtraÃ§Ã£o de tabelas"
+              value={documentMetrics?.tables?.table_extraction_score ?? "â€”"}
             />
             <MetricPill
-              label="Média global campos"
-              value={globalMetrics?.avg_field_completeness ?? "—"}
+              label="Linhas de tabela"
+              value={Object.values(documentMetrics?.tables?.row_counts || {}).join(", ") || "â€”"}
             />
             <MetricPill
-              label="Média global tabelas"
-              value={globalMetrics?.avg_table_extraction ?? "—"}
+              label="Tipo de instrumento"
+              value={documentMetrics?.instrument_type ?? "â€”"}
+            />
+            <MetricPill
+              label="MÃ©dia global campos"
+              value={globalMetrics?.avg_field_completeness ?? "â€”"}
+            />
+            <MetricPill
+              label="MÃ©dia global tabelas"
+              value={globalMetrics?.avg_table_extraction ?? "â€”"}
             />
           </div>
         </div>
@@ -99,14 +116,28 @@ export default function ResultViewer({ data }) {
         <InfoCard title="Header" data={documentData?.header} />
         <InfoCard title="Cliente" data={documentData?.customer} />
         <InfoCard title="Equipamento" data={documentData?.equipment} />
-        <InfoCard title="Condições de trabalho" data={documentData?.work_conditions} />
-        <InfoCard title="Referência" data={documentData?.reference} />
+        <InfoCard title="CondiÃ§Ãµes de trabalho" data={documentData?.work_conditions} />
+        <InfoCard title="ReferÃªncia" data={documentData?.reference} />
       </div>
+
+      {rawBlocks && (
+        <div className="cards-grid">
+          <InfoCard title="Blocos OCR" data={rawBlocks} />
+        </div>
+      )}
+
+      {pageSections && (
+        <div className="cards-grid">
+          {Object.entries(pageSections).map(([pageName, sectionData]) => (
+            <InfoCard key={pageName} title={`SecÃ§Ãµes ${pageName}`} data={sectionData} />
+          ))}
+        </div>
+      )}
 
       <div className="tables-grid">
         {tableEntries.length === 0 ? (
           <div className="result-box">
-            <p>Sem tabelas interpretadas para este método.</p>
+            <p>Sem tabelas interpretadas para este mÃ©todo.</p>
           </div>
         ) : (
           tableEntries.map(([tableName, rows]) => (

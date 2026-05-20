@@ -374,3 +374,682 @@ Notas finais
 - Garantir que o ambiente conda paddle_tese está activo
 - Para demonstração, o caminho recomendado passa agora por:
   frontend React -> backend FastAPI -> pipeline OCR -> JSON estruturado
+
+
+MÃ©todos de processamento disponÃ­veis
+------------------------------------
+O backend jÃ¡ suporta mÃºltiplos mÃ©todos:
+
+- paddle_current
+  - OCR base com PaddleOCR sobre a pÃ¡gina completa
+
+- pdf_table
+  - extracÃ§Ã£o directa de tabelas do PDF com pdfplumber
+
+- hybrid_fast
+  - pipeline hÃ­brido com detecÃ§Ã£o de regiÃµes + OCR por regiÃ£o
+  - preparado para YOLO + PaddleOCR
+
+Escolha do mÃ©todo
+-----------------
+Endpoints Ãºteis:
+- GET /methods
+- POST /process/{file_id}?method=paddle_current
+- POST /process/{file_id}?method=pdf_table
+- POST /process/{file_id}?method=hybrid_fast
+
+O frontend jÃ¡ permite escolher o mÃ©todo antes de processar.
+
+
+Pipeline pdf_table
+------------------
+Script principal:
+
+  python .\src\10_extract_tables_pdfplumber.py
+
+Resumo:
+- lÃª PDFs em data/raw_pdfs/
+- extrai tabelas directamente do PDF
+- tenta preencher campos estruturados a partir da tabela administrativa da pÃ¡gina 1
+- gera:
+  - data/parsed/
+  - data/tables/
+
+Fluxo manual:
+1) colocar PDFs em data/raw_pdfs/
+2) correr:
+   python .\src\10_extract_tables_pdfplumber.py
+3) gerar mÃ©tricas:
+   python .\src\06_metrics_phase1.py
+
+
+Pipeline hybrid_fast (YOLO + PaddleOCR)
+---------------------------------------
+Scripts preparados:
+- 01_pdf_to_images.py
+- 11_detect_regions_yolo.py
+- 12_ocr_regions_paddle.py
+- 13_merge_regions_to_text.py
+- 03_segment_sections.py
+- 04_parse_fields.py
+- 05_parse_tables.py
+- 06_metrics_phase1.py
+
+Resumo:
+1) converter PDF em imagens
+2) detectar regiÃµes com YOLO
+3) correr PaddleOCR por regiÃ£o
+4) agregar texto das regiÃµes
+5) seguir para segmentaÃ§Ã£o, parsing e mÃ©tricas
+
+Modelo YOLO esperado:
+
+  data/models/yolo_regions.pt
+
+Fluxo manual:
+1) colocar PDFs em data/raw_pdfs/
+2) correr:
+   python .\src\01_pdf_to_images.py
+   python .\src\11_detect_regions_yolo.py
+   python .\src\12_ocr_regions_paddle.py
+   python .\src\13_merge_regions_to_text.py
+   python .\src\03_segment_sections.py
+   python .\src\04_parse_fields.py
+   python .\src\05_parse_tables.py
+   python .\src\06_metrics_phase1.py
+
+
+Dataset YOLO para detecÃ§Ã£o de regiÃµes
+-------------------------------------
+Pasta base:
+
+  data/yolo/regions/
+
+Estrutura:
+- images/train
+- images/val
+- labels/train
+- labels/val
+- dataset.yaml
+- curated_pages.json
+
+Classes YOLO actuais:
+- metadata_block
+- customer_block
+- equipment_block
+- work_conditions_block
+- reference_block
+- results_table
+
+Objectivo do YOLO:
+- nÃ£o ler texto
+- localizar blocos e tabelas relevantes
+- permitir ao PaddleOCR fazer OCR sÃ³ nessas zonas
+
+Preparar dataset:
+1) garantir que existem imagens:
+   python .\src\01_pdf_to_images.py
+
+2) montar dataset YOLO:
+   python .\scripts\prepare_yolo_dataset.py
+
+Opcional:
+- gerar labels automÃ¡ticas de rascunho:
+  python .\scripts\auto_annotate_yolo_regions.py
+
+Nota:
+- as auto-labels sÃ£o apenas ponto de partida
+- para treino melhor, pode ser preferÃ­vel anotar manualmente tudo
+
+
+AnotaÃ§Ã£o manual com Label Studio
+--------------------------------
+O projecto estÃ¡ a usar Label Studio para anotaÃ§Ã£o manual das imagens do dataset YOLO.
+
+Fluxo recomendado:
+1) correr:
+   python .\src\01_pdf_to_images.py
+   python .\scripts\prepare_yolo_dataset.py
+
+2) abrir Label Studio
+
+3) criar projecto novo
+
+4) importar imagens de:
+   - data/yolo/regions/images/train
+   - data/yolo/regions/images/val
+
+ConfiguraÃ§Ã£o de labeling sugerida:
+
+<View>
+  <Image name="image" value="$image"/>
+  <RectangleLabels name="label" toName="image">
+    <Label value="metadata_block" background="#1f77b4"/>
+    <Label value="customer_block" background="#2ca02c"/>
+    <Label value="equipment_block" background="#ff7f0e"/>
+    <Label value="work_conditions_block" background="#d62728"/>
+    <Label value="reference_block" background="#9467bd"/>
+    <Label value="results_table" background="#8c564b"/>
+  </RectangleLabels>
+</View>
+
+Como pensar os blocos:
+- metadata_block
+  - topo com data, n.Âº do certificado, pÃ¡gina e, quando aplicÃ¡vel, laboratÃ³rio
+
+- customer_block
+  - secÃ§Ã£o do cliente com nome e morada
+
+- equipment_block
+  - secÃ§Ã£o do equipamento calibrado
+  - inclui designaÃ§Ã£o, marca, modelo, sÃ©rie, indicaÃ§Ã£o, resoluÃ§Ã£o, alcance, etc.
+
+- work_conditions_block
+  - local, temperatura, humidade, anexo tÃ©cnico
+
+- reference_block
+  - descriÃ§Ã£o normativa, normas e procedimento
+
+- results_table
+  - tabela(s) principais de resultados
+
+Regras prÃ¡ticas:
+- desenhar por bloco visual, nÃ£o por palavra
+- numa pÃ¡gina de resultados podem existir 1 ou mais caixas results_table
+- se uma pÃ¡gina nÃ£o tiver uma classe, nÃ£o inventar
+
+
+ExportaÃ§Ã£o das anotaÃ§Ãµes do Label Studio
+----------------------------------------
+Depois de anotar:
+1) abrir o projecto
+2) clicar em Export
+3) escolher formato YOLO
+4) descarregar o .zip exportado
+
+O que interessa do export:
+- os ficheiros .txt das labels YOLO
+- opcionalmente classes.txt como referÃªncia
+
+Destino das labels:
+- labels do train:
+  data/yolo/regions/labels/train
+
+- labels do val:
+  data/yolo/regions/labels/val
+
+Regra importante:
+- cada imagem em images/train ou images/val deve ter um ficheiro .txt com o mesmo nome base
+
+Exemplo:
+- imagem:
+  CITC_021_CORK SUPPLY PORTUGAL__page_01.png
+- label:
+  CITC_021_CORK SUPPLY PORTUGAL__page_01.txt
+
+NÃ£o Ã© necessÃ¡rio copiar:
+- JSONs do Label Studio
+- imagens exportadas, se jÃ¡ usarmos as imagens do projecto
+
+
+Treino YOLO no Google Colab
+---------------------------
+Como nÃ£o Ã© obrigatÃ³rio ter GPU local, o treino pode ser feito no Google Colab.
+
+Fluxo recomendado:
+1) preparar dataset local:
+   python .\src\01_pdf_to_images.py
+   python .\scripts\prepare_yolo_dataset.py
+
+2) anotar manualmente no Label Studio
+
+3) copiar a pasta:
+   data/yolo/regions
+   para o Google Drive
+
+4) abrir Google Colab
+
+5) montar o Drive:
+
+   from google.colab import drive
+   drive.mount('/content/drive')
+
+6) instalar Ultralytics:
+
+   !pip install ultralytics
+
+7) treinar:
+
+   from ultralytics import YOLO
+   model = YOLO("yolo11n.pt")
+   model.train(
+       data="/content/drive/MyDrive/yolo_regions/dataset.yaml",
+       epochs=100,
+       imgsz=1280,
+       batch=8
+   )
+
+8) no fim, descarregar:
+   best.pt
+
+9) guardar em:
+
+   data/models/yolo_regions.pt
+
+
+Como correr os projectos neste momento
+-------------------------------------
+Backend:
+1) abrir terminal
+2) activar ambiente:
+   C:\Users\barbaramartins\AppData\Local\miniconda3\Scripts\activate.bat paddle_tese
+3) ir para a raiz do projecto:
+   cd C:\Projetos\Tese\simme-ai-backend\paddle_ocr_pipeline
+4) arrancar:
+   uvicorn backend.app:app --reload
+
+Frontend:
+1) abrir segundo terminal
+2) ir para:
+   C:\Projetos\Tese\simme-ai-backend\paddle_ocr_pipeline\frontend
+3) correr:
+   npm install
+   npm run dev
+
+Label Studio:
+1) activar o ambiente onde estÃ¡ instalado
+2) correr:
+   label-studio
+   ou, dependendo da instalaÃ§Ã£o:
+   python -m label_studio
+
+3) abrir no browser o URL indicado pelo arranque do Label Studio
+
+
+Resumo operacional actual
+-------------------------
+Se o objectivo for OCR base:
+- usar paddle_current
+
+Se o objectivo for testar extracÃ§Ã£o directa de tabelas:
+- usar pdf_table
+
+Se o objectivo for testar detecÃ§Ã£o de regiÃµes + OCR:
+- preparar dataset YOLO
+- anotar no Label Studio
+- exportar labels YOLO para labels/train e labels/val
+- treinar no Colab
+- guardar best.pt em data/models/
+- usar hybrid_fast
+
+
+Atualização do fluxo YOLO com split train/val
+---------------------------------------------
+Para o treino YOLO com mais certificados, o fluxo recomendado passou a ser:
+
+1) organizar os PDFs em:
+   - data/raw_pdfs/train
+   - data/raw_pdfs/val
+
+Regra importante:
+- um certificado inteiro vai para train ou para val
+- nunca dividir páginas do mesmo certificado entre os dois splits
+
+2) confirmar que não existem PDFs antigos soltos em:
+   - data/raw_pdfs/
+
+Se existirem PDFs na raiz de raw_pdfs, o 01_pdf_to_images.py também os converte e mistura datasets.
+
+3) converter PDFs em imagens:
+   python .\src\01_pdf_to_images.py
+
+O script já suporta:
+- PDFs diretamente em data/raw_pdfs/
+- PDFs em data/raw_pdfs/train
+- PDFs em data/raw_pdfs/val
+
+Quando existem pastas train e val, as imagens ficam organizadas em:
+- data/images/train/<nome_pdf>/page_XX.png
+- data/images/val/<nome_pdf>/page_XX.png
+
+4) preparar o dataset YOLO:
+   python .\scripts\prepare_yolo_dataset.py
+
+Quando existem imagens em data/images/train e data/images/val, o script copia automaticamente para:
+- data/yolo/regions/images/train
+- data/yolo/regions/images/val
+
+5) anotar manualmente no Label Studio
+6) exportar as labels YOLO
+7) copiar os .txt para:
+   - data/yolo/regions/labels/train
+   - data/yolo/regions/labels/val
+8) treinar no Google Colab
+9) descarregar best.pt
+10) guardar em:
+    - data/models/best.pt
+    ou
+    - data/models/yolo_regions.pt
+
+
+Classes YOLO atualizadas
+------------------------
+As classes atuais do detector são:
+
+- metadata_block
+- customer_block
+- equipment_block
+- equipment_state_block
+- work_conditions_block
+- reference_block
+- calibration_date_block
+- standard_equipment_block
+- results_table
+
+O dataset.yaml foi atualizado para 9 classes:
+- 0 metadata_block
+- 1 customer_block
+- 2 equipment_block
+- 3 equipment_state_block
+- 4 work_conditions_block
+- 5 reference_block
+- 6 results_table
+- 7 standard_equipment_block
+- 8 calibration_date_block
+
+
+Regra de anotação por classe
+----------------------------
+Anotar por bloco visual e, regra geral, incluir o título da secção + o conteúdo.
+
+- metadata_block
+  - data, número do certificado, página, laboratório, cabeçalho funcional
+
+- customer_block
+  - bloco cliente/customer com nome e morada
+
+- equipment_block
+  - designação, marca, modelo, série, alcance, resolução, indicação, etc.
+
+- equipment_state_block
+  - estado do equipamento
+  - exame visual
+  - visual inspection
+  - equipment state
+  - usar quando esta informação aparece como bloco visual próprio ou com heading próprio
+
+- work_conditions_block
+  - local, temperatura, humidade, anexo técnico
+
+- reference_block
+  - normas, procedimento, descrição normativa
+
+- calibration_date_block
+  - data da calibração
+  - calibration date
+  - usar quando este campo aparece como bloco/linha visual própria separada do cabeçalho geral
+
+- standard_equipment_block
+  - equipamento padrão utilizado
+  - padrão
+  - blocos/tabelas com os instrumentos de referência usados na calibração
+  - rastreabilidade/certificados dos padrões
+
+- results_table
+  - cabeçalho da tabela + valores
+  - se existirem duas tabelas separadas, usar duas caixas results_table
+
+Regras práticas:
+- não anotar palavra a palavra
+- não separar título e conteúdo da mesma secção em caixas diferentes sem necessidade
+- evitar logos decorativos que estejam claramente fora do bloco
+- páginas sem blocos úteis podem ficar sem labels
+
+
+Label Studio com muitos ficheiros
+---------------------------------
+Com muitos PNGs, o upload direto no browser pode falhar com erros como:
+
+  You cannot access body after reading from request's data stream
+
+Isto costuma acontecer quando:
+- se tenta importar demasiados ficheiros de uma vez
+- se tenta largar uma pasta inteira
+- o Label Studio falha a processar um upload grande numa única request
+
+Fluxo mais estável:
+1) criar o projeto primeiro
+2) definir o Labeling Setup
+3) guardar o projeto
+4) ir ao projeto e importar as imagens em lotes menores
+
+Recomendação prática:
+- para train, importar em lotes de 20 a 40 imagens de cada vez
+- para val, importar tudo de uma vez costuma ser aceitável
+
+Sugestão:
+- criar dois projetos:
+  - yolo_regions_train
+  - yolo_regions_val
+
+Não usar a pasta inteira por drag-and-drop se der erro.
+Preferir:
+- abrir a pasta
+- selecionar um conjunto de PNGs
+- Upload Files
+
+
+Labeling Setup atual
+--------------------
+Usar esta configuração no Label Studio:
+
+<View>
+  <Image name="image" value="$image"/>
+  <RectangleLabels name="label" toName="image">
+    <Label value="metadata_block" background="#1f77b4"/>
+    <Label value="customer_block" background="#2ca02c"/>
+    <Label value="equipment_block" background="#ff7f0e"/>
+    <Label value="equipment_state_block" background="#bcbd22"/>
+    <Label value="work_conditions_block" background="#d62728"/>
+    <Label value="reference_block" background="#9467bd"/>
+    <Label value="results_table" background="#8c564b"/>
+    <Label value="standard_equipment_block" background="#FFA39E"/>
+    <Label value="calibration_date_block" background="#b0fb0e"/>
+  </RectangleLabels>
+</View>
+
+
+Fluxo completo atualizado
+-------------------------
+1) dividir os certificados por:
+   - data/raw_pdfs/train
+   - data/raw_pdfs/val
+
+2) garantir que não há leakage
+   - o mesmo certificado não pode existir nos dois splits
+
+3) garantir que não existem PDFs antigos soltos em data/raw_pdfs/
+
+4) gerar imagens:
+   python .\src\01_pdf_to_images.py
+
+5) preparar o dataset YOLO:
+   python .\scripts\prepare_yolo_dataset.py
+
+6) criar 2 projetos no Label Studio:
+   - train
+   - val
+
+7) importar imagens:
+   - train em lotes pequenos
+   - val normalmente pode ser importado todo
+
+8) anotar todas as páginas úteis
+
+9) exportar em YOLO
+
+10) copiar labels para:
+    - data/yolo/regions/labels/train
+    - data/yolo/regions/labels/val
+
+11) comprimir a pasta:
+    - data/yolo/regions
+
+12) enviar para o Google Drive
+
+13) no Colab:
+    - montar Drive
+    - instalar ultralytics
+    - unzip do dataset
+    - treinar
+
+14) descarregar o best.pt
+
+15) guardar o modelo em data/models/
+
+16) correr o método hybrid_fast no backend/frontend
+
+
+Metodo OCR + LLM
+----------------
+Metodo implementado:
+- key: ocr_llm
+- label: OCR + LLM
+
+Fluxo atual:
+1) 01_pdf_to_images.py
+2) 02_ocr_paddle.py
+3) 14_extract_ocr_llm.py
+4) 06_metrics_phase1.py
+
+Objetivo:
+- usar PaddleOCR como leitura base
+- usar um LLM para interpretar semanticamente o certificado
+- devolver JSON estruturado compatível com o backend atual
+
+Configuracao necessaria:
+- definir OPENAI_API_KEY
+- opcionalmente definir OPENAI_OCR_LLM_MODEL
+  - default atual: gpt-4o
+
+Exemplo no Windows cmd:
+  set OPENAI_API_KEY=colocar_aqui_a_chave
+  set OPENAI_OCR_LLM_MODEL=gpt-4o
+
+Notas:
+- o metodo atual usa texto OCR + imagens das paginas
+- o script grava parsed e tables diretamente, sem passar por 03_segment_sections.py, 04_parse_fields.py e 05_parse_tables.py
+- e um MVP inicial; a parte das tabelas ainda deve ser afinada com testes reais
+
+Decisao atual para desenvolvimento em casa
+------------------------------------------
+Como a API da OpenAI ficou bloqueada por quota insuficiente, a decisao atual para continuar
+o metodo OCR + LLM e usar um modelo local com Ollama.
+
+Escolha recomendada:
+- Ollama local
+- modelo principal: qwen2.5vl:7b
+- fallback mais leve: qwen2.5vl:3b
+
+Motivacao:
+- evita custos e limites de quota da API cloud
+- permite correr testes em casa sem depender de creditos
+- e uma opcao alinhada com compreensao documental multimodal
+- continua coerente com a ideia da tese de um pipeline OCR + LLM
+
+Arquitetura desejada desta variante:
+1) PDF -> imagens
+2) PaddleOCR le o texto base
+3) Qwen2.5-VL recebe:
+   - imagens das paginas
+   - texto OCR de apoio
+4) Qwen devolve JSON estruturado
+5) o backend guarda parsed/tables
+6) 06_metrics_phase1.py calcula as metricas
+
+Nota para retomar mais tarde:
+- adaptar 14_extract_ocr_llm.py para chamar Ollama local em vez da API da OpenAI
+- testar primeiro com qwen2.5vl:3b se o computador nao aguentar o 7b
+
+
+Resumo de métricas por execução
+-------------------------------
+O backend guarda automaticamente um índice leve das execuções em:
+
+  backend/method_runs_summary.json
+
+E um resumo comparativo por PDF em:
+
+  backend/method_comparison_summary.json
+
+Este ficheiro junta, por execução:
+- source_pdf
+- method_key
+- method_label
+- method_category
+- elapsed_seconds
+- instrument_type
+- filled_fields
+- total_fields
+- completeness_score
+- found_tables
+- expected_tables
+- table_extraction_score
+- archive_run_dir
+
+Objetivo:
+- facilitar comparação entre métodos
+- ter um registo simples para a tese
+- no futuro exportar isto para Excel/CSV quando todos os pipelines estiverem estáveis
+
+No ficheiro comparativo:
+- cada PDF aparece uma vez
+- para cada PDF ficam listados os métodos já corridos
+- se existirem repetições do mesmo PDF + método, fica considerada a execução mais recente
+
+
+Conclusões parciais dos testes
+------------------------------
+1) Manómetro analógico_CorkSupply Itália_038.pdf com paddle_current
+- resultado global bom
+- filled_fields: 19/22
+- completeness_score: 0.8636
+- found_tables: 3/3
+- table_extraction_score: 1
+- conclusão:
+  o Baseline Atual funciona bem em certificados com OCR relativamente limpo e estrutura coerente
+
+2) Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf com paddle_current
+- resultado global fraco
+- filled_fields: 2/22
+- completeness_score: 0.0909
+- found_tables: 0
+- conclusão:
+  watermark e ruído de fundo degradam fortemente o OCR da página completa; este documento é um caso difícil para o baseline
+
+3) Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf com pdf_table
+- resultado praticamente vazio
+- conclusão:
+  PdfTable sozinho não é robusto em layouts muito visuais ou com pouca estrutura tabular diretamente extraível
+
+4) Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf com pdf_table
+- resultado intermédio/útil
+- filled_fields: 12/22
+- completeness_score: 0.5455
+- generic_table_1 e generic_table_2 foram extraídas
+- conclusão:
+  PdfTable pode funcionar razoavelmente bem em certificados mais limpos e tabulares, mesmo quando as métricas formais de tabela ainda subestimam esse sucesso
+
+Leitura metodológica atual
+--------------------------
+- paddle_current:
+  melhor em documentos em que o OCR full-page consegue separar bem as secções
+
+- pdf_table:
+  útil em certificados tabulares e limpos, mas frágil como solução geral
+
+- hybrid_fast:
+  justificado para reduzir o impacto do ruído visual, usando deteção de regiões antes do OCR
+
+- vision_llm:
+  ainda por implementar; será interessante para testar maior flexibilidade semântica em layouts novos ou difíceis

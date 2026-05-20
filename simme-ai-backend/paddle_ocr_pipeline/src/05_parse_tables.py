@@ -96,7 +96,29 @@ def clean_result_lines(text: str) -> list[str]:
     return out
 
 
+def collect_region_block_texts(section_json: dict, label: str) -> list[str]:
+    page_region_blocks = section_json.get("page_region_blocks", {})
+    texts = []
+
+    for page_name in sorted(page_region_blocks.keys()):
+        for block in page_region_blocks.get(page_name, []):
+            if (block.get("label") or "") != label:
+                continue
+            text = (block.get("text") or "").strip()
+            if text:
+                texts.append(text)
+
+    return texts
+
+
 def collect_all_results_lines(section_json: dict) -> list[str]:
+    region_texts = collect_region_block_texts(section_json, "results_table")
+    if region_texts:
+        out = []
+        for text in region_texts:
+            out.extend(clean_result_lines(text))
+        return out
+
     page_sections = section_json.get("page_sections", {})
     out = []
     for page_name in sorted(page_sections.keys()):
@@ -439,6 +461,200 @@ def parse_pressure_gauge_tables(section_json: dict) -> dict:
     }
 
 
+def _is_simple_numeric_line(line: str) -> bool:
+    return bool(re.fullmatch(r"\s*[-+]?\d+(?:[.,]\d+)?\s*", line))
+
+
+def _is_generic_header_line(line: str) -> bool:
+    n = normalize(line)
+    return any(token in n for token in ["LEITURA NO EQUIPAMENTO", "PADRAO", "ERRO", "INCERTEZA", "MEDIA"])
+
+
+def _infer_section_from_header_line(line: str) -> str | None:
+    n = normalize(line)
+    if "PADRAO (G)" in n:
+        return "Peso"
+    if "PADRAO (%)" in n:
+        return "Humidade"
+    if "PADRAO (MM)" in n:
+        return None
+    return None
+
+
+def _infer_unit_from_header_line(line: str) -> str | None:
+    n = normalize(line)
+    if "PADRAO (MM)" in n:
+        return "mm"
+    if "PADRAO (G)" in n:
+        return "g"
+    if "PADRAO (%)" in n:
+        return "%"
+    return None
+
+
+def _is_generic_section_line(line: str) -> bool:
+    n = normalize(line)
+    if not n:
+        return False
+    if _is_generic_header_line(line):
+        return False
+    if "RESULTADOS" in n:
+        return False
+    if extract_numbers(line):
+        return False
+    words = n.split()
+    if len(words) > 3:
+        return False
+    return any(token in n for token in ["COMPRIMENTO", "DIAMETRO", "PESO", "HUMIDADE", "UMIDADE", "PRESSAO", "TEMPERATURA"])
+
+
+def _canonical_generic_columns(lines: list[str]) -> list[str]:
+    joined = " ".join(normalize(ln) for ln in lines if _is_generic_header_line(ln))
+    columns = []
+    if "LEITURA NO EQUIPAMENTO" in joined:
+        columns.append("reading_value")
+    if "PADRAO" in joined:
+        columns.append("standard_value")
+    if "ERRO" in joined:
+        columns.append("error_value")
+    if "INCERTEZA" in joined:
+        columns.append("uncertainty_value")
+    if "MEDIA" in joined:
+        columns.append("mean_value")
+    return columns or ["value_1", "value_2", "value_3", "value_4"]
+
+
+def _dedupe_generic_rows(rows: list[dict]) -> list[dict]:
+    deduped_by_values = {}
+    for row in rows:
+        signature = tuple(row.get("values", []))
+        if signature not in deduped_by_values:
+            deduped_by_values[signature] = row
+
+    return list(deduped_by_values.values())
+
+
+def _is_plausible_generic_row(values: list[float | None], columns: list[str]) -> bool:
+    if len(values) < 4:
+        return False
+
+    if any(v is None for v in values[:4]):
+        return False
+
+    reading = values[0]
+    standard = values[1]
+    error = values[2]
+    uncertainty = values[3]
+
+    if reading is None or standard is None or error is None or uncertainty is None:
+        return False
+
+    if uncertainty <= 0:
+        return False
+
+    # Em certificados de calibração, o erro declarado deve ser compatível
+    # com a diferença entre leitura e padrão, admitindo arredondamento.
+    delta = standard - reading
+    tolerance = max(0.05, uncertainty * 8)
+    if min(abs(delta - error), abs(delta + error)) > tolerance:
+        return False
+
+    return True
+
+
+def _fallback_section_from_unit(unit: str | None) -> str | None:
+    if unit == "g":
+        return "Peso"
+    if unit == "%":
+        return "Humidade"
+    return None
+
+
+def parse_generic_results_table(lines: list[str]) -> dict:
+    columns = _canonical_generic_columns(lines)
+    numeric_arity = 4 if len(columns) >= 4 else len(columns)
+    numeric_arity = max(1, min(numeric_arity, 5))
+
+    rows = []
+    numeric_buffer = []
+    current_section = None
+    current_unit = None
+
+    for ln in lines:
+        n = normalize(ln)
+
+        if _is_generic_section_line(ln):
+            current_section = clean_spaces(ln)
+            numeric_buffer = []
+            continue
+
+        if "RESULTADOS" in n:
+            numeric_buffer = []
+            continue
+
+        if _is_generic_header_line(ln):
+            inferred_section = _infer_section_from_header_line(ln)
+            inferred_unit = _infer_unit_from_header_line(ln)
+
+            if inferred_unit == "mm":
+                current_section = None
+            elif inferred_section is not None:
+                current_section = inferred_section
+
+            if inferred_unit is not None:
+                current_unit = inferred_unit
+            numeric_buffer = []
+            continue
+
+        if _is_simple_numeric_line(ln):
+            numeric_buffer.append(to_float(ln))
+            if len(numeric_buffer) == numeric_arity:
+                values = numeric_buffer[:]
+                if _is_plausible_generic_row(values, columns[:numeric_arity]):
+                    row_section = current_section or _fallback_section_from_unit(current_unit)
+                    row = {
+                        "section": row_section,
+                        "unit": current_unit,
+                        "values": values,
+                    }
+                    for idx, value in enumerate(values):
+                        key = columns[idx] if idx < len(columns) else f"value_{idx + 1}"
+                        row[key] = value
+                    rows.append(row)
+                numeric_buffer = []
+            continue
+
+        if extract_numbers(ln):
+            numeric_buffer = []
+
+    deduped_rows = _dedupe_generic_rows(rows)
+    section_names = []
+    for row in deduped_rows:
+        section = row.get("section")
+        if section and section not in section_names:
+            section_names.append(section)
+
+    units = []
+    for row in deduped_rows:
+        unit = row.get("unit")
+        if unit and unit not in units:
+            units.append(unit)
+
+    return {
+        "columns": columns[:numeric_arity],
+        "sections": section_names,
+        "units": units,
+        "rows": deduped_rows,
+    }
+
+
+def parse_generic_block_tables(section_json: dict) -> dict:
+    result_lines = collect_all_results_lines(section_json)
+    return {
+        "generic_results_table": parse_generic_results_table(result_lines),
+    }
+
+
 # -------------------------
 # Dispatcher
 # -------------------------
@@ -455,6 +671,14 @@ def parse_tables(section_json: dict) -> dict:
         return {
             "instrument_type": instrument_type,
             "tables": parse_pressure_gauge_tables(section_json),
+        }
+
+    generic_tables = parse_generic_block_tables(section_json)
+    generic_rows = generic_tables.get("generic_results_table", {}).get("rows", [])
+    if generic_rows:
+        return {
+            "instrument_type": "generic_block_table",
+            "tables": generic_tables,
         }
 
     return {

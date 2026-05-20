@@ -54,10 +54,9 @@ Thumbs.db
 .paddleocr/
 
 ########################################
-# Pipeline data (NÃO subir para git)
+# Pipeline data gerada
 ########################################
 
-paddle_ocr_pipeline/data/raw_pdfs/
 paddle_ocr_pipeline/data/images/
 paddle_ocr_pipeline/data/ocr_text/
 paddle_ocr_pipeline/data/sections/
@@ -65,6 +64,15 @@ paddle_ocr_pipeline/data/tables/
 paddle_ocr_pipeline/data/parsed/
 paddle_ocr_pipeline/data/metrics/
 paddle_ocr_pipeline/data/evaluation/
+paddle_ocr_pipeline/data/crops/
+paddle_ocr_pipeline/data/regions/
+paddle_ocr_pipeline/data/.ultralytics/
+paddle_ocr_pipeline/data/models/
+paddle_ocr_pipeline/data/yolo/regions/images/
+paddle_ocr_pipeline/data/yolo/regions/labels/
+paddle_ocr_pipeline/data/yolo/regions_ready/
+paddle_ocr_pipeline/data/yolo/regions.zip
+paddle_ocr_pipeline/data/yolo/regions_ready.zip
 
 ########################################
 # Backend runtime
@@ -72,6 +80,9 @@ paddle_ocr_pipeline/data/evaluation/
 
 paddle_ocr_pipeline/backend/uploads/
 paddle_ocr_pipeline/backend/outputs/
+paddle_ocr_pipeline/backend/archives/
+paddle_ocr_pipeline/backend/method_runs_summary.json
+paddle_ocr_pipeline/backend/method_comparison_summary.json
 
 ########################################
 # React

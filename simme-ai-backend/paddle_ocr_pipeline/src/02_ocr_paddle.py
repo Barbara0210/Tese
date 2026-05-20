@@ -1,4 +1,19 @@
+import os
 from pathlib import Path
+
+import numpy as np
+
+# Keep Paddle/PaddleOCR compatible with newer protobuf versions on Windows.
+os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
+# imgaug expects np.sctypes, which was removed in NumPy 2.
+if not hasattr(np, "sctypes"):
+    np.sctypes = {
+        "int": [np.int8, np.int16, np.int32, np.int64],
+        "uint": [np.uint8, np.uint16, np.uint32, np.uint64],
+        "float": [np.float16, np.float32, np.float64],
+        "complex": [np.complex64, np.complex128],
+        "others": [np.bool_, np.object_, np.bytes_, np.str_],
+    }
 from paddleocr import PaddleOCR
 
 BASE = Path(__file__).resolve().parents[1]

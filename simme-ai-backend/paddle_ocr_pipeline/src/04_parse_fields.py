@@ -20,6 +20,7 @@ def read_json(path: Path) -> dict:
 def clean_spaces(s: str | None) -> str | None:
     if not s:
         return None
+    s = re.sub(r"\[region:[^\]]+\]", " ", s)
     s = re.sub(r"[ \t]+", " ", s)
     s = re.sub(r"\n{2,}", "\n", s)
     s = s.strip()
@@ -66,7 +67,25 @@ def safe_date(s: str | None) -> str | None:
 
 
 def split_lines(text: str) -> list[str]:
-    return [ln.strip() for ln in (text or "").splitlines() if ln.strip()]
+    out = []
+    for ln in (text or "").splitlines():
+        stripped = re.sub(r"\[region:[^\]]+\]", " ", ln).strip()
+        if stripped:
+            out.append(stripped)
+    return out
+
+
+def truncate_at_section_markers(text: str, markers: list[str]) -> str:
+    lines = split_lines(text)
+    out = []
+    marker_norms = {normalize(marker) for marker in markers}
+
+    for ln in lines:
+        if normalize(ln) in marker_norms:
+            break
+        out.append(ln)
+
+    return "\n".join(out).strip()
 
 
 def strip_footer_noise(text: str) -> str:
@@ -287,12 +306,36 @@ def parse_key_value_block(text: str) -> dict:
 # Parsers por bloco
 # -------------------------
 def extract_customer_name_and_address(text: str) -> tuple[str | None, str | None]:
-    kv = parse_key_value_block(text)
+    pruned = truncate_at_section_markers(
+        text,
+        [
+            "EQUIPAMENTO CALIBRADO",
+            "CONDICOES DO TRABALHO REALIZADO",
+            "DESCRICAO",
+            "RASTREABILIDADE",
+        ],
+    )
+    kv = parse_key_value_block(pruned or text)
     return clean_spaces(kv.get("name")), clean_spaces(kv.get("address"))
 
 
 def extract_equipment_fields(text: str) -> dict:
-    kv = parse_key_value_block(text)
+    pruned = truncate_at_section_markers(
+        text,
+        [
+            "CONDICOES DO TRABALHO REALIZADO",
+            "DESCRICAO",
+            "RASTREABILIDADE",
+        ],
+    )
+    kv = parse_key_value_block(pruned or text)
+
+    internal_ref = clean_spaces(kv.get("internal_ref"))
+    if internal_ref and (
+        "RESULTADOS APRESENTADOS" in normalize(internal_ref) or
+        normalize(internal_ref).startswith("JS RESUITADOS")
+    ):
+        internal_ref = None
 
     return {
         "designation": clean_spaces(kv.get("designation")),
@@ -303,7 +346,7 @@ def extract_equipment_fields(text: str) -> dict:
         "resolution": clean_spaces(kv.get("resolution")),
         "estimated_resolution": clean_spaces(kv.get("estimated_resolution")),
         "indication": clean_spaces(kv.get("indication")),
-        "internal_ref": clean_spaces(kv.get("internal_ref")),
+        "internal_ref": internal_ref,
         "class": clean_spaces(kv.get("class")),
         "state": clean_spaces(kv.get("state")),
     }
@@ -376,6 +419,16 @@ def extract_work_conditions(text: str) -> dict:
                 location = clean_spaces(ln)
                 break
 
+    if location and "|" in location:
+        parts = [clean_spaces(part) for part in location.split("|")]
+        for part in parts:
+            if not part:
+                continue
+            if "CONDICOES DO TRABALHO" in normalize(part):
+                continue
+            location = part
+            break
+
     return {
         "location": location,
         "temperature": temperature,
@@ -385,6 +438,16 @@ def extract_work_conditions(text: str) -> dict:
 
 def extract_reference_from_description(text: str) -> str | None:
     text = strip_footer_noise(text or "")
+
+    plain_lines = split_lines(text)
+    for idx, ln in enumerate(plain_lines):
+        n = normalize(ln)
+        if n in {"DESCRICAO", "DESIGNACAO"}:
+            continue
+        if "NORMATIV" in n:
+            continue
+        if re.search(r"\b[A-Z]{2,6}\s*[A-Z]?\s*\d{1,4}(?:[-/]\d+)?\b", ln):
+            return clean_spaces(ln)
 
     patterns = [
         r"(?i)\b(NP\s*EN\s*\d{2,6}(?:[-–]\d+)?\s*:\s*\d{4})\b",
@@ -397,6 +460,20 @@ def extract_reference_from_description(text: str) -> str | None:
             return clean_spaces(m.group(1))
 
     return None
+
+
+def extract_equipment_state(text: str) -> str | None:
+    lines = split_lines(strip_footer_noise(text))
+    if not lines:
+        return None
+
+    filtered = []
+    for ln in lines:
+        if normalize(ln) == "ESTADO DO EQUIPAMENTO":
+            continue
+        filtered.append(ln)
+
+    return clean_spaces(" ".join(filtered))
 
 
 def extract_header_fields(text: str) -> dict:
@@ -423,14 +500,18 @@ def parse_document(section_json: dict) -> dict:
     page01 = page_sections.get("page_01.png", {})
 
     header_meta = page01.get("header_meta", "")
+    calibration_meta = page01.get("calibration_meta", "")
     customer_block = page01.get("customer", "")
     equipment_block = page01.get("equipment", "")
+    equipment_state_block = page01.get("equipment_state", "")
     work_conditions_block = page01.get("work_conditions", "")
     description_block = page01.get("description", "")
 
-    header = extract_header_fields(header_meta)
+    header = extract_header_fields("\n".join([header_meta, calibration_meta]).strip())
     customer_name, customer_address = extract_customer_name_and_address(customer_block)
     equipment = extract_equipment_fields(equipment_block)
+    if not equipment.get("state"):
+        equipment["state"] = extract_equipment_state(equipment_state_block)
     work_conditions = extract_work_conditions(work_conditions_block)
     reference = {
         "standard_or_procedure": extract_reference_from_description(description_block)
@@ -438,8 +519,10 @@ def parse_document(section_json: dict) -> dict:
 
     raw_blocks = {
         "header_meta": clean_spaces(header_meta),
+        "calibration_meta": clean_spaces(calibration_meta),
         "customer": clean_spaces(customer_block),
         "equipment": clean_spaces(equipment_block),
+        "equipment_state": clean_spaces(equipment_state_block),
         "work_conditions": clean_spaces(work_conditions_block),
         "description": clean_spaces(description_block),
     }

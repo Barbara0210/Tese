@@ -77,6 +77,9 @@ TABLE_EXPECTATIONS = {
         "pressure_error_table": 1,
         "max_hysteresis": 1,
         "environmental_conditions": 1,
+    },
+    "generic_block_table": {
+        "generic_results_table": 1,
     }
 }
 
@@ -126,7 +129,10 @@ def evaluate_tables(table_doc: dict) -> dict:
             row_count = len(value)
         elif isinstance(value, dict):
             present = len(value) > 0
-            row_count = 1 if present else 0
+            if isinstance(value.get("rows"), list):
+                row_count = len(value["rows"])
+            else:
+                row_count = 1 if present else 0
         else:
             present = value is not None
             row_count = 1 if present else 0

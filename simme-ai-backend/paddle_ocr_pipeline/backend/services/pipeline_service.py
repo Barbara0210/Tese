@@ -1,6 +1,7 @@
 import json
 import shutil
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -27,6 +28,8 @@ METRICS_DIR = DATA_DIR / "metrics"
 EVALUATION_DIR = DATA_DIR / "evaluation"
 REGIONS_DIR = DATA_DIR / "regions"
 CROPS_DIR = DATA_DIR / "crops"
+METRICS_SUMMARY_FILE = BACKEND_DIR / "method_runs_summary.json"
+METRICS_COMPARISON_FILE = BACKEND_DIR / "method_comparison_summary.json"
 
 SRC_DIR = BASE / "src"
 
@@ -51,6 +54,12 @@ PIPELINES = {
         "03_segment_sections.py",
         "04_parse_fields.py",
         "05_parse_tables.py",
+        "06_metrics_phase1.py",
+    ],
+    "ocr_llm": [
+        "01_pdf_to_images.py",
+        "02_ocr_paddle.py",
+        "14_extract_ocr_llm.py",
         "06_metrics_phase1.py",
     ],
 }
@@ -86,7 +95,7 @@ def _run_script(script_name: str):
         raise FileNotFoundError(f"Script não encontrado: {script_path}")
 
     result = subprocess.run(
-        ["python", str(script_path)],
+        [sys.executable, str(script_path)],
         cwd=str(BASE),
         capture_output=True,
         text=True,
@@ -191,6 +200,117 @@ def _archive_run_artifacts(
     return run_dir
 
 
+def _build_metrics_summary_entry(result_payload: dict) -> dict:
+    document_metrics = (result_payload.get("metrics") or {}).get("document") or {}
+    field_metrics = document_metrics.get("fields") or {}
+    table_metrics = document_metrics.get("tables") or {}
+    method = result_payload.get("method") or {}
+    archive = result_payload.get("archive") or {}
+
+    return {
+        "file_id": result_payload.get("file_id"),
+        "source_pdf": result_payload.get("source_pdf"),
+        "method_key": method.get("key"),
+        "method_label": method.get("label"),
+        "method_category": method.get("category"),
+        "elapsed_seconds": (result_payload.get("processing_summary") or {}).get("elapsed_seconds"),
+        "instrument_type": document_metrics.get("instrument_type"),
+        "filled_fields": field_metrics.get("filled_fields"),
+        "total_fields": field_metrics.get("total_fields"),
+        "completeness_score": field_metrics.get("completeness_score"),
+        "found_tables": table_metrics.get("found_tables"),
+        "expected_tables": table_metrics.get("expected_tables"),
+        "table_extraction_score": table_metrics.get("table_extraction_score"),
+        "archive_run_dir": archive.get("run_dir"),
+        "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+
+
+def _refresh_metrics_summary_index():
+    METRICS_SUMMARY_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    entries = []
+    for result_path in sorted(ARCHIVES_DIR.glob("*/result.json")):
+        try:
+            result_payload = json.loads(result_path.read_text(encoding="utf-8"))
+            entry = _build_metrics_summary_entry(result_payload)
+            entry["recorded_at"] = time.strftime(
+                "%Y-%m-%dT%H:%M:%S",
+                time.localtime(result_path.stat().st_mtime),
+            )
+            entries.append(entry)
+        except Exception:
+            continue
+
+    entries.sort(
+        key=lambda item: (
+            item.get("recorded_at") or "",
+            item.get("source_pdf") or "",
+            item.get("method_key") or "",
+        )
+    )
+
+    payload = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "n_runs": len(entries),
+        "entries": entries,
+    }
+    METRICS_SUMMARY_FILE.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    _refresh_metrics_comparison_index(entries)
+
+
+def _refresh_metrics_comparison_index(entries: list[dict]):
+    latest_by_pair = {}
+    for entry in entries:
+        key = (entry.get("source_pdf"), entry.get("method_key"))
+        current = latest_by_pair.get(key)
+        if current is None or (entry.get("recorded_at") or "") >= (current.get("recorded_at") or ""):
+            latest_by_pair[key] = entry
+
+    grouped = {}
+    for entry in latest_by_pair.values():
+        source_pdf = entry.get("source_pdf") or "unknown.pdf"
+        grouped.setdefault(source_pdf, []).append(entry)
+
+    documents = []
+    for source_pdf in sorted(grouped):
+        methods = sorted(grouped[source_pdf], key=lambda item: item.get("method_key") or "")
+        best_completeness = None
+        best_table_score = None
+        if methods:
+            best_completeness = max(
+                (item.get("completeness_score") for item in methods if item.get("completeness_score") is not None),
+                default=None,
+            )
+            best_table_score = max(
+                (item.get("table_extraction_score") for item in methods if item.get("table_extraction_score") is not None),
+                default=None,
+            )
+
+        documents.append(
+            {
+                "source_pdf": source_pdf,
+                "n_methods": len(methods),
+                "best_completeness_score": best_completeness,
+                "best_table_extraction_score": best_table_score,
+                "methods": methods,
+            }
+        )
+
+    payload = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "n_documents": len(documents),
+        "documents": documents,
+    }
+    METRICS_COMPARISON_FILE.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
 def process_file(file_id: str, method_key: str = "paddle_current"):
     method = get_method(method_key)
     if not method:
@@ -274,6 +394,7 @@ def process_file(file_id: str, method_key: str = "paddle_current"):
         json.dumps(result_payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+    _refresh_metrics_summary_index()
     out_fp.write_text(
         json.dumps(result_payload, ensure_ascii=False, indent=2),
         encoding="utf-8",

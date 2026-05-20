@@ -1,0 +1,21 @@
+{
+  "keep_pages": {
+    "CITC_021_CORK SUPPLY PORTUGAL": [1, 2, 3, 4],
+    "CITC_023_FUNDACION INSTITUT CATALA DEL SURO ICSURO (1)": [1, 2, 3, 4],
+    "CORKINSERT_001_TREFINOS": [1, 2, 3],
+    "ExtraLab_012_BERLIN PACKAGING GREECE": [1, 2, 3],
+    "Medcork_103_BOUCHONS TRESCASES S.A 2026 (1)": [1, 2],
+    "Medcork_115_Francisco Oller 2026": [1, 2],
+    "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L.": [1, 2],
+    "Paquimetro MITUTOYO ns B22034284 - SYMINGTON": [1, 2, 3, 4, 5],
+    "Paquimetro MITUTOYO sn B22268348 - M.A. SILVA (1)": [1, 2, 3],
+    "TorsiLab_003_RELVAS II (1)": [1, 2]
+  },
+  "val_pages": [
+    "CITC_023_FUNDACION INSTITUT CATALA DEL SURO ICSURO (1)__page_01.png",
+    "ExtraLab_012_BERLIN PACKAGING GREECE__page_02.png",
+    "Medcork_103_BOUCHONS TRESCASES S.A 2026 (1)__page_01.png",
+    "Paquimetro MITUTOYO ns B22034284 - SYMINGTON__page_02.png",
+    "TorsiLab_003_RELVAS II (1)__page_01.png"
+  ]
+}

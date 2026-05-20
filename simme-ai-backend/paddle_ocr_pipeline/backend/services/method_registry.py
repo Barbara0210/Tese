@@ -23,12 +23,12 @@ METHODS = {
         "implemented": True,
         "category": "hybrid",
     },
-    "vision_llm": {
-        "key": "vision_llm",
-        "label": "LLM com Visão",
-        "short_label": "Vision LLM",
-        "description": "Método multimodal com modelo de visão para extração semântica.",
-        "implemented": False,
+    "ocr_llm": {
+        "key": "ocr_llm",
+        "label": "OCR + LLM",
+        "short_label": "OCR + LLM",
+        "description": "Pipeline híbrido com PaddleOCR e LLM para interpretação semântica e estruturação.",
+        "implemented": True,
         "category": "multimodal",
     },
 }

@@ -11,26 +11,26 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # -------------------------
-# Normalização
+# Normalizacao
 # -------------------------
 def normalize_line(line: str) -> str:
     s = line.upper()
 
     replacements = {
-        "Ç": "C",
-        "Ã": "A",
-        "Á": "A",
-        "Â": "A",
-        "Õ": "O",
-        "Ó": "O",
-        "Ô": "O",
-        "É": "E",
-        "Ê": "E",
-        "Í": "I",
-        "Ú": "U",
-        "Ö": "O",
-        "Ä": "A",
-        "Ü": "U",
+        "Ã‡": "C",
+        "Ãƒ": "A",
+        "Ã": "A",
+        "Ã‚": "A",
+        "Ã•": "O",
+        "Ã“": "O",
+        "Ã”": "O",
+        "Ã‰": "E",
+        "ÃŠ": "E",
+        "Ã": "I",
+        "Ãš": "U",
+        "Ã–": "O",
+        "Ã„": "A",
+        "Ãœ": "U",
     }
 
     for k, v in replacements.items():
@@ -38,6 +38,10 @@ def normalize_line(line: str) -> str:
 
     s = re.sub(r"\s+", " ", s).strip()
     return s
+
+
+def read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 # -------------------------
@@ -58,11 +62,40 @@ def split_pages(raw: str) -> dict:
     return pages
 
 
+def load_region_ocr_blocks(txt_path: Path) -> dict[str, list[dict]] | None:
+    region_json_path = txt_path.with_name(f"{txt_path.stem}_regions.json")
+    if not region_json_path.exists():
+        return None
+
+    try:
+        data = read_json(region_json_path)
+    except Exception:
+        return None
+
+    return data.get("pages") or None
+
+
 # -------------------------
 # Utils
 # -------------------------
 def lines_of(text: str) -> list[str]:
     return [ln.rstrip() for ln in text.splitlines()]
+
+
+def parse_region_blocks(text: str) -> list[dict]:
+    parts = re.split(r"\n\[region:([^\]]+)\]\n", text)
+    if len(parts) < 3:
+        return []
+
+    blocks = []
+    for i in range(1, len(parts), 2):
+        label = parts[i].strip()
+        block_text = parts[i + 1].strip()
+        if not block_text:
+            continue
+        blocks.append({"label": label, "text": block_text})
+
+    return blocks
 
 
 def join_clean(lines: list[str]) -> str:
@@ -111,10 +144,6 @@ def slice_between(lines: list[str], start_candidates: list[str], end_candidates:
 
 
 def remove_footer_noise(text: str) -> str:
-    """
-    Remove linhas muito repetitivas de moradas/rodapés e frases legais comuns.
-    Não agressivo.
-    """
     bad_patterns = [
         r"^RUA DOS PLATANOS",
         r"^RUA CIDADE DO PORTO",
@@ -139,27 +168,210 @@ def remove_footer_noise(text: str) -> str:
     return join_clean(out)
 
 
+def append_unique_text(bucket: list[str], text: str) -> None:
+    cleaned = remove_footer_noise(text)
+    if not cleaned:
+        return
+
+    cleaned_norm = normalize_line(cleaned)
+    if not cleaned_norm:
+        return
+
+    for idx, existing in enumerate(bucket):
+        existing_norm = normalize_line(existing)
+        if cleaned_norm == existing_norm:
+            return
+        if cleaned_norm in existing_norm:
+            return
+        if existing_norm in cleaned_norm:
+            bucket[idx] = cleaned
+            return
+
+    bucket.append(cleaned)
+
+
+def bucket_to_text(bucket: list[str]) -> str:
+    return "\n".join(bucket).strip()
+
+
+def sort_region_entries(entries: list[dict]) -> list[dict]:
+    def score(item: dict):
+        bbox = item.get("bbox") or {}
+        x1 = bbox.get("x1", 0)
+        y1 = bbox.get("y1", 0)
+        x2 = bbox.get("x2", 0)
+        y2 = bbox.get("y2", 0)
+        area = max(0, x2 - x1) * max(0, y2 - y1)
+        confidence = item.get("confidence") or 0.0
+        return (y1, x1, -confidence, -area)
+
+    return sorted(entries, key=score)
+
+
+def looks_like_customer_block(norm: str) -> bool:
+    if norm.startswith("CLIENTE"):
+        return True
+    return "NOME" in norm and "MORADA" in norm
+
+
 # -------------------------
-# Segmentação página 1
+# Regioes -> secoes
+# -------------------------
+def segment_first_page_region_entries(entries: list[dict]) -> dict:
+    sections = {
+        "header_meta": [],
+        "customer": [],
+        "equipment": [],
+        "equipment_state": [],
+        "work_conditions": [],
+        "description": [],
+        "traceability": [],
+        "uncertainty": [],
+        "calibration_meta": [],
+    }
+
+    for entry in sort_region_entries(entries):
+        label = entry.get("label") or ""
+        block_text = (entry.get("text") or "").strip()
+        if not block_text:
+            continue
+
+        norm = normalize_line(block_text)
+
+        if "RASTREABILIDADE" in norm:
+            append_unique_text(sections["traceability"], block_text)
+            continue
+
+        if "INCERTEZA" in norm:
+            append_unique_text(sections["uncertainty"], block_text)
+            continue
+
+        if "ESTADO DO EQUIPAMENTO" in norm:
+            append_unique_text(sections["equipment_state"], block_text)
+            continue
+
+        if "DATA CALIBRACAO" in norm:
+            append_unique_text(sections["calibration_meta"], block_text)
+            if label == "metadata_block":
+                append_unique_text(sections["header_meta"], block_text)
+            continue
+
+        if looks_like_customer_block(norm):
+            append_unique_text(sections["customer"], block_text)
+            continue
+
+        if (
+            "EQUIPAMENTO CALIBRADO" in norm or
+            "DESIGNAGAO" in norm or
+            "DESIGNACAO" in norm or
+            "MARCA" in norm or
+            "MODELO" in norm or
+            "SERIE" in norm
+        ):
+            append_unique_text(sections["equipment"], block_text)
+            continue
+
+        if (
+            "CONDICOES DO TRABALHO" in norm or
+            ("CONDI" in norm and "TRABALHO" in norm) or
+            "INSTALAC" in norm
+        ):
+            append_unique_text(sections["work_conditions"], block_text)
+            continue
+
+        if "DESCRICAO" in norm or "DOCUMENTOS NORMATIVOS" in norm:
+            append_unique_text(sections["description"], block_text)
+            continue
+
+        if "CERTIFICADO" in norm or "DATA DE EMISSAO" in norm or label == "metadata_block":
+            append_unique_text(sections["header_meta"], block_text)
+            continue
+
+        if label == "reference_block":
+            append_unique_text(sections["description"], block_text)
+            continue
+        if label == "customer_block":
+            append_unique_text(sections["customer"], block_text)
+            continue
+        if label == "equipment_block":
+            append_unique_text(sections["equipment"], block_text)
+            continue
+        if label == "equipment_state_block":
+            append_unique_text(sections["equipment_state"], block_text)
+            continue
+        if label in {"work_conditions_block", "calibration_date_block"}:
+            if "LOCAL" in norm or "TRABALHO" in norm or "INSTALAC" in norm:
+                append_unique_text(sections["work_conditions"], block_text)
+            elif "DATA CALIBRACAO" in norm:
+                append_unique_text(sections["calibration_meta"], block_text)
+            else:
+                append_unique_text(sections["header_meta"], block_text)
+
+    return {key: bucket_to_text(value) for key, value in sections.items()}
+
+
+def segment_results_page_region_entries(entries: list[dict]) -> dict:
+    sections = {
+        "results": [],
+        "environmental_conditions": [],
+        "observations": [],
+    }
+
+    for entry in sort_region_entries(entries):
+        label = entry.get("label") or ""
+        block_text = (entry.get("text") or "").strip()
+        if not block_text:
+            continue
+
+        norm = normalize_line(block_text)
+
+        if label == "results_table" or "RESULTADOS" in norm:
+            append_unique_text(sections["results"], block_text)
+            continue
+
+        if "CONDICOES AMBIENTAIS" in norm or "PRESSAO ATMOSFERICA" in norm or "DENSIDADE DO AR" in norm:
+            append_unique_text(sections["environmental_conditions"], block_text)
+            continue
+
+        if "OBSERVACOES" in norm:
+            append_unique_text(sections["observations"], block_text)
+            continue
+
+    return {key: bucket_to_text(value) for key, value in sections.items()}
+
+
+def segment_first_page_regions(text: str) -> dict:
+    return segment_first_page_region_entries(parse_region_blocks(text))
+
+
+def segment_results_page_regions(text: str) -> dict:
+    return segment_results_page_region_entries(parse_region_blocks(text))
+
+
+# -------------------------
+# Segmentacao pagina 1 fallback
 # -------------------------
 def segment_first_page(text: str) -> dict:
+    if "[region:" in text:
+        return segment_first_page_regions(text)
+
     lines = lines_of(text)
 
-    # ordem esperada na página 1
     section_order = [
         ("customer", ["CLIENTE"], ["EQUIPAMENTO CALIBRADO"]),
-        ("equipment", ["EQUIPAMENTO CALIBRADO"], ["CONDICOES DO TRABALHO REALIZADO", "CONDIÇÕES DO TRABALHO REALIZADO", "CONDICÖES DO TRABALHO REALIZADO"]),
-        ("work_conditions", ["CONDICOES DO TRABALHO REALIZADO", "CONDIÇÕES DO TRABALHO REALIZADO", "CONDICÖES DO TRABALHO REALIZADO"], ["DESCRICAO", "DESCRIÇÃO"]),
-        ("description", ["DESCRICAO", "DESCRIÇÃO"], ["RASTREABILIDADE", "INCERTEZA"]),
-        ("traceability", ["RASTREABILIDADE"], ["INCERTEZA", "DATA CALIBRACAO", "DATA CALIBRAÇÃO"]),
-        ("uncertainty", ["INCERTEZA"], ["DATA CALIBRACAO", "DATA CALIBRAÇÃO", "RESULTADOS"]),
-        ("calibration_meta", ["DATA CALIBRACAO", "DATA CALIBRAÇÃO"], []),
+        ("equipment", ["EQUIPAMENTO CALIBRADO"], ["CONDICOES DO TRABALHO REALIZADO", "CONDIÃ‡Ã•ES DO TRABALHO REALIZADO", "CONDICÃ–ES DO TRABALHO REALIZADO"]),
+        ("work_conditions", ["CONDICOES DO TRABALHO REALIZADO", "CONDIÃ‡Ã•ES DO TRABALHO REALIZADO", "CONDICÃ–ES DO TRABALHO REALIZADO"], ["DESCRICAO", "DESCRIÃ‡ÃƒO"]),
+        ("description", ["DESCRICAO", "DESCRIÃ‡ÃƒO"], ["RASTREABILIDADE", "INCERTEZA"]),
+        ("traceability", ["RASTREABILIDADE"], ["INCERTEZA", "DATA CALIBRACAO", "DATA CALIBRAÃ‡ÃƒO"]),
+        ("uncertainty", ["INCERTEZA"], ["DATA CALIBRACAO", "DATA CALIBRAÃ‡ÃƒO", "RESULTADOS"]),
+        ("calibration_meta", ["DATA CALIBRACAO", "DATA CALIBRAÃ‡ÃƒO"], []),
     ]
 
     sections = {
         "header_meta": "",
         "customer": "",
         "equipment": "",
+        "equipment_state": "",
         "work_conditions": "",
         "description": "",
         "traceability": "",
@@ -167,7 +379,6 @@ def segment_first_page(text: str) -> dict:
         "calibration_meta": "",
     }
 
-    # header_meta = tudo antes de CLIENTE
     idx_customer = find_first_line_index(lines, ["CLIENTE"])
     if idx_customer is None:
         sections["header_meta"] = join_clean(lines)
@@ -191,9 +402,12 @@ def segment_first_page(text: str) -> dict:
 
 
 # -------------------------
-# Segmentação páginas de resultados
+# Segmentacao paginas de resultados fallback
 # -------------------------
 def segment_results_page(text: str) -> dict:
+    if "[region:" in text:
+        return segment_results_page_regions(text)
+
     lines = lines_of(text)
 
     sections = {
@@ -203,26 +417,22 @@ def segment_results_page(text: str) -> dict:
     }
 
     idx_results = find_first_line_index(lines, ["RESULTADOS"])
-    idx_env = find_first_line_index(lines, ["CONDICOES AMBIENTAIS", "CONDIÇÕES AMBIENTAIS"])
-    idx_obs = find_first_line_index(lines, ["OBSERVACOES", "OBSERVAÇÕES"])
+    idx_env = find_first_line_index(lines, ["CONDICOES AMBIENTAIS", "CONDIÃ‡Ã•ES AMBIENTAIS"])
+    idx_obs = find_first_line_index(lines, ["OBSERVACOES", "OBSERVAÃ‡Ã•ES"])
 
-    # se não houver RESULTADOS, assume a página inteira como resultados/continuação
     if idx_results is None:
         idx_results = 0
 
-    # bloco results
     results_start = idx_results + 1
     results_end_candidates = [x for x in [idx_env, idx_obs] if x is not None]
     results_end = min(results_end_candidates) if results_end_candidates else len(lines)
     sections["results"] = remove_footer_noise(join_clean(lines[results_start:results_end]))
 
-    # bloco environmental_conditions
     if idx_env is not None:
         env_start = idx_env + 1
         env_end = idx_obs if idx_obs is not None and idx_obs > idx_env else len(lines)
         sections["environmental_conditions"] = remove_footer_noise(join_clean(lines[env_start:env_end]))
 
-    # bloco observations
     if idx_obs is not None:
         obs_start = idx_obs + 1
         sections["observations"] = remove_footer_noise(join_clean(lines[obs_start:]))
@@ -236,24 +446,34 @@ def segment_results_page(text: str) -> dict:
 def process_document(txt_path: Path) -> dict:
     raw = txt_path.read_text(encoding="utf-8", errors="ignore")
     pages = split_pages(raw)
+    region_pages = load_region_ocr_blocks(txt_path) or {}
 
     page_keys = sorted(pages.keys())
 
     page_sections = {}
+    page_region_blocks = {}
 
     for page_key in page_keys:
         page_text = pages[page_key]
+        page_entries = region_pages.get(page_key, [])
+        page_region_blocks[page_key] = page_entries
 
-        # primeira página
         if page_key == "page_01.png":
-            page_sections[page_key] = segment_first_page(page_text)
+            if page_entries:
+                page_sections[page_key] = segment_first_page_region_entries(page_entries)
+            else:
+                page_sections[page_key] = segment_first_page(page_text)
         else:
-            page_sections[page_key] = segment_results_page(page_text)
+            if page_entries:
+                page_sections[page_key] = segment_results_page_region_entries(page_entries)
+            else:
+                page_sections[page_key] = segment_results_page(page_text)
 
     return {
         "source_file": txt_path.name,
         "extracted_at": datetime.now().isoformat(timespec="seconds"),
         "page_sections": page_sections,
+        "page_region_blocks": page_region_blocks,
     }
 
 
