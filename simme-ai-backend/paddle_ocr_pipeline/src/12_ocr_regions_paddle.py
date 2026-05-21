@@ -18,6 +18,7 @@ if not hasattr(np, "sctypes"):
         "others": [np.bool_, np.object_, np.bytes_, np.str_],
     }
 from paddleocr import PaddleOCR
+from ocr_preprocess import preprocess_for_ocr
 
 
 BASE = Path(__file__).resolve().parents[1]
@@ -34,7 +35,11 @@ ocr = PaddleOCR(lang="pt", use_angle_cls=True)
 
 
 def _ocr_image(image_path: Path) -> str:
-    result = ocr.ocr(str(image_path), cls=True)
+    with Image.open(image_path) as image:
+        processed = preprocess_for_ocr(image)
+        image_np = np.array(processed)
+
+    result = ocr.ocr(image_np, cls=True)
     if not result:
         return ""
 

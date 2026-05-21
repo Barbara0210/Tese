@@ -1,7 +1,8 @@
-const EM_DASH = "\u2014";
+export const EM_DASH = "—";
 
 const REPLACEMENTS = new Map([
   ["Ã¢â‚¬â€", EM_DASH],
+  ["ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â", EM_DASH],
   ["SecÃ§Ãµes", "Secções"],
   ["MÃ©todo", "Método"],
   ["DescriÃ§Ã£o", "Descrição"],
@@ -15,7 +16,8 @@ const REPLACEMENTS = new Map([
   ["nÃ£o", "não"],
   ["hÃ¡", "há"],
   ["InvestigaciÃ³n", "Investigación"],
-  ["CÃ¤diz", "Cádiz"],
+  ["CÃ¡diz", "Cádiz"],
+  ["Cädiz", "Cádiz"],
   ["Designagäo", "Designação"],
   ["Calibracäo", "Calibração"],
   ["Instalacöes", "Instalações"],
@@ -23,6 +25,7 @@ const REPLACEMENTS = new Map([
   ["Diämetro", "Diâmetro"],
   ["Diametro", "Diâmetro"],
   ["Padräo", "Padrão"],
+  ["Padrao", "Padrão"],
   ["N°", "Nº"],
   ["Applicable", "Aplicável"],
   ["Strict", "Estrita"],
@@ -52,6 +55,7 @@ const FIXED_LABELS = {
   range: "Intervalo de indicação",
   resolution: "Resolução",
   estimated_resolution: "Resolução estimada",
+  indication: "Indicação",
   class: "Classe",
   state: "Estado do equipamento",
   location: "Local",
@@ -64,6 +68,17 @@ const FIXED_LABELS = {
   error_value: "Erro",
   uncertainty_value: "Incerteza",
   mean_value: "Média",
+  equipment_force_dan: "Força no equipamento (daN)",
+  error_dan: "Erro (daN)",
+  expanded_uncertainty_dan: "Incerteza expandida (daN)",
+  q_percent: "q (%)",
+  b_percent: "b (%)",
+  a_percent: "a (%)",
+  fo_percent: "fo (%)",
+  vef: "vef",
+  force_calibration_measurements: "Medições de calibração",
+  force_relative_errors: "Erros relativos",
+  force_environmental_conditions: "Condições ambientais",
   page_01: "Página 1",
   page_02: "Página 2",
 };
@@ -87,9 +102,7 @@ export function repairText(value) {
 
 export function prettifyLabel(label) {
   const raw = String(label);
-  if (FIXED_LABELS[raw]) {
-    return FIXED_LABELS[raw];
-  }
+  if (FIXED_LABELS[raw]) return FIXED_LABELS[raw];
 
   return repairText(
     raw
@@ -97,5 +110,3 @@ export function prettifyLabel(label) {
       .replace(/\b\w/g, (char) => char.toUpperCase()),
   );
 }
-
-export { EM_DASH };

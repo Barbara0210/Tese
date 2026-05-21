@@ -2,6 +2,7 @@ import json
 import re
 from pathlib import Path
 from datetime import datetime
+from pt_text import repair_nested_text, repair_portuguese_text
 
 BASE = Path(__file__).resolve().parents[1]
 
@@ -101,7 +102,7 @@ def parse_region_blocks(text: str) -> list[dict]:
 def join_clean(lines: list[str]) -> str:
     out = []
     for ln in lines:
-        s = ln.strip()
+        s = repair_portuguese_text(ln.strip())
         if s:
             out.append(s)
     return "\n".join(out).strip()
@@ -235,6 +236,7 @@ def segment_first_page_region_entries(entries: list[dict]) -> dict:
         block_text = (entry.get("text") or "").strip()
         if not block_text:
             continue
+        block_text = repair_portuguese_text(block_text)
 
         norm = normalize_line(block_text)
 
@@ -322,6 +324,7 @@ def segment_results_page_region_entries(entries: list[dict]) -> dict:
         block_text = (entry.get("text") or "").strip()
         if not block_text:
             continue
+        block_text = repair_portuguese_text(block_text)
 
         norm = normalize_line(block_text)
 
@@ -456,7 +459,7 @@ def process_document(txt_path: Path) -> dict:
     for page_key in page_keys:
         page_text = pages[page_key]
         page_entries = region_pages.get(page_key, [])
-        page_region_blocks[page_key] = page_entries
+        page_region_blocks[page_key] = repair_nested_text(page_entries)
 
         if page_key == "page_01.png":
             if page_entries:
@@ -469,12 +472,12 @@ def process_document(txt_path: Path) -> dict:
             else:
                 page_sections[page_key] = segment_results_page(page_text)
 
-    return {
+    return repair_nested_text({
         "source_file": txt_path.name,
         "extracted_at": datetime.now().isoformat(timespec="seconds"),
         "page_sections": page_sections,
         "page_region_blocks": page_region_blocks,
-    }
+    })
 
 
 # -------------------------

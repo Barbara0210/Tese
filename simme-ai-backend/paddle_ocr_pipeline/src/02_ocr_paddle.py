@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import numpy as np
+from PIL import Image
 
 # Keep Paddle/PaddleOCR compatible with newer protobuf versions on Windows.
 os.environ.setdefault("PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION", "python")
@@ -15,6 +16,7 @@ if not hasattr(np, "sctypes"):
         "others": [np.bool_, np.object_, np.bytes_, np.str_],
     }
 from paddleocr import PaddleOCR
+from ocr_preprocess import preprocess_for_ocr
 
 BASE = Path(__file__).resolve().parents[1]
 IMG_DIR = BASE / "data" / "images"
@@ -25,7 +27,11 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 ocr = PaddleOCR(lang="pt", use_angle_cls=True)
 
 def ocr_page(img_path: Path) -> str:
-    res = ocr.ocr(str(img_path), cls=True)
+    with Image.open(img_path) as image:
+        processed = preprocess_for_ocr(image)
+        image_np = np.array(processed)
+
+    res = ocr.ocr(image_np, cls=True)
     if not res:
         return ""
 

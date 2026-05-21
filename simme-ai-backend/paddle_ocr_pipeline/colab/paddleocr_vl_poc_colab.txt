@@ -1,0 +1,146 @@
+# PaddleOCR-VL POC no Google Colab
+
+# =========================================================
+# 1) Montar o Google Drive
+# =========================================================
+from google.colab import drive
+drive.mount('/content/drive')
+
+
+# =========================================================
+# 2) Instalação base
+# Nota:
+# - esta versão usa o caminho mais simples para validação inicial
+# - a documentação oficial recomenda o pipeline completo do PaddleOCR-VL
+# - para o primeiro teste, começa com poucas páginas
+# =========================================================
+!python -m pip install -q -U pip setuptools wheel
+!python -m pip install -q paddlepaddle==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+!python -m pip install -q -U "paddleocr[doc-parser]"
+
+
+# =========================================================
+# 3) Configuração dos caminhos
+# Ajusta estes caminhos no teu Drive
+# =========================================================
+from pathlib import Path
+import json
+import shutil
+import subprocess
+
+ROOT = Path("/content/drive/MyDrive/paddleocr_vl_poc")
+INPUT_DIR = ROOT / "input"
+OUTPUT_DIR = ROOT / "output"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+print("INPUT_DIR =", INPUT_DIR)
+print("OUTPUT_DIR =", OUTPUT_DIR)
+
+
+# =========================================================
+# 4) Escolher o documento a testar
+# Podes trocar este nome pela pasta que quiseres
+# =========================================================
+DOC_NAME = "CITC_021_CORK SUPPLY PORTUGAL"
+DOC_INPUT_DIR = INPUT_DIR / DOC_NAME
+DOC_OUTPUT_DIR = OUTPUT_DIR / DOC_NAME
+DOC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+page_paths = sorted(DOC_INPUT_DIR.glob("page_*.png"))
+print("Paginas encontradas:", len(page_paths))
+for path in page_paths:
+    print("-", path.name)
+
+
+# =========================================================
+# 5) Teste rápido só com a primeira página
+# Faz primeiro isto para ver se o ambiente está estável
+# =========================================================
+if not page_paths:
+    raise RuntimeError(f"Sem páginas em {DOC_INPUT_DIR}")
+
+first_page = page_paths[0]
+first_page_output = DOC_OUTPUT_DIR / first_page.stem
+first_page_output.mkdir(parents=True, exist_ok=True)
+
+cmd = [
+    "paddleocr",
+    "doc_parser",
+    "-i",
+    str(first_page),
+    "--device",
+    "cpu",
+    "--save_path",
+    str(first_page_output),
+]
+
+print("A correr:", " ".join(cmd))
+result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+print("returncode =", result.returncode)
+print(result.stdout)
+print(result.stderr)
+
+
+# =========================================================
+# 6) Se o primeiro teste correr bem, processar o documento todo
+# =========================================================
+all_runs = []
+
+for page_path in page_paths:
+    page_output_dir = DOC_OUTPUT_DIR / page_path.stem
+    page_output_dir.mkdir(parents=True, exist_ok=True)
+
+    cmd = [
+        "paddleocr",
+        "doc_parser",
+        "-i",
+        str(page_path),
+        "--device",
+        "cpu",
+        "--save_path",
+        str(page_output_dir),
+    ]
+
+    print(f"\n=== {page_path.name} ===")
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+
+    all_runs.append({
+        "page": page_path.name,
+        "returncode": result.returncode,
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+        "output_dir": str(page_output_dir),
+    })
+
+    print("returncode =", result.returncode)
+    if result.stdout:
+        print(result.stdout[:4000])
+    if result.stderr:
+        print(result.stderr[:4000])
+
+
+# =========================================================
+# 7) Guardar um resumo simples da execução
+# =========================================================
+summary_path = DOC_OUTPUT_DIR / "run_summary.json"
+summary_path.write_text(json.dumps(all_runs, ensure_ascii=False, indent=2), encoding="utf-8")
+print("Resumo guardado em:", summary_path)
+
+
+# =========================================================
+# 8) Listar os ficheiros gerados
+# =========================================================
+generated = sorted(DOC_OUTPUT_DIR.rglob("*"))
+for item in generated:
+    if item.is_file():
+        print(item)
+
+
+# =========================================================
+# 9) Notas para a análise
+# Depois de correr, verifica:
+# - se o modelo gerou markdown/json por página
+# - se tabelas vêm completas
+# - se campos do cabeçalho e equipamento aparecem corretamente
+# - se o fundo/watermark continua a perturbar o parsing
+# =========================================================

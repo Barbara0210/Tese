@@ -2,6 +2,7 @@ import json
 import re
 from pathlib import Path
 from datetime import datetime
+from pt_text import repair_nested_text, repair_portuguese_text
 
 BASE = Path(__file__).resolve().parents[1]
 
@@ -20,13 +21,14 @@ def read_json(path: Path) -> dict:
 def clean_spaces(s: str | None) -> str | None:
     if not s:
         return None
-    s = re.sub(r"[ \t]+", " ", s).strip()
+    s = repair_portuguese_text(re.sub(r"[ \t]+", " ", s).strip())
     return s or None
 
 
 def normalize_display_text(s: str | None) -> str | None:
     if not s:
         return None
+    return repair_portuguese_text(s)
 
     replacements = {
         "Diämetro": "Diametro",
@@ -89,7 +91,8 @@ def to_float(x: str | None):
 
 
 def extract_numbers(line: str) -> list[str]:
-    return re.findall(r"[-+]?\d+(?:[.,]\d+)?", line)
+    compact = re.sub(r"(?<=\d)\s+(?=\d{3}(?:[.,]\d+)?)", "", line)
+    return re.findall(r"[-+]?\d+(?:[.,]\d+)?", compact)
 
 
 def is_footer_noise(line: str) -> bool:
@@ -152,6 +155,16 @@ def collect_all_results_lines(section_json: dict) -> list[str]:
     return out
 
 
+def collect_results_pages(section_json: dict) -> dict[str, list[str]]:
+    page_sections = section_json.get("page_sections", {})
+    pages = {}
+    for page_name in sorted(page_sections.keys()):
+        page = page_sections[page_name]
+        if page.get("results"):
+            pages[page_name] = clean_result_lines(page["results"])
+    return pages
+
+
 def collect_environmental_conditions_lines(section_json: dict) -> list[str]:
     page_sections = section_json.get("page_sections", {})
     out = []
@@ -166,11 +179,18 @@ def detect_instrument_type(section_json: dict) -> str | None:
     page01 = section_json.get("page_sections", {}).get("page_01.png", {})
     equipment_text = page01.get("equipment", "")
     n = normalize(equipment_text)
+    results_text = "\n".join(collect_all_results_lines(section_json))
+    results_n = normalize(results_text)
 
     if "PAQUIMETRO" in n:
         return "caliper"
     if "MANOMETRO" in n:
         return "pressure_gauge"
+    if (
+        "MAQUINA UNIVERSAL DE ENSAIO" in n or
+        ("GAMA NOMINAL" in results_n and "INCERTEZA EXPANDIDA" in results_n and "ERROS RELATIVOS" in results_n)
+    ):
+        return "force_calibration"
     return None
 
 
@@ -485,8 +505,321 @@ def parse_pressure_gauge_tables(section_json: dict) -> dict:
     }
 
 
+def _find_first_index(lines: list[str], needles: list[str]) -> int | None:
+    for idx, line in enumerate(lines):
+        n = normalize(line)
+        if any(needle in n for needle in needles):
+            return idx
+    return None
+
+
+def _slice_force_section(lines: list[str], start_needles: list[str], end_needles: list[str] | None = None) -> list[str]:
+    start_idx = _find_first_index(lines, start_needles)
+    if start_idx is None:
+        return []
+
+    start = start_idx + 1
+    end = len(lines)
+    if end_needles:
+        for idx in range(start, len(lines)):
+            n = normalize(lines[idx])
+            if any(needle in n for needle in end_needles):
+                end = idx
+                break
+
+    return lines[start:end]
+
+
+def _extract_force_page_meta(lines: list[str]) -> dict:
+    text = "\n".join(lines)
+
+    def grab(pattern: str):
+        match = re.search(pattern, text, re.IGNORECASE)
+        return clean_spaces(match.group(1)) if match else None
+
+    return {
+        "gama_nominal": grab(r"Gama\s+Nominal\s*:\s*([^\n]+)"),
+        "divisao": grab(r"Divis[aã]o\s*:\s*([^\n]+)"),
+        "sentido": grab(r"Sentido\s*:\s*([^\n]+)"),
+        "resolucao": grab(r"Resolu[cç][aã]o\s*:\s*([^\n]+)"),
+    }
+
+
+def _force_range_slug(meta: dict, fallback: str) -> str:
+    raw = meta.get("gama_nominal") or fallback
+    slug = normalize(raw).lower()
+    slug = slug.replace(" ", "_")
+    slug = re.sub(r"[^a-z0-9_]+", "", slug)
+    return slug or fallback
+
+
+def parse_force_measurement_rows(lines: list[str]) -> list[dict]:
+    section = _slice_force_section(
+        lines,
+        start_needles=["INCERTEZA EXPANDIDA"],
+        end_needles=["ERROS RELATIVOS", "CLASSE"],
+    )
+
+    tokens = []
+    for line in section:
+        if _is_simple_numeric_line(line):
+            nums = extract_numbers(line)
+            if len(nums) == 1:
+                value = to_float(nums[0])
+                if value is not None:
+                    tokens.append(value)
+
+    rows = []
+    buffer = []
+    for value in tokens:
+        buffer.append(value)
+        if len(buffer) == 5:
+            equipment, error, k, vef, uncertainty = buffer
+            if equipment > 0 and 1.5 <= k <= 3.0 and vef > 5 and uncertainty > 0:
+                rows.append(
+                    {
+                        "equipment_force_dan": equipment,
+                        "error_dan": error,
+                        "k": k,
+                        "vef": vef,
+                        "expanded_uncertainty_dan": uncertainty,
+                    }
+                )
+            buffer = []
+
+    return rows
+
+
+def _is_close_force(value: float | None, expected: float | None) -> bool:
+    if value is None or expected is None:
+        return False
+    tolerance = max(1.0, abs(expected) * 0.02)
+    return abs(value - expected) <= tolerance
+
+
+def parse_force_relative_rows(lines: list[str], expected_forces: list[float] | None = None) -> list[dict]:
+    section = _slice_force_section(lines, start_needles=["ERROS RELATIVOS"], end_needles=["TEMPERATURA", "HUMIDADE"])
+    if not section:
+        return []
+
+    numeric_values = []
+    current_class = None
+    for line in section:
+        n = normalize(line)
+        if "CLASSE" in n:
+            current_class = clean_spaces(line)
+            continue
+        if _is_simple_numeric_line(line):
+            nums = extract_numbers(line)
+            if len(nums) == 1:
+                value = to_float(nums[0])
+                if value is not None:
+                    numeric_values.append(value)
+
+    rows = []
+    if expected_forces:
+        cursor = 0
+        previous_force = None
+        for expected_force in expected_forces:
+            metrics = None
+
+            while cursor < len(numeric_values):
+                current = numeric_values[cursor]
+
+                if previous_force is not None and _is_close_force(current, previous_force):
+                    cursor += 1
+                    continue
+
+                if _is_close_force(current, expected_force):
+                    candidate = numeric_values[cursor + 1: cursor + 5]
+                    if len(candidate) >= 4:
+                        metrics = candidate[:4]
+                        cursor += 5
+                        break
+
+                candidate5 = numeric_values[cursor: cursor + 5]
+                if (
+                    len(candidate5) >= 5 and
+                    all(value is not None and abs(value) <= 10 for value in candidate5[:3]) and
+                    _is_close_force(candidate5[3], expected_force) and
+                    candidate5[4] is not None and abs(candidate5[4]) <= 10
+                ):
+                    metrics = [candidate5[0], candidate5[1], candidate5[2], candidate5[4]]
+                    cursor += 5
+                    break
+
+                candidate = numeric_values[cursor: cursor + 4]
+                if len(candidate) >= 4 and all(value is not None and abs(value) <= 10 for value in candidate):
+                    metrics = candidate[:4]
+                    cursor += 4
+                    break
+
+                cursor += 1
+
+            if metrics is None:
+                continue
+
+            q, b, a, fo = metrics
+            rows.append(
+                {
+                    "equipment_force_dan": expected_force,
+                    "q_percent": q,
+                    "b_percent": b,
+                    "a_percent": a,
+                    "fo_percent": fo,
+                    "class": current_class or "Classe",
+                }
+            )
+            previous_force = expected_force
+        return rows
+
+    buffer = []
+    for value in numeric_values:
+        buffer.append(value)
+        if len(buffer) == 5:
+            equipment, q, b, a, fo = buffer
+            rows.append(
+                {
+                    "equipment_force_dan": equipment,
+                    "q_percent": q,
+                    "b_percent": b,
+                    "a_percent": a,
+                    "fo_percent": fo,
+                    "class": current_class or "Classe",
+                }
+            )
+            buffer = []
+
+    return rows
+
+
+def parse_force_environmental_rows(lines: list[str]) -> list[dict]:
+    rows = []
+    for idx, line in enumerate(lines):
+        n = normalize(line)
+        if "TEMPERATURA" not in n:
+            continue
+
+        window = lines[idx + 1: idx + 8]
+        values = []
+        for candidate in window:
+            if _is_simple_numeric_line(candidate):
+                nums = extract_numbers(candidate)
+                if len(nums) == 1:
+                    value = to_float(nums[0])
+                    if value is not None:
+                        values.append(value)
+
+        if len(values) >= 2:
+            rows.append(
+                {
+                    "temperature_c": values[0],
+                    "humidity_percent_hr": values[1],
+                }
+            )
+
+    return rows
+
+
+def parse_force_calibration_tables(section_json: dict) -> dict:
+    results_pages = collect_results_pages(section_json)
+
+    measurement_subtables = []
+    relative_subtables = []
+    environmental_rows = []
+    measurement_rows_all = []
+    relative_rows_all = []
+
+    for page_name, lines in results_pages.items():
+        meta = _extract_force_page_meta(lines)
+        slug = _force_range_slug(meta, page_name.replace(".png", ""))
+
+        measurement_rows = parse_force_measurement_rows(lines)
+        if measurement_rows:
+            measurement_rows_all.extend(measurement_rows)
+            measurement_subtables.append(
+                {
+                    "key": f"force_calibration_measurements_{slug}",
+                    "title": meta.get("gama_nominal") or page_name,
+                    "table": {
+                        "columns": [
+                            "equipment_force_dan",
+                            "error_dan",
+                            "k",
+                            "vef",
+                            "expanded_uncertainty_dan",
+                        ],
+                        "page": page_name,
+                        "meta": meta,
+                        "rows": measurement_rows,
+                    },
+                }
+            )
+
+        expected_forces = [row["equipment_force_dan"] for row in measurement_rows]
+        relative_rows = parse_force_relative_rows(lines, expected_forces)
+        if relative_rows:
+            relative_rows_all.extend(relative_rows)
+            relative_subtables.append(
+                {
+                    "key": f"force_relative_errors_{slug}",
+                    "title": meta.get("gama_nominal") or page_name,
+                    "table": {
+                        "columns": [
+                            "equipment_force_dan",
+                            "q_percent",
+                            "b_percent",
+                            "a_percent",
+                            "fo_percent",
+                            "class",
+                        ],
+                        "page": page_name,
+                        "meta": meta,
+                        "rows": relative_rows,
+                    },
+                }
+            )
+
+        environmental_rows.extend(parse_force_environmental_rows(lines))
+
+    tables = {}
+
+    if measurement_rows_all:
+        tables["force_calibration_measurements"] = {
+            "columns": [
+                "equipment_force_dan",
+                "error_dan",
+                "k",
+                "vef",
+                "expanded_uncertainty_dan",
+            ],
+            "rows": measurement_rows_all,
+            "subtables": measurement_subtables,
+        }
+
+    if relative_rows_all:
+        tables["force_relative_errors"] = {
+            "columns": [
+                "equipment_force_dan",
+                "q_percent",
+                "b_percent",
+                "a_percent",
+                "fo_percent",
+                "class",
+            ],
+            "rows": relative_rows_all,
+            "subtables": relative_subtables,
+        }
+
+    if environmental_rows:
+        tables["force_environmental_conditions"] = environmental_rows
+
+    return tables
+
+
 def _is_simple_numeric_line(line: str) -> bool:
-    return bool(re.fullmatch(r"\s*[-+]?\d+(?:[.,]\d+)?\s*", line))
+    compact = re.sub(r"(?<=\d)\s+(?=\d{3}(?:[.,]\d+)?)", "", line.strip())
+    return bool(re.fullmatch(r"[-+]?\d+(?:[.,]\d+)?", compact))
 
 
 def _is_generic_header_line(line: str) -> bool:
@@ -822,29 +1155,36 @@ def parse_tables(section_json: dict) -> dict:
     instrument_type = detect_instrument_type(section_json)
 
     if instrument_type == "caliper":
-        return {
+        return repair_nested_text({
             "instrument_type": instrument_type,
             "tables": parse_caliper_tables(section_json),
-        }
+        })
 
     if instrument_type == "pressure_gauge":
-        return {
+        return repair_nested_text({
             "instrument_type": instrument_type,
             "tables": parse_pressure_gauge_tables(section_json),
-        }
+        })
+
+    if instrument_type == "force_calibration":
+        force_tables = parse_force_calibration_tables(section_json)
+        return repair_nested_text({
+            "instrument_type": instrument_type,
+            "tables": force_tables,
+        })
 
     generic_tables = parse_generic_block_tables(section_json)
     generic_rows = generic_tables.get("generic_results_table", {}).get("rows", [])
     if generic_rows:
-        return {
+        return repair_nested_text({
             "instrument_type": "generic_block_table",
             "tables": generic_tables,
-        }
+        })
 
-    return {
+    return repair_nested_text({
         "instrument_type": instrument_type,
         "tables": {},
-    }
+    })
 
 
 # -------------------------
@@ -862,12 +1202,12 @@ def main():
         parsed = parse_tables(data)
 
         out = OUT_DIR / fp.name.replace("_sections.json", "_tables.json")
-        payload = {
+        payload = repair_nested_text({
             "source_file": data.get("source_file"),
             "extracted_at": datetime.now().isoformat(timespec="seconds"),
             "instrument_type": parsed["instrument_type"],
             "tables": parsed["tables"],
-        }
+        })
 
         out.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2),

@@ -251,6 +251,17 @@ body {
   box-shadow: 0 14px 28px rgba(20, 184, 166, 0.24);
 }
 
+.secondary-action {
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid rgba(59, 130, 246, 0.16);
+  border-radius: 14px;
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .primary-action:disabled {
   opacity: 0.7;
   cursor: not-allowed;
@@ -373,6 +384,13 @@ body {
   color: #1d4ed8;
   font-size: 0.78rem;
   font-weight: 800;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .dashboard-hero {
@@ -629,6 +647,85 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.yolo-page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.yolo-page-card {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+}
+
+.yolo-page-head,
+.yolo-block-head,
+.yolo-block-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.yolo-page-head {
+  margin-bottom: 14px;
+  align-items: center;
+}
+
+.yolo-page-head strong {
+  color: var(--heading);
+}
+
+.yolo-page-head span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.yolo-block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.yolo-block {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.yolo-block-head {
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.yolo-block-label {
+  color: var(--heading);
+  font-weight: 800;
+}
+
+.yolo-block-confidence {
+  color: #0f766e;
+  font-weight: 800;
+}
+
+.yolo-block-meta {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.yolo-block-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .table-badges {

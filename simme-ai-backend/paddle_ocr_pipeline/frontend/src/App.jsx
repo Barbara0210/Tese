@@ -6,13 +6,7 @@ import UploadForm from "./components/UploadForm";
 import { repairText } from "./utils/text";
 import "./App.css";
 
-const NAV_ITEMS = [
-  "Painel",
-  "Campos",
-  "Secções",
-  "Tabelas",
-  "JSON",
-];
+const NAV_ITEMS = ["Painel", "Campos", "Secções", "Tabelas", "JSON"];
 
 export default function App() {
   const [result, setResult] = useState(null);

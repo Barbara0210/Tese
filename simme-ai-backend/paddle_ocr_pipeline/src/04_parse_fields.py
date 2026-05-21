@@ -2,6 +2,7 @@ import json
 import re
 from pathlib import Path
 from datetime import datetime
+from pt_text import repair_nested_text, repair_portuguese_text
 
 BASE = Path(__file__).resolve().parents[1]
 
@@ -23,7 +24,7 @@ def clean_spaces(s: str | None) -> str | None:
     s = re.sub(r"\[region:[^\]]+\]", " ", s)
     s = re.sub(r"[ \t]+", " ", s)
     s = re.sub(r"\n{2,}", "\n", s)
-    s = s.strip()
+    s = repair_portuguese_text(s.strip())
     return s or None
 
 
@@ -69,7 +70,7 @@ def safe_date(s: str | None) -> str | None:
 def split_lines(text: str) -> list[str]:
     out = []
     for ln in (text or "").splitlines():
-        stripped = re.sub(r"\[region:[^\]]+\]", " ", ln).strip()
+        stripped = repair_portuguese_text(re.sub(r"\[region:[^\]]+\]", " ", ln).strip())
         if stripped:
             out.append(stripped)
     return out
@@ -529,7 +530,7 @@ def parse_document(section_json: dict) -> dict:
         "description": clean_spaces(description_block),
     }
 
-    return {
+    return repair_nested_text({
         "source_file": section_json.get("source_file"),
         "extracted_at": datetime.now().isoformat(timespec="seconds"),
         "header": header,
@@ -541,7 +542,7 @@ def parse_document(section_json: dict) -> dict:
         "work_conditions": work_conditions,
         "reference": reference,
         "raw_blocks": raw_blocks,
-    }
+    })
 
 
 # -------------------------

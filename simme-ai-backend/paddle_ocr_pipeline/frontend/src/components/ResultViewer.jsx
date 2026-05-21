@@ -1,3 +1,4 @@
+import { useState } from "react";
 import DataTable from "./DataTable";
 import { EM_DASH, prettifyLabel, repairText } from "../utils/text";
 
@@ -51,7 +52,7 @@ function valueToDisplay(value) {
 
 function flattenDocument(documentData) {
   const groups = [
-    ["Header", documentData?.header],
+    ["Cabeçalho", documentData?.header],
     ["Cliente", documentData?.customer],
     ["Equipamento", documentData?.equipment],
     ["Condições de trabalho", documentData?.work_conditions],
@@ -73,9 +74,7 @@ function flattenDocument(documentData) {
 function ScoreRing({ label, value, tone = "teal" }) {
   const numeric = typeof value === "number" ? value : 0;
   const percent = Math.max(0, Math.min(100, Math.round(numeric * 100)));
-  const styles = {
-    "--percent": `${percent}%`,
-  };
+  const styles = { "--percent": `${percent}%` };
 
   return (
     <div className={`score-ring-card score-ring-${tone}`}>
@@ -172,7 +171,63 @@ function SectionPanel({ pageName, sectionData }) {
   );
 }
 
+function YoloPanel({ blocksByPage }) {
+  const pages = Object.entries(blocksByPage || {}).filter(([, blocks]) => Array.isArray(blocks) && blocks.length > 0);
+  if (!pages.length) return null;
+
+  return (
+    <section className="dashboard-card">
+      <div className="dashboard-card-header">
+        <h3>Deteções YOLO</h3>
+        <span className="section-badge">blocos e confiança</span>
+      </div>
+
+      <div className="yolo-page-grid">
+        {pages.map(([pageName, blocks]) => (
+          <div className="yolo-page-card" key={pageName}>
+            <div className="yolo-page-head">
+              <strong>{repairText(pageName)}</strong>
+              <span>{blocks.length} blocos</span>
+            </div>
+
+            <div className="yolo-block-list">
+              {blocks.map((block) => (
+                <div className="yolo-block" key={`${pageName}-${block.region_index}-${block.label}`}>
+                  <div className="yolo-block-head">
+                    <span className="yolo-block-label">{repairText(block.label || "bloco")}</span>
+                    <span className="yolo-block-confidence">
+                      {typeof block.confidence === "number" ? `${Math.round(block.confidence * 100)}%` : EM_DASH}
+                    </span>
+                  </div>
+                  <div className="yolo-block-meta">
+                    <span>Região {block.region_index ?? EM_DASH}</span>
+                    <span>
+                      {block?.bbox?.x1 ?? 0},{block?.bbox?.y1 ?? 0} → {block?.bbox?.x2 ?? 0},{block?.bbox?.y2 ?? 0}
+                    </span>
+                  </div>
+                  <div className="yolo-block-text">
+                    {String(repairText(block.text || ""))
+                      .split("\n")
+                      .map((line) => line.trim())
+                      .filter(Boolean)
+                      .slice(0, 8)
+                      .map((line, index) => (
+                        <span key={`${pageName}-${block.region_index}-${index}`}>{line}</span>
+                      ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function ResultViewer({ data }) {
+  const [copied, setCopied] = useState(false);
+
   if (!data) {
     return (
       <div className="dashboard-card empty-state">
@@ -188,9 +243,20 @@ export default function ResultViewer({ data }) {
   const documentMetrics = data?.metrics?.document || null;
   const globalMetrics = data?.metrics?.global || null;
   const pageSections = repairText(data?.raw?.sections?.page_sections || null);
+  const yoloBlocks = repairText(data?.raw?.sections?.page_region_blocks || null);
   const tableEntries = buildTableEntries(documentData);
   const fieldItems = flattenDocument(documentData).filter((item) => item.fieldValue !== null && item.fieldValue !== "");
   const rowCounts = Object.entries(documentMetrics?.tables?.row_counts || {});
+
+  async function handleCopyJson() {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className="result-layout">
@@ -201,7 +267,12 @@ export default function ResultViewer({ data }) {
               <span className="section-eyebrow">Documento analisado</span>
               <h2>{repairText(data?.source_pdf || "Sem ficheiro")}</h2>
             </div>
-            <span className="section-badge">{repairText(method?.short_label || method?.label || "Método")}</span>
+            <div className="hero-actions">
+              <span className="section-badge">{repairText(method?.short_label || method?.label || "Método")}</span>
+              <button type="button" className="secondary-action" onClick={handleCopyJson}>
+                {copied ? "JSON copiado" : "Copiar JSON"}
+              </button>
+            </div>
           </div>
 
           <div className="hero-meta-grid">
@@ -218,7 +289,7 @@ export default function ResultViewer({ data }) {
               tone="teal"
             />
             <StatCard
-              label="Campos strict"
+              label="Campos estritos"
               value={`${documentMetrics?.fields?.schema_filled_fields ?? EM_DASH}/${documentMetrics?.fields?.schema_total_fields ?? EM_DASH}`}
               note="schema fixo"
               tone="amber"
@@ -232,23 +303,23 @@ export default function ResultViewer({ data }) {
           </div>
         </div>
 
-        <ScoreRing label="Applicable" value={documentMetrics?.fields?.completeness_score} tone="teal" />
-        <ScoreRing label="Strict" value={documentMetrics?.fields?.schema_completeness_score} tone="amber" />
+        <ScoreRing label="Aplicável" value={documentMetrics?.fields?.completeness_score} tone="teal" />
+        <ScoreRing label="Estrita" value={documentMetrics?.fields?.schema_completeness_score} tone="amber" />
         <ScoreRing label="Tabelas" value={documentMetrics?.tables?.table_extraction_score} tone="blue" />
       </section>
 
       <section className="analytics-grid">
         <div className="dashboard-card">
           <div className="dashboard-card-header">
-            <h3>Performance do documento</h3>
+            <h3>Desempenho do documento</h3>
             <span className="section-badge">Visão geral</span>
           </div>
           <div className="progress-stack">
-            <ProgressBlock label="Applicable Completeness" value={documentMetrics?.fields?.completeness_score} tone="teal" />
-            <ProgressBlock label="Strict Completeness" value={documentMetrics?.fields?.schema_completeness_score} tone="amber" />
-            <ProgressBlock label="Table Extraction" value={documentMetrics?.tables?.table_extraction_score} tone="blue" />
+            <ProgressBlock label="Completude aplicável" value={documentMetrics?.fields?.completeness_score} tone="teal" />
+            <ProgressBlock label="Completude estrita" value={documentMetrics?.fields?.schema_completeness_score} tone="amber" />
+            <ProgressBlock label="Extração tabular" value={documentMetrics?.tables?.table_extraction_score} tone="blue" />
             <ProgressBlock label="Média global aplicável" value={globalMetrics?.avg_field_completeness} tone="teal" />
-            <ProgressBlock label="Média global strict" value={globalMetrics?.avg_schema_field_completeness} tone="amber" />
+            <ProgressBlock label="Média global estrita" value={globalMetrics?.avg_schema_field_completeness} tone="amber" />
           </div>
         </div>
 
@@ -268,10 +339,7 @@ export default function ResultViewer({ data }) {
                     <strong>{count}</strong>
                   </div>
                   <div className="mini-bar-track">
-                    <div
-                      className="mini-bar-fill"
-                      style={{ width: `${Math.min(100, 16 + count * 3)}%` }}
-                    />
+                    <div className="mini-bar-fill" style={{ width: `${Math.min(100, 16 + count * 3)}%` }} />
                   </div>
                 </div>
               ))
@@ -281,6 +349,8 @@ export default function ResultViewer({ data }) {
       </section>
 
       <FieldList title="Campos extraídos" items={fieldItems} />
+
+      <YoloPanel blocksByPage={yoloBlocks} />
 
       {pageSections && (
         <section className="dashboard-section-grid">
@@ -310,7 +380,7 @@ export default function ResultViewer({ data }) {
       <div className="dashboard-card json-card">
         <div className="dashboard-card-header">
           <h3>JSON bruto</h3>
-          <span className="section-badge">Debug</span>
+          <span className="section-badge">Depuração</span>
         </div>
         <pre>{JSON.stringify(data, null, 2)}</pre>
       </div>

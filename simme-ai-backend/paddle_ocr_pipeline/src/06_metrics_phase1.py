@@ -108,6 +108,10 @@ TABLE_EXPECTATIONS = {
     "generic_block_table": {
         "generic_results_table": 1,
     },
+    "force_calibration": {
+        "force_calibration_measurements": 1,
+        "force_relative_errors": 1,
+    },
 }
 
 
