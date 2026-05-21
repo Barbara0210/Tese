@@ -487,6 +487,7 @@ def extract_header_fields(text: str) -> dict:
     return {
         "issue_date": safe_date(issue_date),
         "certificate_number": clean_spaces(certificate_number),
+        "calibration_date": None,
         "lab_name": clean_spaces(lab_name),
         "lab_unit": clean_spaces(lab_unit),
     }
@@ -508,6 +509,7 @@ def parse_document(section_json: dict) -> dict:
     description_block = page01.get("description", "")
 
     header = extract_header_fields("\n".join([header_meta, calibration_meta]).strip())
+    header["calibration_date"] = safe_date(first_date_in_text(calibration_meta))
     customer_name, customer_address = extract_customer_name_and_address(customer_block)
     equipment = extract_equipment_fields(equipment_block)
     if not equipment.get("state"):

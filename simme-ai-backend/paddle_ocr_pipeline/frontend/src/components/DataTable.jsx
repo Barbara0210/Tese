@@ -1,8 +1,4 @@
-function prettifyColumnName(name) {
-  return String(name)
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-}
+import { EM_DASH, prettifyLabel, repairText } from "../utils/text";
 
 export default function DataTable({ title, rows }) {
   const tableData = Array.isArray(rows) ? { rows } : rows;
@@ -15,40 +11,46 @@ export default function DataTable({ title, rows }) {
       ? tableData.columns
       : Object.keys(rowList[0]).filter((key) => key !== "values");
 
+  const fixedSections = Array.isArray(tableData?.sections) ? repairText(tableData.sections) : [];
+  const fixedUnits = Array.isArray(tableData?.units) ? repairText(tableData.units) : [];
+
   return (
     <div className="table-card">
-      <h3>{title}</h3>
-      {(Array.isArray(tableData?.sections) || Array.isArray(tableData?.units)) && (
-        <div className="table-meta">
-          {Array.isArray(tableData?.sections) && tableData.sections.length > 0 && (
-            <p>
-              <strong>Secções:</strong> {tableData.sections.join(", ")}
-            </p>
-          )}
-          {Array.isArray(tableData?.units) && tableData.units.length > 0 && (
-            <p>
-              <strong>Unidades:</strong> {tableData.units.join(", ")}
-            </p>
-          )}
-        </div>
-      )}
+      <div className="table-card-header">
+        <h3>{repairText(title)}</h3>
+        {(fixedSections.length > 0 || fixedUnits.length > 0) && (
+          <div className="table-badges">
+            {fixedSections.map((section) => (
+              <span key={`section-${section}`} className="table-badge">
+                {section}
+              </span>
+            ))}
+            {fixedUnits.map((unit) => (
+              <span key={`unit-${unit}`} className="table-badge table-badge-soft">
+                {unit}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="table-wrapper">
         <table>
           <thead>
             <tr>
-              {columns.map((col) => (
-                <th key={col}>{prettifyColumnName(col)}</th>
+              {columns.map((column) => (
+                <th key={column}>{prettifyLabel(column)}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rowList.map((row, idx) => (
-              <tr key={idx}>
-                {columns.map((col) => (
-                  <td key={col}>
-                    {row[col] === null || row[col] === undefined || row[col] === ""
-                      ? "—"
-                      : String(row[col])}
+            {rowList.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column) => (
+                  <td key={column}>
+                    {row[column] === null || row[column] === undefined || row[column] === ""
+                      ? EM_DASH
+                      : String(repairText(row[column]))}
                   </td>
                 ))}
               </tr>

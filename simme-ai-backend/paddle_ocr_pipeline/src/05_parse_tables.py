@@ -24,6 +24,30 @@ def clean_spaces(s: str | None) -> str | None:
     return s or None
 
 
+def normalize_display_text(s: str | None) -> str | None:
+    if not s:
+        return None
+
+    replacements = {
+        "Diämetro": "Diametro",
+        "Diāmetro": "Diametro",
+        "Diametro": "Diametro",
+        "Humidade": "Humidade",
+        "Padrao": "Padrao",
+        "Calibracäo": "Calibracao",
+        "Designagäo": "Designagao",
+        "Instalacöes": "Instalacoes",
+        "InvestigaciÃ³n": "Investigacion",
+        "CÃ¤diz": "Cadiz",
+    }
+
+    out = s
+    for old, new in replacements.items():
+        out = out.replace(old, new)
+
+    return out
+
+
 def normalize(s: str | None) -> str:
     if not s:
         return ""
@@ -509,19 +533,10 @@ def _is_generic_section_line(line: str) -> bool:
 
 
 def _canonical_generic_columns(lines: list[str]) -> list[str]:
-    joined = " ".join(normalize(ln) for ln in lines if _is_generic_header_line(ln))
-    columns = []
-    if "LEITURA NO EQUIPAMENTO" in joined:
-        columns.append("reading_value")
-    if "PADRAO" in joined:
-        columns.append("standard_value")
-    if "ERRO" in joined:
-        columns.append("error_value")
-    if "INCERTEZA" in joined:
-        columns.append("uncertainty_value")
-    if "MEDIA" in joined:
-        columns.append("mean_value")
-    return columns or ["value_1", "value_2", "value_3", "value_4"]
+    joined = " ".join(normalize(line) for line in lines)
+    if "PADRAO" in joined and "ERRO" in joined and "INCERTEZA" in joined:
+        return ["standard_value", "reading_value", "error_value", "uncertainty_value"]
+    return ["value_1", "value_2", "value_3", "value_4"]
 
 
 def _dedupe_generic_rows(rows: list[dict]) -> list[dict]:
@@ -541,8 +556,8 @@ def _is_plausible_generic_row(values: list[float | None], columns: list[str]) ->
     if any(v is None for v in values[:4]):
         return False
 
-    reading = values[0]
-    standard = values[1]
+    standard = values[0]
+    reading = values[1]
     error = values[2]
     uncertainty = values[3]
 
@@ -562,6 +577,133 @@ def _is_plausible_generic_row(values: list[float | None], columns: list[str]) ->
     return True
 
 
+def _split_generic_groups(lines: list[str]) -> list[dict]:
+    groups = []
+    current = None
+
+    for line in lines:
+        normalized = normalize(line)
+
+        if _is_generic_header_line(line):
+            inferred_unit = _infer_unit_from_header_line(line)
+            if inferred_unit:
+                if current and current["rows"]:
+                    groups.append(current)
+                current = {
+                    "unit": inferred_unit,
+                    "header_lines": [],
+                    "rows": [],
+                    "markers": [],
+                }
+
+            if current:
+                current["header_lines"].append(line)
+            continue
+
+        if current is None:
+            continue
+
+        if _is_generic_section_line(line):
+            current["markers"].append(
+                {
+                    "label": normalize_display_text(clean_spaces(line)),
+                    "row_index": len(current["rows"]),
+                }
+            )
+            continue
+
+        if _is_simple_numeric_line(line):
+            value = to_float(line)
+            if value is not None:
+                current.setdefault("numeric_buffer", []).append(value)
+                if len(current["numeric_buffer"]) == 4:
+                    current["rows"].append({
+                        "values": current["numeric_buffer"][:],
+                    })
+                    current["numeric_buffer"] = []
+            continue
+
+        if extract_numbers(line):
+            current["numeric_buffer"] = []
+
+    if current and current["rows"]:
+        groups.append(current)
+
+    for group in groups:
+        group.pop("numeric_buffer", None)
+
+    return groups
+
+
+def _find_monotonic_drop_boundaries(rows: list[dict]) -> list[int]:
+    boundaries = []
+    if len(rows) < 2:
+        return boundaries
+
+    previous = rows[0]["values"][0]
+    for index in range(1, len(rows)):
+        current = rows[index]["values"][0]
+        if previous is None or current is None:
+            previous = current
+            continue
+
+        if current < previous - 5:
+            boundaries.append(index)
+        previous = current
+
+    return boundaries
+
+
+def _assign_group_sections(group: dict) -> list[dict]:
+    rows = [dict(row) for row in group.get("rows", [])]
+    markers = [marker["label"] for marker in group.get("markers", []) if marker.get("label")]
+    unit = group.get("unit")
+
+    if not rows:
+        return rows
+
+    if unit == "mm":
+        boundaries = _find_monotonic_drop_boundaries(rows)
+        if boundaries and markers:
+            segment_starts = [0] + boundaries + [len(rows)]
+            segment_count = len(segment_starts) - 1
+            labels = markers[:segment_count]
+            if len(labels) < segment_count:
+                labels.extend([labels[-1]] * (segment_count - len(labels)))
+
+            for segment_index in range(segment_count):
+                start = segment_starts[segment_index]
+                end = segment_starts[segment_index + 1]
+                label = labels[segment_index] if segment_index < len(labels) else None
+                for row_index in range(start, end):
+                    rows[row_index]["section"] = label
+            return rows
+
+    if len(markers) == 1:
+        label = markers[0]
+        for row in rows:
+            row["section"] = label
+        return rows
+
+    if markers:
+        current_label = None
+        for row_index, row in enumerate(rows):
+            for marker in group.get("markers", []):
+                if marker["row_index"] <= row_index:
+                    current_label = marker["label"]
+            row["section"] = current_label
+
+        if rows and rows[0].get("section") is None:
+            first_label = markers[0]
+            for row in rows:
+                if row.get("section") is None:
+                    row["section"] = first_label
+                else:
+                    break
+
+    return rows
+
+
 def _fallback_section_from_unit(unit: str | None) -> str | None:
     if unit == "g":
         return "Peso"
@@ -570,62 +712,41 @@ def _fallback_section_from_unit(unit: str | None) -> str | None:
     return None
 
 
+def _slugify_section_name(name: str | None) -> str:
+    if not name:
+        return "section"
+    normalized = normalize(name).lower()
+    normalized = normalized.replace(" ", "_")
+    normalized = re.sub(r"[^a-z0-9_]+", "", normalized)
+    return normalized or "section"
+
+
 def parse_generic_results_table(lines: list[str]) -> dict:
-    columns = _canonical_generic_columns(lines)
-    numeric_arity = 4 if len(columns) >= 4 else len(columns)
-    numeric_arity = max(1, min(numeric_arity, 5))
-
+    groups = _split_generic_groups(lines)
     rows = []
-    numeric_buffer = []
-    current_section = None
-    current_unit = None
+    active_columns = ["standard_value", "reading_value", "error_value", "uncertainty_value"]
 
-    for ln in lines:
-        n = normalize(ln)
+    for group in groups:
+        group_columns = _canonical_generic_columns(group.get("header_lines", []))
+        if len(group_columns) >= 4:
+            active_columns = group_columns[:4]
 
-        if _is_generic_section_line(ln):
-            current_section = clean_spaces(ln)
-            numeric_buffer = []
-            continue
+        assigned_rows = _assign_group_sections(group)
+        for row in assigned_rows:
+            values = row.get("values", [])
+            if not _is_plausible_generic_row(values, active_columns):
+                continue
 
-        if "RESULTADOS" in n:
-            numeric_buffer = []
-            continue
-
-        if _is_generic_header_line(ln):
-            inferred_section = _infer_section_from_header_line(ln)
-            inferred_unit = _infer_unit_from_header_line(ln)
-
-            if inferred_unit == "mm":
-                current_section = None
-            elif inferred_section is not None:
-                current_section = inferred_section
-
-            if inferred_unit is not None:
-                current_unit = inferred_unit
-            numeric_buffer = []
-            continue
-
-        if _is_simple_numeric_line(ln):
-            numeric_buffer.append(to_float(ln))
-            if len(numeric_buffer) == numeric_arity:
-                values = numeric_buffer[:]
-                if _is_plausible_generic_row(values, columns[:numeric_arity]):
-                    row_section = current_section or _fallback_section_from_unit(current_unit)
-                    row = {
-                        "section": row_section,
-                        "unit": current_unit,
-                        "values": values,
-                    }
-                    for idx, value in enumerate(values):
-                        key = columns[idx] if idx < len(columns) else f"value_{idx + 1}"
-                        row[key] = value
-                    rows.append(row)
-                numeric_buffer = []
-            continue
-
-        if extract_numbers(ln):
-            numeric_buffer = []
+            row_section = normalize_display_text(row.get("section") or _fallback_section_from_unit(group.get("unit")))
+            parsed_row = {
+                "section": row_section,
+                "unit": group.get("unit"),
+                "values": values,
+            }
+            for idx, value in enumerate(values):
+                key = active_columns[idx] if idx < len(active_columns) else f"value_{idx + 1}"
+                parsed_row[key] = value
+            rows.append(parsed_row)
 
     deduped_rows = _dedupe_generic_rows(rows)
     section_names = []
@@ -641,7 +762,7 @@ def parse_generic_results_table(lines: list[str]) -> dict:
             units.append(unit)
 
     return {
-        "columns": columns[:numeric_arity],
+        "columns": active_columns[:4],
         "sections": section_names,
         "units": units,
         "rows": deduped_rows,
@@ -650,9 +771,48 @@ def parse_generic_results_table(lines: list[str]) -> dict:
 
 def parse_generic_block_tables(section_json: dict) -> dict:
     result_lines = collect_all_results_lines(section_json)
-    return {
-        "generic_results_table": parse_generic_results_table(result_lines),
+    generic_table = parse_generic_results_table(result_lines)
+    rows = generic_table.get("rows", [])
+
+    section_groups = {}
+    for row in rows:
+        section = row.get("section")
+        if not section:
+            continue
+        section_groups.setdefault(section, []).append(row)
+
+    subtables = []
+    extra_tables = {}
+    if section_groups:
+        for section_name, section_rows in section_groups.items():
+            units = []
+            for row in section_rows:
+                unit = row.get("unit")
+                if unit and unit not in units:
+                    units.append(unit)
+
+            section_table = {
+                "columns": generic_table.get("columns", []),
+                "sections": [section_name],
+                "units": units,
+                "rows": section_rows,
+            }
+            subtables.append(
+                {
+                    "key": f"generic_results_table_{_slugify_section_name(section_name)}",
+                    "title": section_name,
+                    "table": section_table,
+                }
+            )
+            extra_tables[f"generic_results_table_{_slugify_section_name(section_name)}"] = section_table
+
+    generic_table["subtables"] = subtables
+
+    tables = {
+        "generic_results_table": generic_table,
     }
+    tables.update(extra_tables)
+    return tables
 
 
 # -------------------------

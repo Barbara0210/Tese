@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api/client";
+import { repairText } from "../utils/text";
 
 export default function UploadForm({
   methods,
@@ -11,8 +12,8 @@ export default function UploadForm({
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
 
     if (!file) {
       onStatus("Seleciona um ficheiro PDF primeiro.");
@@ -37,7 +38,6 @@ export default function UploadForm({
       });
 
       const fileId = uploadResponse.data.file_id;
-
       onStatus(`Ficheiro enviado. A processar com o método "${selectedMethod}"...`);
 
       await api.post(`/process/${fileId}`, null, {
@@ -70,24 +70,29 @@ export default function UploadForm({
         <span>Método</span>
         <select
           value={selectedMethod}
-          onChange={(e) => onMethodChange(e.target.value)}
+          onChange={(event) => onMethodChange(event.target.value)}
           disabled={loading || methods.length === 0}
         >
           {methods.map((method) => (
             <option key={method.key} value={method.key}>
-              {method.label}
+              {repairText(method.label)}
               {!method.implemented ? " (planeado)" : ""}
             </option>
           ))}
         </select>
       </label>
 
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
-      <button type="submit" disabled={loading}>
+      <label className="field-group field-group-file">
+        <span>PDF</span>
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={(event) => setFile(event.target.files?.[0] || null)}
+        />
+        <small>{file?.name || "Nenhum ficheiro selecionado"}</small>
+      </label>
+
+      <button type="submit" disabled={loading} className="primary-action">
         {loading ? "A processar..." : "Enviar e Processar"}
       </button>
     </form>
