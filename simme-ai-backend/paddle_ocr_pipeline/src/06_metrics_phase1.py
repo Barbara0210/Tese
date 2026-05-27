@@ -1,5 +1,6 @@
 import json
 import re
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from statistics import mean
@@ -61,6 +62,8 @@ def normalize(text: str | None) -> str:
     }
     for old, new in replacements.items():
         value = value.replace(old, new)
+    value = unicodedata.normalize("NFKD", value)
+    value = "".join(char for char in value if not unicodedata.combining(char))
     value = re.sub(r"\s+", " ", value).strip()
     return value
 
@@ -195,6 +198,22 @@ def evaluate_fields(parsed_doc: dict) -> dict:
     }
 
 
+def table_row_count(value) -> int:
+    if isinstance(value, list):
+        return len(value)
+    if not isinstance(value, dict):
+        return 1 if value is not None else 0
+    if isinstance(value.get("rows"), list):
+        return len(value.get("rows", []))
+    if isinstance(value.get("subtables"), list):
+        return sum(
+            table_row_count(subtable.get("table"))
+            for subtable in value.get("subtables", [])
+            if isinstance(subtable, dict)
+        )
+    return 1 if len(value) > 0 else 0
+
+
 def evaluate_tables(table_doc: dict) -> dict:
     instrument_type = table_doc.get("instrument_type")
     tables = table_doc.get("tables", {})
@@ -207,15 +226,8 @@ def evaluate_tables(table_doc: dict) -> dict:
     for table_name in expected:
         value = tables.get(table_name)
 
-        if isinstance(value, list):
-            present = len(value) > 0
-            row_count = len(value)
-        elif isinstance(value, dict):
-            present = len(value) > 0
-            row_count = len(value.get("rows", [])) if isinstance(value.get("rows"), list) else (1 if present else 0)
-        else:
-            present = value is not None
-            row_count = 1 if present else 0
+        row_count = table_row_count(value)
+        present = row_count > 0
 
         table_presence[table_name] = present
         table_row_counts[table_name] = row_count
@@ -223,6 +235,10 @@ def evaluate_tables(table_doc: dict) -> dict:
         if present:
             found_count += 1
 
+    for table_name, value in tables.items():
+        table_row_counts.setdefault(table_name, table_row_count(value))
+
+    detected_tables = sum(1 for count in table_row_counts.values() if count > 0)
     total_expected = len(expected)
     extraction_score = round(found_count / total_expected, 4) if total_expected else 0.0
 
@@ -232,6 +248,7 @@ def evaluate_tables(table_doc: dict) -> dict:
         "table_row_counts": table_row_counts,
         "found_tables": found_count,
         "expected_tables": total_expected,
+        "detected_tables": detected_tables,
         "table_extraction_score": extraction_score,
     }
 

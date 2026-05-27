@@ -28,6 +28,7 @@ METRICS_DIR = DATA_DIR / "metrics"
 EVALUATION_DIR = DATA_DIR / "evaluation"
 REGIONS_DIR = DATA_DIR / "regions"
 CROPS_DIR = DATA_DIR / "crops"
+PADDLEOCR_VL_DIR = DATA_DIR / "paddleocr_vl"
 METRICS_SUMMARY_FILE = BACKEND_DIR / "method_runs_summary.json"
 METRICS_COMPARISON_FILE = BACKEND_DIR / "method_comparison_summary.json"
 
@@ -60,6 +61,10 @@ PIPELINES = {
         "01_pdf_to_images.py",
         "02_ocr_paddle.py",
         "14_extract_ocr_llm.py",
+        "06_metrics_phase1.py",
+    ],
+    "paddleocr_vl": [
+        "15_import_paddleocr_vl.py",
         "06_metrics_phase1.py",
     ],
 }
@@ -166,6 +171,18 @@ def _copy_folder_contents(source_dir: Path, target_dir: Path):
             shutil.copytree(item, destination)
 
 
+def _prepare_paddleocr_vl_summary(file_id: str, original_filename: str):
+    summary_path = UPLOADS_DIR / f"{file_id}__paddleocr_vl_run_summary.json"
+    if not summary_path.exists():
+        return None
+
+    target_dir = PADDLEOCR_VL_DIR / Path(original_filename).stem
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_path = target_dir / "run_summary.json"
+    shutil.copy2(summary_path, target_path)
+    return target_path
+
+
 def _archive_run_artifacts(
     file_id: str,
     method_key: str,
@@ -196,6 +213,8 @@ def _archive_run_artifacts(
     _copy_folder_contents(OCR_TEXT_DIR, run_dir / "ocr_text")
     _copy_folder_contents(REGIONS_DIR, run_dir / "regions")
     _copy_folder_contents(CROPS_DIR, run_dir / "crops")
+    if PADDLEOCR_VL_DIR.exists():
+        _copy_folder_contents(PADDLEOCR_VL_DIR, run_dir / "paddleocr_vl")
 
     return run_dir
 
@@ -226,10 +245,43 @@ def _build_metrics_summary_entry(result_payload: dict) -> dict:
         "schema_completeness_score": field_metrics.get("schema_completeness_score"),
         "found_tables": table_metrics.get("found_tables"),
         "expected_tables": table_metrics.get("expected_tables"),
+        "detected_tables": table_metrics.get("detected_tables"),
         "table_extraction_score": table_metrics.get("table_extraction_score"),
         "archive_run_dir": archive.get("run_dir"),
         "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
+
+
+def _count_table_rows(value) -> int:
+    if isinstance(value, list):
+        return len(value)
+    if not isinstance(value, dict):
+        return 1 if value is not None else 0
+    if isinstance(value.get("rows"), list):
+        return len(value.get("rows", []))
+    if isinstance(value.get("subtables"), list):
+        return sum(
+            _count_table_rows(subtable.get("table"))
+            for subtable in value.get("subtables", [])
+            if isinstance(subtable, dict)
+        )
+    return 1 if value else 0
+
+
+def _enrich_table_metrics(document_metrics: dict | None, tables_data: dict | None) -> dict | None:
+    if not document_metrics:
+        return document_metrics
+
+    table_metrics = document_metrics.setdefault("tables", {})
+    row_counts = table_metrics.setdefault("row_counts", {})
+    for table_name, table_value in (tables_data or {}).get("tables", {}).items():
+        row_counts.setdefault(table_name, _count_table_rows(table_value))
+
+    table_metrics.setdefault(
+        "detected_tables",
+        sum(1 for count in row_counts.values() if isinstance(count, (int, float)) and count > 0),
+    )
+    return document_metrics
 
 
 def _refresh_metrics_summary_index():
@@ -347,6 +399,9 @@ def process_file(file_id: str, method_key: str = "paddle_current"):
     target_pdf = RAW_PDFS_DIR / original_filename
     shutil.copy2(upload_pdf, target_pdf)
 
+    if method_key == "paddleocr_vl":
+        _prepare_paddleocr_vl_summary(file_id, original_filename)
+
     logs = []
     started_at = time.perf_counter()
     pipeline_scripts = PIPELINES[method_key]
@@ -363,6 +418,10 @@ def process_file(file_id: str, method_key: str = "paddle_current"):
 
     frontend_document = _build_frontend_document(parsed_data, tables_data)
     source_file = parsed_data.get("source_file") if parsed_data else None
+    document_metrics = _enrich_table_metrics(
+        _find_document_metrics(metrics_data, source_file),
+        tables_data,
+    )
 
     result_payload = {
         "file_id": file_id,
@@ -373,7 +432,7 @@ def process_file(file_id: str, method_key: str = "paddle_current"):
             "scripts_executed": pipeline_scripts,
         },
         "metrics": {
-            "document": _find_document_metrics(metrics_data, source_file),
+            "document": document_metrics,
             "global": metrics_data.get("global_metrics") if metrics_data else None,
         },
         "document": frontend_document,

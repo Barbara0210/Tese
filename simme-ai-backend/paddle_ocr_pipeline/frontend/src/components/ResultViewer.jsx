@@ -2,10 +2,14 @@ import { useState } from "react";
 import DataTable from "./DataTable";
 import { EM_DASH, prettifyLabel, repairText } from "../utils/text";
 
-function buildTableEntries(documentData) {
+function buildTableEntries(documentData, rawTablesData) {
   const entries = [];
+  const tableSource =
+    documentData?.tables && Object.keys(documentData.tables).length > 0
+      ? documentData.tables
+      : rawTablesData?.tables || {};
 
-  for (const [tableName, tableValue] of Object.entries(documentData?.tables || {})) {
+  for (const [tableName, tableValue] of Object.entries(tableSource)) {
     if (tableValue && typeof tableValue === "object" && Array.isArray(tableValue.subtables) && tableValue.subtables.length > 0) {
       tableValue.subtables.forEach((subtable, index) => {
         entries.push([
@@ -244,9 +248,24 @@ export default function ResultViewer({ data }) {
   const globalMetrics = data?.metrics?.global || null;
   const pageSections = repairText(data?.raw?.sections?.page_sections || null);
   const yoloBlocks = repairText(data?.raw?.sections?.page_region_blocks || null);
-  const tableEntries = buildTableEntries(documentData);
+  const tableEntries = buildTableEntries(documentData, data?.raw?.tables || null);
   const fieldItems = flattenDocument(documentData).filter((item) => item.fieldValue !== null && item.fieldValue !== "");
   const rowCounts = Object.entries(documentMetrics?.tables?.row_counts || {});
+  const expectedTables = documentMetrics?.tables?.expected_tables ?? 0;
+  const detectedTables = documentMetrics?.tables?.detected_tables ?? (rowCounts.length || tableEntries.length);
+  const tableStatValue =
+    expectedTables > 0 ? `${documentMetrics?.tables?.found_tables ?? 0}/${expectedTables}` : `${detectedTables} grupos`;
+  const tableStatNote =
+    expectedTables > 0
+      ? repairText(documentMetrics?.instrument_type || "sem tipo")
+      : repairText(documentMetrics?.instrument_type || "sem tipo definido");
+  const tableIndicatorValue =
+    expectedTables > 0
+      ? documentMetrics?.tables?.table_extraction_score
+      : detectedTables > 0
+        ? 1
+        : 0;
+  const tableIndicatorLabel = expectedTables > 0 ? "Tabelas" : "Detetadas";
 
   async function handleCopyJson() {
     try {
@@ -296,8 +315,8 @@ export default function ResultViewer({ data }) {
             />
             <StatCard
               label="Tabelas"
-              value={`${documentMetrics?.tables?.found_tables ?? 0}/${documentMetrics?.tables?.expected_tables ?? 0}`}
-              note={repairText(documentMetrics?.instrument_type || "sem tipo")}
+              value={tableStatValue}
+              note={tableStatNote}
               tone="rose"
             />
           </div>
@@ -305,7 +324,7 @@ export default function ResultViewer({ data }) {
 
         <ScoreRing label="Aplicável" value={documentMetrics?.fields?.completeness_score} tone="teal" />
         <ScoreRing label="Estrita" value={documentMetrics?.fields?.schema_completeness_score} tone="amber" />
-        <ScoreRing label="Tabelas" value={documentMetrics?.tables?.table_extraction_score} tone="blue" />
+        <ScoreRing label={tableIndicatorLabel} value={tableIndicatorValue} tone="blue" />
       </section>
 
       <section className="analytics-grid">
@@ -317,7 +336,11 @@ export default function ResultViewer({ data }) {
           <div className="progress-stack">
             <ProgressBlock label="Completude aplicável" value={documentMetrics?.fields?.completeness_score} tone="teal" />
             <ProgressBlock label="Completude estrita" value={documentMetrics?.fields?.schema_completeness_score} tone="amber" />
-            <ProgressBlock label="Extração tabular" value={documentMetrics?.tables?.table_extraction_score} tone="blue" />
+            <ProgressBlock
+              label={expectedTables > 0 ? "Extração tabular" : "Tabelas detetadas"}
+              value={tableIndicatorValue}
+              tone="blue"
+            />
             <ProgressBlock label="Média global aplicável" value={globalMetrics?.avg_field_completeness} tone="teal" />
             <ProgressBlock label="Média global estrita" value={globalMetrics?.avg_schema_field_completeness} tone="amber" />
           </div>
@@ -380,7 +403,12 @@ export default function ResultViewer({ data }) {
       <div className="dashboard-card json-card">
         <div className="dashboard-card-header">
           <h3>JSON bruto</h3>
-          <span className="section-badge">Depuração</span>
+          <div className="hero-actions">
+            <span className="section-badge">Depuração</span>
+            <button type="button" className="secondary-action" onClick={handleCopyJson}>
+              {copied ? "JSON copiado" : "Copiar JSON"}
+            </button>
+          </div>
         </div>
         <pre>{JSON.stringify(data, null, 2)}</pre>
       </div>

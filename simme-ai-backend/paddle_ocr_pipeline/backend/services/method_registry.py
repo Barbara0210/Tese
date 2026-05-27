@@ -31,6 +31,14 @@ METHODS = {
         "implemented": True,
         "category": "multimodal",
     },
+    "paddleocr_vl": {
+        "key": "paddleocr_vl",
+        "label": "PaddleOCR-VL",
+        "short_label": "PaddleOCR-VL",
+        "description": "Importa os resultados multimodais do PaddleOCR-VL gerados no Colab e converte-os para o esquema de campos, tabelas e metricas do projeto.",
+        "implemented": True,
+        "category": "multimodal",
+    },
 }
 
 
