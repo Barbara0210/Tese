@@ -1,0 +1,687 @@
+{
+  "generated_at": "2026-05-28T15:14:00",
+  "manifest": {
+    "name": "thesis_test_set_5docs",
+    "description": "Conjunto fixo de 5 certificados escolhido para avaliacao comparativa dos metodos da tese.",
+    "documents": [
+      {
+        "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+        "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/CITC_021_CORK SUPPLY PORTUGAL.pdf",
+        "paddleocr_vl_summary_path": "data/paddleocr_vl/CITC_021_CORK SUPPLY PORTUGAL/run_summary.json"
+      },
+      {
+        "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+        "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Dinamómetro EX.001 RED LION.pdf",
+        "paddleocr_vl_summary_path": "data/paddleocr_vl/Dinamómetro EX.001 RED LION/run_summary.json"
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "paddleocr_vl_summary_path": "data/paddleocr_vl/Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL/run_summary.json"
+      },
+      {
+        "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+        "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+        "paddleocr_vl_summary_path": null
+      },
+      {
+        "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+        "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+        "paddleocr_vl_summary_path": null
+      }
+    ],
+    "methods": [
+      "paddle_current",
+      "pdf_table",
+      "hybrid_fast",
+      "ocr_llm",
+      "paddleocr_vl",
+      "paddleocr_vl_llm"
+    ]
+  },
+  "methods": [
+    "paddle_current",
+    "pdf_table",
+    "hybrid_fast",
+    "ocr_llm",
+    "paddleocr_vl",
+    "paddleocr_vl_llm"
+  ],
+  "aggregate": {
+    "method_summary": [
+      {
+        "method_key": "hybrid_fast",
+        "n_runs": 3,
+        "avg_elapsed_seconds": 91.5377,
+        "avg_completeness_score": 0.419,
+        "avg_schema_completeness_score": 0.4,
+        "avg_table_extraction_score": 0.6667,
+        "avg_detected_tables": null,
+        "total_llm_conflicts": 0
+      },
+      {
+        "method_key": "paddle_current",
+        "n_runs": 4,
+        "avg_elapsed_seconds": 38.1698,
+        "avg_completeness_score": 0.7477,
+        "avg_schema_completeness_score": 0.4167,
+        "avg_table_extraction_score": 0.25,
+        "avg_detected_tables": null,
+        "total_llm_conflicts": 0
+      },
+      {
+        "method_key": "paddleocr_vl",
+        "n_runs": 3,
+        "avg_elapsed_seconds": 2.9453,
+        "avg_completeness_score": 1.0,
+        "avg_schema_completeness_score": 0.7333,
+        "avg_table_extraction_score": 0.5,
+        "avg_detected_tables": null,
+        "total_llm_conflicts": 0
+      },
+      {
+        "method_key": "paddleocr_vl_llm",
+        "n_runs": 1,
+        "avg_elapsed_seconds": 247.373,
+        "avg_completeness_score": 1.0,
+        "avg_schema_completeness_score": 1.0,
+        "avg_table_extraction_score": 0.0,
+        "avg_detected_tables": 4,
+        "total_llm_conflicts": 0
+      },
+      {
+        "method_key": "pdf_table",
+        "n_runs": 2,
+        "avg_elapsed_seconds": 1.081,
+        "avg_completeness_score": 0.2727,
+        "avg_schema_completeness_score": null,
+        "avg_table_extraction_score": 0.0,
+        "avg_detected_tables": null,
+        "total_llm_conflicts": 0
+      }
+    ],
+    "document_summary": [
+      {
+        "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+        "n_runs": 4,
+        "best_schema_completeness_score": 1.0,
+        "best_table_extraction_score": 1.0,
+        "methods_run": [
+          "hybrid_fast",
+          "paddle_current",
+          "paddleocr_vl",
+          "paddleocr_vl_llm"
+        ]
+      },
+      {
+        "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+        "n_runs": 2,
+        "best_schema_completeness_score": 0.9,
+        "best_table_extraction_score": 0.5,
+        "methods_run": [
+          "paddle_current",
+          "paddleocr_vl"
+        ]
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "n_runs": 1,
+        "best_schema_completeness_score": 0.75,
+        "best_table_extraction_score": 0.0,
+        "methods_run": [
+          "paddleocr_vl"
+        ]
+      },
+      {
+        "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+        "n_runs": 3,
+        "best_schema_completeness_score": 0.6,
+        "best_table_extraction_score": 1.0,
+        "methods_run": [
+          "hybrid_fast",
+          "paddle_current",
+          "pdf_table"
+        ]
+      },
+      {
+        "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+        "n_runs": 3,
+        "best_schema_completeness_score": null,
+        "best_table_extraction_score": 0.0,
+        "methods_run": [
+          "hybrid_fast",
+          "paddle_current",
+          "pdf_table"
+        ]
+      }
+    ],
+    "missing_runs": [
+      {
+        "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+        "method_key": "pdf_table",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+        "method_key": "ocr_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+        "method_key": "pdf_table",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+        "method_key": "hybrid_fast",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+        "method_key": "ocr_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+        "method_key": "paddleocr_vl_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "method_key": "paddle_current",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "method_key": "pdf_table",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "method_key": "hybrid_fast",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "method_key": "ocr_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+        "method_key": "paddleocr_vl_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+        "method_key": "ocr_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+        "method_key": "paddleocr_vl",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+        "method_key": "paddleocr_vl_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+        "method_key": "ocr_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+        "method_key": "paddleocr_vl",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      },
+      {
+        "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+        "method_key": "paddleocr_vl_llm",
+        "status": "missing",
+        "notes": "No archived run found for this document/method."
+      }
+    ]
+  },
+  "runs": [
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "method_key": "paddle_current",
+      "status": "ok",
+      "file_id": "259a3f4ef0fc4c09a087e7ce0c22bf7e",
+      "method_label": "Baseline Atual",
+      "elapsed_seconds": 35.546,
+      "instrument_type": null,
+      "filled_fields": 1,
+      "total_fields": 1,
+      "completeness_score": 1.0,
+      "schema_filled_fields": 2,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.1,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {},
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\259a3f4ef0fc4c09a087e7ce0c22bf7e__paddle_current__CITC_021_CORK_SUPPLY_PORTUGAL",
+      "recorded_at": "2026-05-21T12:42:20"
+    },
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "method_key": "pdf_table",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "method_key": "hybrid_fast",
+      "status": "ok",
+      "file_id": "4ddf65e9991f4044816f725cc615639f",
+      "method_label": "Híbrido Rápido",
+      "elapsed_seconds": 107.342,
+      "instrument_type": "force_calibration",
+      "filled_fields": 2,
+      "total_fields": 5,
+      "completeness_score": 0.4,
+      "schema_filled_fields": 4,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.2,
+      "found_tables": 2,
+      "expected_tables": 2,
+      "detected_tables": null,
+      "table_extraction_score": 1.0,
+      "row_counts": {
+        "force_calibration_measurements": 11,
+        "force_relative_errors": 11
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\4ddf65e9991f4044816f725cc615639f__hybrid_fast__CITC_021_CORK_SUPPLY_PORTUGAL",
+      "recorded_at": "2026-05-26T17:02:33"
+    },
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "method_key": "ocr_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "method_key": "paddleocr_vl",
+      "status": "ok",
+      "file_id": "c2edc37fd6aa47a5852382ca62a507f8",
+      "method_label": "PaddleOCR-VL",
+      "elapsed_seconds": 4.142,
+      "instrument_type": "force_calibration",
+      "filled_fields": 11,
+      "total_fields": 11,
+      "completeness_score": 1.0,
+      "schema_filled_fields": 11,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.55,
+      "found_tables": 2,
+      "expected_tables": 2,
+      "detected_tables": null,
+      "table_extraction_score": 1.0,
+      "row_counts": {
+        "force_calibration_measurements": 11,
+        "force_relative_errors": 11
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\c2edc37fd6aa47a5852382ca62a507f8__paddleocr_vl__CITC_021_CORK_SUPPLY_PORTUGAL",
+      "recorded_at": "2026-05-26T17:33:46"
+    },
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "method_key": "paddleocr_vl_llm",
+      "status": "ok",
+      "file_id": "dc3f9c978a8a4137b18b9cc02c67002a",
+      "method_label": "PaddleOCR-VL + LLM",
+      "elapsed_seconds": 247.373,
+      "instrument_type": "Force Transducer",
+      "filled_fields": 11,
+      "total_fields": 11,
+      "completeness_score": 1.0,
+      "schema_filled_fields": 20,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 1.0,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": 4,
+      "table_extraction_score": 0.0,
+      "row_counts": {
+        "force_calibration_measurements": 11,
+        "force_relative_errors": 11,
+        "reference_equipment": 3,
+        "force_transducer": 1
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\dc3f9c978a8a4137b18b9cc02c67002a__paddleocr_vl_llm__CITC_021_CORK_SUPPLY_PORTUGAL",
+      "recorded_at": "2026-05-28T15:01:51"
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "method_key": "paddle_current",
+      "status": "ok",
+      "file_id": "c159c8bc0df64c118763b8798da336b4",
+      "method_label": "Baseline Atual",
+      "elapsed_seconds": 26.272,
+      "instrument_type": null,
+      "filled_fields": 10,
+      "total_fields": 10,
+      "completeness_score": 1.0,
+      "schema_filled_fields": 12,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.6,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {},
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\c159c8bc0df64c118763b8798da336b4__paddle_current__Dinamómetro_EX.001_RED_LION",
+      "recorded_at": "2026-05-21T12:24:36"
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "method_key": "pdf_table",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "method_key": "hybrid_fast",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "method_key": "ocr_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "method_key": "paddleocr_vl",
+      "status": "ok",
+      "file_id": "ebf9a382a34249028f9235add04c3c61",
+      "method_label": "PaddleOCR-VL",
+      "elapsed_seconds": 2.634,
+      "instrument_type": "force_calibration",
+      "filled_fields": 17,
+      "total_fields": 17,
+      "completeness_score": 1.0,
+      "schema_filled_fields": 18,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.9,
+      "found_tables": 1,
+      "expected_tables": 2,
+      "detected_tables": null,
+      "table_extraction_score": 0.5,
+      "row_counts": {
+        "force_calibration_measurements": 22,
+        "force_relative_errors": 0
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\ebf9a382a34249028f9235add04c3c61__paddleocr_vl__Dinamómetro_EX.001_RED_LION",
+      "recorded_at": "2026-05-26T17:33:07"
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "method_key": "paddleocr_vl_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "method_key": "paddle_current",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "method_key": "pdf_table",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "method_key": "hybrid_fast",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "method_key": "ocr_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "method_key": "paddleocr_vl",
+      "status": "ok",
+      "file_id": "c88847b638094438a08073857ef151ea",
+      "method_label": "PaddleOCR-VL",
+      "elapsed_seconds": 2.06,
+      "instrument_type": null,
+      "filled_fields": 15,
+      "total_fields": 15,
+      "completeness_score": 1.0,
+      "schema_filled_fields": 15,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.75,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {
+        "reference_equipment": 2,
+        "paddleocr_vl_detected_tables": 21
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\c88847b638094438a08073857ef151ea__paddleocr_vl__Extralab2G_025_GRUPO_SOLAR_DE_SAMANIEGO_SL",
+      "recorded_at": "2026-05-26T17:47:47"
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "method_key": "paddleocr_vl_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "method_key": "paddle_current",
+      "status": "ok",
+      "file_id": "55ef50014d984fc296d1e4709ba3fa57",
+      "method_label": "Baseline Atual",
+      "elapsed_seconds": 20.783,
+      "instrument_type": "generic_block_table",
+      "filled_fields": 9,
+      "total_fields": 10,
+      "completeness_score": 0.9,
+      "schema_filled_fields": 11,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.55,
+      "found_tables": 1,
+      "expected_tables": 1,
+      "detected_tables": null,
+      "table_extraction_score": 1.0,
+      "row_counts": {
+        "generic_results_table": 25
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\55ef50014d984fc296d1e4709ba3fa57__paddle_current__Medcork_116_HEREDEROS_DE_TORRENT_MIRANDA_S.L.",
+      "recorded_at": "2026-05-21T11:52:05"
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "method_key": "pdf_table",
+      "status": "ok",
+      "file_id": "a99971ad1c314085a2b4738f284ace47",
+      "method_label": "PdfTable",
+      "elapsed_seconds": 0.736,
+      "instrument_type": null,
+      "filled_fields": 12,
+      "total_fields": 22,
+      "completeness_score": 0.5455,
+      "schema_filled_fields": null,
+      "schema_total_fields": null,
+      "schema_completeness_score": null,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {},
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\a99971ad1c314085a2b4738f284ace47__pdf_table__Medcork_116_HEREDEROS_DE_TORRENT_MIRANDA_S.L.",
+      "recorded_at": "2026-05-20T15:21:18"
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "method_key": "hybrid_fast",
+      "status": "ok",
+      "file_id": "b8cf8358542440e98fe6b64cf398624f",
+      "method_label": "Híbrido Rápido",
+      "elapsed_seconds": 29.009,
+      "instrument_type": "generic_block_table",
+      "filled_fields": 12,
+      "total_fields": 14,
+      "completeness_score": 0.8571,
+      "schema_filled_fields": 12,
+      "schema_total_fields": 20,
+      "schema_completeness_score": 0.6,
+      "found_tables": 1,
+      "expected_tables": 1,
+      "detected_tables": null,
+      "table_extraction_score": 1.0,
+      "row_counts": {
+        "generic_results_table": 25
+      },
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\b8cf8358542440e98fe6b64cf398624f__hybrid_fast__Medcork_116_HEREDEROS_DE_TORRENT_MIRANDA_S.L.",
+      "recorded_at": "2026-05-21T12:16:40"
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "method_key": "ocr_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "method_key": "paddleocr_vl",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "method_key": "paddleocr_vl_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "method_key": "paddle_current",
+      "status": "ok",
+      "file_id": "d83b1be71d314046806d697941907c87",
+      "method_label": "Baseline Atual",
+      "elapsed_seconds": 70.078,
+      "instrument_type": null,
+      "filled_fields": 2,
+      "total_fields": 22,
+      "completeness_score": 0.0909,
+      "schema_filled_fields": null,
+      "schema_total_fields": null,
+      "schema_completeness_score": null,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {},
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\d83b1be71d314046806d697941907c87__paddle_current__Paquimetro_MITUTOYO_ns_B22034284_-_SYMINGTON",
+      "recorded_at": "2026-05-20T15:18:29"
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "method_key": "pdf_table",
+      "status": "ok",
+      "file_id": "d93ab30f6957434eaf7262b9f82ff458",
+      "method_label": "PdfTable",
+      "elapsed_seconds": 1.426,
+      "instrument_type": null,
+      "filled_fields": 0,
+      "total_fields": 22,
+      "completeness_score": 0.0,
+      "schema_filled_fields": null,
+      "schema_total_fields": null,
+      "schema_completeness_score": null,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {},
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\d93ab30f6957434eaf7262b9f82ff458__pdf_table__Paquimetro_MITUTOYO_ns_B22034284_-_SYMINGTON",
+      "recorded_at": "2026-05-20T15:19:29"
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "method_key": "hybrid_fast",
+      "status": "ok",
+      "file_id": "f6859d535ab2449aae00fecfac921540",
+      "method_label": "Híbrido Rápido",
+      "elapsed_seconds": 138.262,
+      "instrument_type": null,
+      "filled_fields": 0,
+      "total_fields": 22,
+      "completeness_score": 0.0,
+      "schema_filled_fields": null,
+      "schema_total_fields": null,
+      "schema_completeness_score": null,
+      "found_tables": 0,
+      "expected_tables": 0,
+      "detected_tables": null,
+      "table_extraction_score": 0.0,
+      "row_counts": {},
+      "llm_conflicts": 0,
+      "archive_run_dir": "C:\\Projetos\\Tese\\simme-ai-backend\\paddle_ocr_pipeline\\backend\\archives\\f6859d535ab2449aae00fecfac921540__hybrid_fast__Paquimetro_MITUTOYO_ns_B22034284_-_SYMINGTON",
+      "recorded_at": "2026-05-20T15:08:37"
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "method_key": "ocr_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "method_key": "paddleocr_vl",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "method_key": "paddleocr_vl_llm",
+      "status": "missing",
+      "notes": "No archived run found for this document/method."
+    }
+  ]
+}

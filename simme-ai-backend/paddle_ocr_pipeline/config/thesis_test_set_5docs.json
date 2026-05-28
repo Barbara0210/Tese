@@ -1,0 +1,39 @@
+{
+  "name": "thesis_test_set_5docs",
+  "description": "Conjunto fixo de 5 certificados escolhido para avaliacao comparativa dos metodos da tese.",
+  "documents": [
+    {
+      "source_pdf": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/CITC_021_CORK SUPPLY PORTUGAL.pdf",
+      "paddleocr_vl_summary_path": "data/paddleocr_vl/CITC_021_CORK SUPPLY PORTUGAL/run_summary.json"
+    },
+    {
+      "source_pdf": "Dinamómetro EX.001 RED LION.pdf",
+      "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Dinamómetro EX.001 RED LION.pdf",
+      "paddleocr_vl_summary_path": "data/paddleocr_vl/Dinamómetro EX.001 RED LION/run_summary.json"
+    },
+    {
+      "source_pdf": "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf",
+      "paddleocr_vl_summary_path": "data/paddleocr_vl/Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL/run_summary.json"
+    },
+    {
+      "source_pdf": "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf",
+      "paddleocr_vl_summary_path": null
+    },
+    {
+      "source_pdf": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "pdf_path": "C:/Users/barbaramartins/OneDrive - EGITRON/Desktop/certificados/teste/Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+      "paddleocr_vl_summary_path": null
+    }
+  ],
+  "methods": [
+    "paddle_current",
+    "pdf_table",
+    "hybrid_fast",
+    "ocr_llm",
+    "paddleocr_vl",
+    "paddleocr_vl_llm"
+  ]
+}

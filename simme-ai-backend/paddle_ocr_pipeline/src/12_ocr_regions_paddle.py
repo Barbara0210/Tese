@@ -42,6 +42,8 @@ def _ocr_image(image_path: Path) -> str:
     result = ocr.ocr(image_np, cls=True)
     if not result:
         return ""
+    if not result[0]:
+        return ""
 
     lines = []
     for item in result[0]:

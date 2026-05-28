@@ -29,6 +29,7 @@ EVALUATION_DIR = DATA_DIR / "evaluation"
 REGIONS_DIR = DATA_DIR / "regions"
 CROPS_DIR = DATA_DIR / "crops"
 PADDLEOCR_VL_DIR = DATA_DIR / "paddleocr_vl"
+LLM_DIR = DATA_DIR / "llm"
 METRICS_SUMMARY_FILE = BACKEND_DIR / "method_runs_summary.json"
 METRICS_COMPARISON_FILE = BACKEND_DIR / "method_comparison_summary.json"
 
@@ -60,11 +61,19 @@ PIPELINES = {
     "ocr_llm": [
         "01_pdf_to_images.py",
         "02_ocr_paddle.py",
-        "14_extract_ocr_llm.py",
+        "03_segment_sections.py",
+        "04_parse_fields.py",
+        "05_parse_tables.py",
+        "16_normalize_with_ollama.py",
         "06_metrics_phase1.py",
     ],
     "paddleocr_vl": [
         "15_import_paddleocr_vl.py",
+        "06_metrics_phase1.py",
+    ],
+    "paddleocr_vl_llm": [
+        "15_import_paddleocr_vl.py",
+        "16_normalize_with_ollama.py",
         "06_metrics_phase1.py",
     ],
 }
@@ -82,6 +91,7 @@ def _clean_data_folders():
         EVALUATION_DIR,
         REGIONS_DIR,
         CROPS_DIR,
+        LLM_DIR,
     ]
 
     for folder in folders:
@@ -213,6 +223,7 @@ def _archive_run_artifacts(
     _copy_folder_contents(OCR_TEXT_DIR, run_dir / "ocr_text")
     _copy_folder_contents(REGIONS_DIR, run_dir / "regions")
     _copy_folder_contents(CROPS_DIR, run_dir / "crops")
+    _copy_folder_contents(LLM_DIR, run_dir / "llm")
     if PADDLEOCR_VL_DIR.exists():
         _copy_folder_contents(PADDLEOCR_VL_DIR, run_dir / "paddleocr_vl")
 
@@ -399,7 +410,7 @@ def process_file(file_id: str, method_key: str = "paddle_current"):
     target_pdf = RAW_PDFS_DIR / original_filename
     shutil.copy2(upload_pdf, target_pdf)
 
-    if method_key == "paddleocr_vl":
+    if method_key in {"paddleocr_vl", "paddleocr_vl_llm"}:
         _prepare_paddleocr_vl_summary(file_id, original_filename)
 
     logs = []

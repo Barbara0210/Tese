@@ -1,0 +1,488 @@
+{
+  "source_file": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+  "model": "qwen3:4b",
+  "ollama_url": "http://localhost:11434/api/generate",
+  "normalized_at": "2026-05-28T16:17:09.107952+00:00",
+  "llm_output": {
+    "instrument_type": "Paquímetro",
+    "header": {
+      "issue_date": "2022-05-18",
+      "certificate_number": "B22034284",
+      "calibration_date": "2022-05-18",
+      "lab_name": "CATIM",
+      "lab_unit": null
+    },
+    "customer": {
+      "name": "PÁGINA 1 DE 3",
+      "address": "EGITRON - ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA.\nRUA CENTRAL DA VERGADA, 1280 MOZELOS"
+    },
+    "equipment": {
+      "designation": "Paquímetro",
+      "brand": "MITUTOYO",
+      "model": "500-161-30",
+      "serial_number": "B22034284",
+      "internal_ref": null,
+      "range": null,
+      "resolution": null,
+      "estimated_resolution": null,
+      "indication": "Digital",
+      "class": null,
+      "state": null
+    },
+    "work_conditions": {
+      "location": null,
+      "temperature": null,
+      "humidity": null,
+      "accreditation_annex": null
+    },
+    "reference": {
+      "standard_or_procedure": null
+    },
+    "tables": {
+      "force_calibration_measurements": [
+        {
+          "equipment_force_dan": 3.0,
+          "error_dan": null,
+          "k": null,
+          "vef": 2.0,
+          "expanded_uncertainty_dan": null
+        },
+        {
+          "equipment_force_dan": 2.5,
+          "error_dan": 2.5,
+          "k": 0.0,
+          "vef": 2.5,
+          "expanded_uncertainty_dan": 2.5
+        },
+        {
+          "equipment_force_dan": 7.7,
+          "error_dan": 7.7,
+          "k": 0.0,
+          "vef": 7.7,
+          "expanded_uncertainty_dan": 7.7
+        },
+        {
+          "equipment_force_dan": 20.2,
+          "error_dan": 20.2,
+          "k": 0.0,
+          "vef": 20.2,
+          "expanded_uncertainty_dan": 20.2
+        },
+        {
+          "equipment_force_dan": 50.0,
+          "error_dan": 50.0,
+          "k": -0.01,
+          "vef": 50.0,
+          "expanded_uncertainty_dan": 49.99
+        },
+        {
+          "equipment_force_dan": 100.0,
+          "error_dan": 100.0,
+          "k": -0.01,
+          "vef": 100.0,
+          "expanded_uncertainty_dan": 99.99
+        },
+        {
+          "equipment_force_dan": 149.99,
+          "error_dan": 149.99,
+          "k": -0.01,
+          "vef": 150.0,
+          "expanded_uncertainty_dan": 149.99
+        }
+      ]
+    },
+    "evidence": {
+      "header": "DATA DE EMISSAO: 2022-05-18\nCERTIFICADO DE CALIBRAÇÃO\nLABORATÓRIO DE METROLOGIA - DIMENSIONAL",
+      "calibration_meta": "DATA calibração: 2022-05-18",
+      "customer": "Nome: PÁGINA 1 DE 3\nMorada: EGITRON - ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA.\nRUA CENTRAL DA VERGADA, 1280 MOZELOS",
+      "equipment": "Paquímetro\nMITUTOYO\n500-161-30\nB22034284",
+      "tables": "force_calibration_measurements: [3.0, 2.5, 7.7, 20.2, 50.0, 100.0, 149.99]"
+    },
+    "notes": "The certificate number is derived from the serial number field in the equipment section. The calibration date and issue date are the same in this certificate."
+  },
+  "context": {
+    "source_file": "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf",
+    "current_extraction": {
+      "header": {
+        "certificate_number": null,
+        "issue_date": "2022-05-18",
+        "calibration_date": "2022-05-18",
+        "lab_name": "CATIM",
+        "lab_unit": null,
+        "page_count": 5
+      },
+      "customer": {
+        "name": "PÁGINA 1 DE 3",
+        "address": "EGITRON - ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA.\nRUA CENTRAL DA VERGADA, 1280 MOZELOS"
+      },
+      "equipment": {
+        "designation": "Paquímetro",
+        "brand": "MITUTOYO",
+        "model": "500-161-30",
+        "serial_number": "B22034284",
+        "internal_ref": null,
+        "internal_reference": null,
+        "indication": "Digital",
+        "range": null,
+        "resolution": null,
+        "state": null
+      },
+      "work_conditions": {
+        "temperature": null,
+        "humidity": null,
+        "temperature_c": null,
+        "humidity_percent": null,
+        "location": null,
+        "accreditation_annex": null
+      },
+      "reference": {
+        "standard_or_procedure": null
+      },
+      "calibration": {
+        "standard": null,
+        "operation_summary": null,
+        "equipment_state": null
+      }
+    },
+    "raw_text_blocks": {
+      "header_meta": "DATA DE EMISSAO: 2022-05-18\nCERTIFICADO DE CALIBRAÇÃO\nLABORATÓRIO DE METROLOGIA - DIMENSIONAL",
+      "calibration_meta": "DATA calibração: 2022-05-18",
+      "customer": "Nome: PÁGINA 1 DE 3\nMorada: EGITRON - ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA.\nRUA CENTRAL DA VERGADA, 1280 MOZELOS",
+      "equipment": "designação: Paquímetro\nMarca: MITUTOYO\nModelo: 500-161-30\nSérie: B22034284"
+    },
+    "current_tables": {
+      "force_calibration_measurements": {
+        "columns": [
+          "equipment_force_dan",
+          "error_dan",
+          "k",
+          "vef",
+          "expanded_uncertainty_dan"
+        ],
+        "rows": [
+          {
+            "equipment_force_dan": 3.0,
+            "error_dan": null,
+            "k": null,
+            "vef": 2.0,
+            "expanded_uncertainty_dan": null,
+            "raw_cells": [
+              "Zona 1 mm",
+              "Zona 2 mm",
+              "Zona 3 mm"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 2.5,
+            "error_dan": 2.5,
+            "k": 0.0,
+            "vef": 2.5,
+            "expanded_uncertainty_dan": 2.5,
+            "raw_cells": [
+              "ENOLOGICO",
+              "2.500",
+              "2.50",
+              "2.50",
+              "2.50",
+              "0.000",
+              "0.011",
+              "2.02",
+              "150"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 7.7,
+            "error_dan": 7.7,
+            "k": 0.0,
+            "vef": 7.7,
+            "expanded_uncertainty_dan": 7.7,
+            "raw_cells": [
+              "OINDUSTRIA",
+              "7.700",
+              "7.70",
+              "7.70",
+              "7.70",
+              "0.000",
+              "0.011",
+              "2.02",
+              "150"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 20.2,
+            "error_dan": 20.2,
+            "k": 0.0,
+            "vef": 20.2,
+            "expanded_uncertainty_dan": 20.2,
+            "raw_cells": [
+              "OINDUSTRIA",
+              "20.200",
+              "20.20",
+              "20.20",
+              "20.20",
+              "0.000",
+              "0.011",
+              "2.02",
+              "150"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 50.0,
+            "error_dan": 50.0,
+            "k": -0.01,
+            "vef": 50.0,
+            "expanded_uncertainty_dan": 49.99,
+            "raw_cells": [
+              "Exteriores",
+              "50.000",
+              "50.00",
+              "50.00",
+              "49.99",
+              "-0.010",
+              "0.012",
+              "2.02",
+              "153"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 100.0,
+            "error_dan": 100.0,
+            "k": -0.01,
+            "vef": 100.0,
+            "expanded_uncertainty_dan": 99.99,
+            "raw_cells": [
+              "OINDUSTRIA",
+              "100.000",
+              "100.00",
+              "100.00",
+              "99.99",
+              "-0.010",
+              "0.013",
+              "2.02",
+              "164"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 149.99,
+            "error_dan": 149.99,
+            "k": -0.01,
+            "vef": 150.0,
+            "expanded_uncertainty_dan": 149.99,
+            "raw_cells": [
+              "OINDUSTRIA",
+              "150.000",
+              "149.99",
+              "149.99",
+              "149.99",
+              "-0.010",
+              "0.014",
+              "2.01",
+              "179"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          }
+        ],
+        "subtables": [
+          {
+            "key": "force_calibration_measurements_page_02_png",
+            "title": "page_02.png",
+            "table": {
+              "columns": [
+                "equipment_force_dan",
+                "error_dan",
+                "k",
+                "vef",
+                "expanded_uncertainty_dan"
+              ],
+              "page": "page_02.png",
+              "meta": {
+                "page": "page_02.png",
+                "gama_nominal": null,
+                "divisao": null,
+                "sentido": null,
+                "resolucao": null
+              },
+              "rows": [
+                {
+                  "equipment_force_dan": 3.0,
+                  "error_dan": null,
+                  "k": null,
+                  "vef": 2.0,
+                  "expanded_uncertainty_dan": null,
+                  "raw_cells": [
+                    "Zona 1 mm",
+                    "Zona 2 mm",
+                    "Zona 3 mm"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 2.5,
+                  "error_dan": 2.5,
+                  "k": 0.0,
+                  "vef": 2.5,
+                  "expanded_uncertainty_dan": 2.5,
+                  "raw_cells": [
+                    "ENOLOGICO",
+                    "2.500",
+                    "2.50",
+                    "2.50",
+                    "2.50",
+                    "0.000",
+                    "0.011",
+                    "2.02",
+                    "150"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 7.7,
+                  "error_dan": 7.7,
+                  "k": 0.0,
+                  "vef": 7.7,
+                  "expanded_uncertainty_dan": 7.7,
+                  "raw_cells": [
+                    "OINDUSTRIA",
+                    "7.700",
+                    "7.70",
+                    "7.70",
+                    "7.70",
+                    "0.000",
+                    "0.011",
+                    "2.02",
+                    "150"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 20.2,
+                  "error_dan": 20.2,
+                  "k": 0.0,
+                  "vef": 20.2,
+                  "expanded_uncertainty_dan": 20.2,
+                  "raw_cells": [
+                    "OINDUSTRIA",
+                    "20.200",
+                    "20.20",
+                    "20.20",
+                    "20.20",
+                    "0.000",
+                    "0.011",
+                    "2.02",
+                    "150"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 50.0,
+                  "error_dan": 50.0,
+                  "k": -0.01,
+                  "vef": 50.0,
+                  "expanded_uncertainty_dan": 49.99,
+                  "raw_cells": [
+                    "Exteriores",
+                    "50.000",
+                    "50.00",
+                    "50.00",
+                    "49.99",
+                    "-0.010",
+                    "0.012",
+                    "2.02",
+                    "153"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 100.0,
+                  "error_dan": 100.0,
+                  "k": -0.01,
+                  "vef": 100.0,
+                  "expanded_uncertainty_dan": 99.99,
+                  "raw_cells": [
+                    "OINDUSTRIA",
+                    "100.000",
+                    "100.00",
+                    "100.00",
+                    "99.99",
+                    "-0.010",
+                    "0.013",
+                    "2.02",
+                    "164"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 149.99,
+                  "error_dan": 149.99,
+                  "k": -0.01,
+                  "vef": 150.0,
+                  "expanded_uncertainty_dan": 149.99,
+                  "raw_cells": [
+                    "OINDUSTRIA",
+                    "150.000",
+                    "149.99",
+                    "149.99",
+                    "149.99",
+                    "-0.010",
+                    "0.014",
+                    "2.01",
+                    "179"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

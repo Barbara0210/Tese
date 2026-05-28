@@ -1,0 +1,15 @@
+﻿method_key,present,row_count,source_pdf,table
+hybrid_fast,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+hybrid_fast,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+paddleocr_vl,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+paddleocr_vl,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+paddleocr_vl_llm,,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+paddleocr_vl_llm,,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+paddleocr_vl_llm,,1,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_transducer
+paddleocr_vl_llm,,3,CITC_021_CORK SUPPLY PORTUGAL.pdf,reference_equipment
+paddleocr_vl,True,22,Dinamómetro EX.001 RED LION.pdf,force_calibration_measurements
+paddleocr_vl,False,0,Dinamómetro EX.001 RED LION.pdf,force_relative_errors
+paddleocr_vl,,21,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,paddleocr_vl_detected_tables
+paddleocr_vl,,2,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,reference_equipment
+paddle_current,True,25,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table
+hybrid_fast,True,25,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table

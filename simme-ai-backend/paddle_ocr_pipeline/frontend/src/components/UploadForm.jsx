@@ -12,7 +12,7 @@ export default function UploadForm({
   const [file, setFile] = useState(null);
   const [paddleSummaryFile, setPaddleSummaryFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const needsPaddleSummary = selectedMethod === "paddleocr_vl";
+  const needsPaddleSummary = ["paddleocr_vl", "paddleocr_vl_llm"].includes(selectedMethod);
 
   async function handleSubmit(event) {
     event.preventDefault();

@@ -1,0 +1,78 @@
+﻿method_key,present,row_count,source_pdf,table
+paddle_current,True,9,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+paddle_current,,2,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_environmental_conditions
+paddle_current,True,9,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+hybrid_fast,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+hybrid_fast,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+ocr_llm,True,9,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+ocr_llm,,9,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_results
+ocr_llm,,2,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_environmental_conditions
+ocr_llm,True,9,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+ocr_llm,,9,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors_table
+paddleocr_vl,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+paddleocr_vl,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+paddleocr_vl,,3,CITC_021_CORK SUPPLY PORTUGAL.pdf,reference_equipment
+paddleocr_vl_llm,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_calibration_measurements
+paddleocr_vl_llm,True,11,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_relative_errors
+paddleocr_vl_llm,,1,CITC_021_CORK SUPPLY PORTUGAL.pdf,force_transducer
+paddleocr_vl_llm,,3,CITC_021_CORK SUPPLY PORTUGAL.pdf,reference_equipment
+pdf_table,,10,Dinamómetro EX.001 RED LION.pdf,generic_table_1
+pdf_table,,10,Dinamómetro EX.001 RED LION.pdf,generic_table_2
+paddleocr_vl,True,22,Dinamómetro EX.001 RED LION.pdf,force_calibration_measurements
+paddleocr_vl,False,0,Dinamómetro EX.001 RED LION.pdf,force_relative_errors
+paddleocr_vl,,25,Dinamómetro EX.001 RED LION.pdf,paddleocr_vl_detected_tables
+paddleocr_vl_llm,,11,Dinamómetro EX.001 RED LION.pdf,calibration_results
+paddleocr_vl_llm,True,22,Dinamómetro EX.001 RED LION.pdf,force_calibration_measurements
+paddleocr_vl_llm,False,0,Dinamómetro EX.001 RED LION.pdf,force_relative_errors
+paddleocr_vl_llm,,25,Dinamómetro EX.001 RED LION.pdf,paddleocr_vl_detected_tables
+paddle_current,True,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_calibration_measurements
+paddle_current,,1,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_environmental_conditions
+paddle_current,True,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_relative_errors
+pdf_table,,9,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,generic_table_1
+pdf_table,,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,generic_table_2
+pdf_table,,34,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,generic_table_3
+hybrid_fast,True,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_calibration_measurements
+hybrid_fast,True,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_relative_errors
+ocr_llm,True,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_calibration_measurements
+ocr_llm,,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_calibration_results
+ocr_llm,,1,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_environmental_conditions
+ocr_llm,True,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_relative_errors
+ocr_llm,,10,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,force_relative_errors_table
+paddleocr_vl,,21,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,paddleocr_vl_detected_tables
+paddleocr_vl,,2,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,reference_equipment
+paddleocr_vl_llm,,21,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,paddleocr_vl_detected_tables
+paddleocr_vl_llm,,13,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,page_01
+paddleocr_vl_llm,,1,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,page_02
+paddleocr_vl_llm,,3,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,page_03
+paddleocr_vl_llm,,2,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf,reference_equipment
+paddle_current,True,24,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table
+paddle_current,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_comprimento
+paddle_current,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_diametro
+paddle_current,,1,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_humidade
+paddle_current,,7,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_peso
+pdf_table,,15,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_table_1
+pdf_table,,6,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_table_2
+hybrid_fast,True,25,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table
+hybrid_fast,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_comprimento
+hybrid_fast,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_diametro
+hybrid_fast,,2,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_humidade
+hybrid_fast,,7,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_peso
+ocr_llm,True,24,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table
+ocr_llm,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_composition
+ocr_llm,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_comprimento
+ocr_llm,,8,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_diametro
+ocr_llm,,1,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_humidade
+ocr_llm,,7,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,generic_results_table_peso
+paddleocr_vl,,46,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,paddleocr_vl_detected_tables
+paddleocr_vl_llm,,25,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,calibration_results
+paddleocr_vl_llm,,46,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf,paddleocr_vl_detected_tables
+hybrid_fast,False,0,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,E_contact_partial
+hybrid_fast,True,2,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,L_line_contact
+hybrid_fast,False,0,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,S_scale_change
+ocr_llm,,1,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,calibration
+paddleocr_vl,True,7,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,force_calibration_measurements
+paddleocr_vl,False,0,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,force_relative_errors
+paddleocr_vl,,29,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,paddleocr_vl_detected_tables
+paddleocr_vl_llm,True,7,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,force_calibration_measurements
+paddleocr_vl_llm,False,0,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,force_relative_errors
+paddleocr_vl_llm,,29,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf,paddleocr_vl_detected_tables

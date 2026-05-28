@@ -1,0 +1,269 @@
+﻿applicable,field,method_key,present,source_pdf
+False,customer.address,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,customer.name,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.brand,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.class,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.designation,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.estimated_resolution,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.internal_ref,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.model,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.range,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.resolution,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.serial_number,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.state,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,header.calibration_date,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.certificate_number,paddle_current,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,header.issue_date,paddle_current,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,reference.standard_or_procedure,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.accreditation_annex,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.humidity,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.location,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.temperature,paddle_current,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,customer.address,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,customer.name,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.brand,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.class,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.designation,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.estimated_resolution,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.internal_ref,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.model,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.range,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.resolution,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.serial_number,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.state,hybrid_fast,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,header.calibration_date,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.certificate_number,hybrid_fast,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,header.issue_date,hybrid_fast,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,reference.standard_or_procedure,hybrid_fast,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.accreditation_annex,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.humidity,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.location,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.temperature,hybrid_fast,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,customer.address,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,customer.name,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.brand,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.class,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.designation,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.estimated_resolution,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.internal_ref,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.model,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.range,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.resolution,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.serial_number,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.state,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.calibration_date,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.certificate_number,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.issue_date,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,reference.standard_or_procedure,paddleocr_vl,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.accreditation_annex,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.humidity,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.location,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.temperature,paddleocr_vl,False,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,customer.address,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,customer.name,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.brand,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.class,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.designation,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.estimated_resolution,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.internal_ref,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.model,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.range,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,equipment.resolution,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.serial_number,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,equipment.state,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.calibration_date,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.certificate_number,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,header.issue_date,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,reference.standard_or_procedure,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.accreditation_annex,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.humidity,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.location,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+False,work_conditions.temperature,paddleocr_vl_llm,True,CITC_021_CORK SUPPLY PORTUGAL.pdf
+True,customer.address,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+True,customer.name,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.brand,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.class,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+True,equipment.designation,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.estimated_resolution,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+True,equipment.internal_ref,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.model,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.range,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+False,equipment.resolution,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+True,equipment.serial_number,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.state,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+False,header.calibration_date,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+True,header.certificate_number,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+True,header.issue_date,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+True,reference.standard_or_procedure,paddle_current,True,Dinamómetro EX.001 RED LION.pdf
+False,work_conditions.accreditation_annex,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+False,work_conditions.humidity,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+False,work_conditions.location,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+False,work_conditions.temperature,paddle_current,False,Dinamómetro EX.001 RED LION.pdf
+True,customer.address,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,customer.name,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.brand,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.class,paddleocr_vl,False,Dinamómetro EX.001 RED LION.pdf
+True,equipment.designation,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.estimated_resolution,paddleocr_vl,False,Dinamómetro EX.001 RED LION.pdf
+True,equipment.internal_ref,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.model,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+False,equipment.range,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.resolution,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.serial_number,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,equipment.state,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,header.calibration_date,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,header.certificate_number,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,header.issue_date,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,reference.standard_or_procedure,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,work_conditions.accreditation_annex,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,work_conditions.humidity,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,work_conditions.location,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,work_conditions.temperature,paddleocr_vl,True,Dinamómetro EX.001 RED LION.pdf
+True,customer.address,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,customer.name,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,equipment.brand,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+False,equipment.class,paddleocr_vl,False,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,equipment.designation,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+False,equipment.estimated_resolution,paddleocr_vl,False,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+False,equipment.internal_ref,paddleocr_vl,False,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,equipment.model,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+False,equipment.range,paddleocr_vl,False,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+False,equipment.resolution,paddleocr_vl,False,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,equipment.serial_number,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,equipment.state,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,header.calibration_date,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,header.certificate_number,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,header.issue_date,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,reference.standard_or_procedure,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,work_conditions.accreditation_annex,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,work_conditions.humidity,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,work_conditions.location,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,work_conditions.temperature,paddleocr_vl,True,Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf
+True,customer.address,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,customer.name,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.brand,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.class,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.designation,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.estimated_resolution,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.internal_ref,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.model,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.range,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.resolution,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.serial_number,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.state,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,header.calibration_date,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,header.certificate_number,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,header.issue_date,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,reference.standard_or_procedure,paddle_current,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,work_conditions.accreditation_annex,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,work_conditions.humidity,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,work_conditions.location,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,work_conditions.temperature,paddle_current,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,customer.address,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,customer.name,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.brand,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.class,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.designation,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.estimated_resolution,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.indication,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.internal_ref,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.model,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.range,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.resolution,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.serial_number,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,equipment.state,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,header.certificate_number,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,header.issue_date,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,header.lab_name,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,header.lab_unit,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,reference.standard_or_procedure,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,work_conditions.accreditation_annex,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,work_conditions.humidity,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,work_conditions.location,pdf_table,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,work_conditions.temperature,pdf_table,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,customer.address,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,customer.name,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.brand,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.class,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.designation,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.estimated_resolution,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.internal_ref,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.model,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.range,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,equipment.resolution,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.serial_number,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,equipment.state,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,header.calibration_date,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,header.certificate_number,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,header.issue_date,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,reference.standard_or_procedure,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,work_conditions.accreditation_annex,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+False,work_conditions.humidity,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,work_conditions.location,hybrid_fast,True,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+True,work_conditions.temperature,hybrid_fast,False,Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf
+,customer.address,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,customer.name,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.brand,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.class,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.designation,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.estimated_resolution,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.indication,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.internal_ref,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.model,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.range,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.resolution,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.serial_number,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.state,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.certificate_number,paddle_current,True,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.issue_date,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.lab_name,paddle_current,True,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.lab_unit,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,reference.standard_or_procedure,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.accreditation_annex,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.humidity,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.location,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.temperature,paddle_current,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,customer.address,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,customer.name,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.brand,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.class,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.designation,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.estimated_resolution,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.indication,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.internal_ref,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.model,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.range,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.resolution,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.serial_number,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.state,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.certificate_number,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.issue_date,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.lab_name,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.lab_unit,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,reference.standard_or_procedure,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.accreditation_annex,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.humidity,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.location,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.temperature,pdf_table,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,customer.address,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,customer.name,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.brand,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.class,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.designation,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.estimated_resolution,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.indication,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.internal_ref,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.model,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.range,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.resolution,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.serial_number,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,equipment.state,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.certificate_number,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.issue_date,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.lab_name,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,header.lab_unit,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,reference.standard_or_procedure,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.accreditation_annex,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.humidity,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.location,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
+,work_conditions.temperature,hybrid_fast,False,Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf
