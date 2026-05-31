@@ -1,0 +1,1233 @@
+{
+  "source_file": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+  "model": "qwen3:4b",
+  "ollama_url": "http://localhost:11434/api/generate",
+  "normalized_at": "2026-05-31T19:30:21.696132+00:00",
+  "llm_output": {
+    "instrument_type": "Force Transducer",
+    "header": {
+      "issue_date": "2024-04-15",
+      "certificate_number": "03.50615",
+      "calibration_date": "2024-04-15",
+      "lab_name": "HBK (DAkkS)",
+      "lab_unit": "DAkkS"
+    },
+    "customer": {
+      "name": "Customer",
+      "address": "Address"
+    },
+    "equipment": {
+      "designation": "Transdutor de Força TOP-Z4A/20kN Classe 00",
+      "brand": "HBK",
+      "model": "TOP-Z4A/20kN",
+      "serial_number": "09.501061",
+      "internal_ref": "09.501061",
+      "range": "0-20 kN",
+      "resolution": "0.01 kN",
+      "estimated_resolution": "0.01 kN",
+      "indication": "Digital",
+      "class": "00",
+      "state": "Calibrated"
+    },
+    "work_conditions": {
+      "location": "Laboratory",
+      "temperature": "23 °C",
+      "humidity": "50 % RH",
+      "accreditation_annex": "Annex 1"
+    },
+    "reference": {
+      "standard_or_procedure": "Unidade de Medida Digital MGC Plus (03.50615) - HBK (DAkkS) / 113009 / 2025-04"
+    },
+    "tables": {
+      "force_transducer": {
+        "columns": [
+          "equipment_force_transducer",
+          "calibration_date",
+          "calibration_interval",
+          "calibration_type",
+          "calibration_method",
+          "calibration_uncertainty",
+          "calibration_certification"
+        ],
+        "rows": [
+          {
+            "equipment_force_transducer": "Transdutor de Força TOP-Z4A/20kN Classe 00",
+            "calibration_date": "2024-04-15",
+            "calibration_interval": "12 months",
+            "calibration_type": "Primary",
+            "calibration_method": "Direct comparison",
+            "calibration_uncertainty": "0.01 kN",
+            "calibration_certification": "Yes"
+          }
+        ]
+      }
+    },
+    "evidence": {
+      "calibration_report": "Calibration report for Transdutor de Força TOP-Z4A/20kN Classe 00",
+      "traceability": "HBK (DAkkS) / 113009 / 2025-04",
+      "certificate_validity": "2025-04"
+    },
+    "notes": "This calibration report is valid for 12 months from the calibration date."
+  },
+  "rejected_unsupported": [
+    {
+      "field": "equipment.range",
+      "llm_suggestion": "0-20 kN",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "field": "equipment.resolution",
+      "llm_suggestion": "0.01 kN",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "field": "equipment.estimated_resolution",
+      "llm_suggestion": "0.01 kN",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "field": "work_conditions.location",
+      "llm_suggestion": "Laboratory",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "field": "work_conditions.temperature",
+      "llm_suggestion": "23 °C",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "field": "work_conditions.humidity",
+      "llm_suggestion": "50 % RH",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "field": "work_conditions.accreditation_annex",
+      "llm_suggestion": "Annex 1",
+      "reason": "Suggestion was not found in the original OCR/VL evidence."
+    },
+    {
+      "table": "force_transducer",
+      "reason": "LLM table contains values not found in the original OCR/VL evidence.",
+      "unsupported_examples": [
+        "2024-04-15",
+        "12 months",
+        "Primary",
+        "Direct comparison",
+        "0.01 kN",
+        "Yes"
+      ]
+    }
+  ],
+  "context": {
+    "source_file": "CITC_021_CORK SUPPLY PORTUGAL.pdf",
+    "current_extraction": {
+      "header": {
+        "certificate_number": "LMF20245017226/10",
+        "issue_date": "2024-10-17",
+        "calibration_date": "2024-10-11",
+        "lab_name": "CATIM",
+        "lab_unit": null,
+        "page_count": 4
+      },
+      "customer": {
+        "name": "EGITRON-ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA",
+        "address": "RUA CENTRAL DA VERGADA, 1280\n4535 - 166 - MOZELOS VFR"
+      },
+      "equipment": {
+        "designation": "Máquina Universal de Ensao",
+        "brand": "EGITRON",
+        "model": "CITC-2018-01",
+        "serial_number": "021",
+        "internal_ref": null,
+        "internal_reference": null,
+        "indication": "Digital",
+        "range": null,
+        "resolution": null,
+        "state": "O equipamento encontra-se em bom estado."
+      },
+      "work_conditions": {
+        "temperature": null,
+        "humidity": null,
+        "temperature_c": null,
+        "humidity_percent": null,
+        "location": null,
+        "accreditation_annex": null
+      },
+      "reference": {
+        "standard_or_procedure": "EN ISO 7500-1:2018"
+      },
+      "calibration": {
+        "standard": "EN ISO 7500-1:2018",
+        "operation_summary": "Calibração segundo a norma EN ISO 7500-1:2018. A calibração foi efectuada com força lida no indicador da força da máquina de ensaio constante (transdutores de força) ou com força verdadeira constante (pesos). Foram realizadas três series para todos os patamares com força crescente. Todas as medições foram efectuadas nas instalações do cliente acima referido.",
+        "equipment_state": "O equipamento encontra-se em bom estado."
+      }
+    },
+    "raw_text_blocks": {
+      "header_meta": "DATA DE EMISSAO: 2024-10-17\nCertificado de Calibração\nLABORATÓRIO DE METROLOGIA - FORÇA\nCertificado: LMF20245017226/10",
+      "calibration_meta": "DATA calibração: 2024-10-11",
+      "customer": "Nome: EGITRON-ENGENHARIA E AUTOMAÇÃO INDUSTRIAL, LDA\nMorada: RUA CENTRAL DA VERGADA, 1280\n4535 - 166 - MOZELOS VFR",
+      "equipment": "designação: Máquina Universal de Ensao\nMarca: EGITRON\nModelo: CITC-2018-01\nSérie: 021",
+      "equipment_state": "Estado do equipamento: O equipamento encontra-se em bom estado.",
+      "description": "Calibração segundo a norma EN ISO 7500-1:2018. A calibração foi efectuada com força lida no indicador da força da máquina de ensaio constante (transdutores de força) ou com força verdadeira constante (pesos). Foram realizadas três series para todos os patamares com força crescente. Todas as medições foram efectuadas nas instalações do cliente acima referido."
+    },
+    "current_tables": {
+      "force_calibration_measurements": {
+        "columns": [
+          "equipment_force_dan",
+          "error_dan",
+          "k",
+          "vef",
+          "expanded_uncertainty_dan"
+        ],
+        "rows": [
+          {
+            "equipment_force_dan": 60.0,
+            "error_dan": -0.07,
+            "k": 2.02,
+            "vef": 148.0,
+            "expanded_uncertainty_dan": 0.15,
+            "raw_cells": [
+              "60.0",
+              "-0.07",
+              "2.01",
+              "349",
+              "0.24"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 120.0,
+            "error_dan": -0.08,
+            "k": 2.01,
+            "vef": 349.0,
+            "expanded_uncertainty_dan": 0.24,
+            "raw_cells": [
+              "120.0",
+              "-0.08",
+              "2.01",
+              "314",
+              "0.35"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 180.0,
+            "error_dan": 0.01,
+            "k": 2.01,
+            "vef": 314.0,
+            "expanded_uncertainty_dan": 0.35,
+            "raw_cells": [
+              "180.0",
+              "0.01",
+              "2.01",
+              "210",
+              "0.42"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 240.0,
+            "error_dan": 0.04,
+            "k": 2.01,
+            "vef": 210.0,
+            "expanded_uncertainty_dan": 0.42,
+            "raw_cells": [
+              "240.0",
+              "0.04",
+              "2.01",
+              "11",
+              "0.76"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 300.0,
+            "error_dan": 0.28,
+            "k": 2.25,
+            "vef": 11.0,
+            "expanded_uncertainty_dan": 0.76,
+            "raw_cells": [
+              "300.0",
+              "0.28",
+              "2.25",
+              "11",
+              "0.76"
+            ],
+            "table_id": "force_calibration_measurements_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 300.0,
+            "error_dan": 1.06,
+            "k": 2.17,
+            "vef": 16.0,
+            "expanded_uncertainty_dan": 0.39,
+            "raw_cells": [
+              "300.0",
+              "1.06",
+              "2.06",
+              "42",
+              "0.64"
+            ],
+            "table_id": "force_calibration_measurements_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 600.0,
+            "error_dan": 2.6,
+            "k": 2.06,
+            "vef": 42.0,
+            "expanded_uncertainty_dan": 0.64,
+            "raw_cells": [
+              "600.0",
+              "2.60",
+              "2.37",
+              "8",
+              "1.4"
+            ],
+            "table_id": "force_calibration_measurements_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 900.0,
+            "error_dan": 2.5,
+            "k": 2.37,
+            "vef": 8.0,
+            "expanded_uncertainty_dan": 1.4,
+            "raw_cells": [
+              "900.0",
+              "2.5",
+              "2.08",
+              "34",
+              "1.3"
+            ],
+            "table_id": "force_calibration_measurements_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 1200.0,
+            "error_dan": 4.0,
+            "k": 2.08,
+            "vef": 34.0,
+            "expanded_uncertainty_dan": 1.3,
+            "raw_cells": [
+              "1 200.0",
+              "4.0",
+              "2.20",
+              "14",
+              "1.9"
+            ],
+            "table_id": "force_calibration_measurements_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 1500.0,
+            "error_dan": 4.3,
+            "k": 2.2,
+            "vef": 14.0,
+            "expanded_uncertainty_dan": 1.9,
+            "raw_cells": [
+              "1 500.0",
+              "4.3",
+              "2.37",
+              "8",
+              "2.7"
+            ],
+            "table_id": "force_calibration_measurements_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 1800.0,
+            "error_dan": 4.4,
+            "k": 2.37,
+            "vef": 8.0,
+            "expanded_uncertainty_dan": 2.7,
+            "raw_cells": [
+              "1 800.0",
+              "4.4",
+              "2.37",
+              "8",
+              "2.7"
+            ],
+            "table_id": "force_calibration_measurements_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          }
+        ],
+        "subtables": [
+          {
+            "key": "force_calibration_measurements_page_02_png",
+            "title": "page_02.png",
+            "table": {
+              "columns": [
+                "equipment_force_dan",
+                "error_dan",
+                "k",
+                "vef",
+                "expanded_uncertainty_dan"
+              ],
+              "page": "page_02.png",
+              "meta": {
+                "page": "page_02.png",
+                "gama_nominal": null,
+                "divisao": null,
+                "sentido": null,
+                "resolucao": null
+              },
+              "rows": [
+                {
+                  "equipment_force_dan": 60.0,
+                  "error_dan": -0.07,
+                  "k": 2.02,
+                  "vef": 148.0,
+                  "expanded_uncertainty_dan": 0.15,
+                  "raw_cells": [
+                    "60.0",
+                    "-0.07",
+                    "2.01",
+                    "349",
+                    "0.24"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 120.0,
+                  "error_dan": -0.08,
+                  "k": 2.01,
+                  "vef": 349.0,
+                  "expanded_uncertainty_dan": 0.24,
+                  "raw_cells": [
+                    "120.0",
+                    "-0.08",
+                    "2.01",
+                    "314",
+                    "0.35"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 180.0,
+                  "error_dan": 0.01,
+                  "k": 2.01,
+                  "vef": 314.0,
+                  "expanded_uncertainty_dan": 0.35,
+                  "raw_cells": [
+                    "180.0",
+                    "0.01",
+                    "2.01",
+                    "210",
+                    "0.42"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 240.0,
+                  "error_dan": 0.04,
+                  "k": 2.01,
+                  "vef": 210.0,
+                  "expanded_uncertainty_dan": 0.42,
+                  "raw_cells": [
+                    "240.0",
+                    "0.04",
+                    "2.01",
+                    "11",
+                    "0.76"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 300.0,
+                  "error_dan": 0.28,
+                  "k": 2.25,
+                  "vef": 11.0,
+                  "expanded_uncertainty_dan": 0.76,
+                  "raw_cells": [
+                    "300.0",
+                    "0.28",
+                    "2.25",
+                    "11",
+                    "0.76"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "key": "force_calibration_measurements_page_03_png",
+            "title": "page_03.png",
+            "table": {
+              "columns": [
+                "equipment_force_dan",
+                "error_dan",
+                "k",
+                "vef",
+                "expanded_uncertainty_dan"
+              ],
+              "page": "page_03.png",
+              "meta": {
+                "page": "page_03.png",
+                "gama_nominal": null,
+                "divisao": null,
+                "sentido": null,
+                "resolucao": null
+              },
+              "rows": [
+                {
+                  "equipment_force_dan": 300.0,
+                  "error_dan": 1.06,
+                  "k": 2.17,
+                  "vef": 16.0,
+                  "expanded_uncertainty_dan": 0.39,
+                  "raw_cells": [
+                    "300.0",
+                    "1.06",
+                    "2.06",
+                    "42",
+                    "0.64"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 600.0,
+                  "error_dan": 2.6,
+                  "k": 2.06,
+                  "vef": 42.0,
+                  "expanded_uncertainty_dan": 0.64,
+                  "raw_cells": [
+                    "600.0",
+                    "2.60",
+                    "2.37",
+                    "8",
+                    "1.4"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 900.0,
+                  "error_dan": 2.5,
+                  "k": 2.37,
+                  "vef": 8.0,
+                  "expanded_uncertainty_dan": 1.4,
+                  "raw_cells": [
+                    "900.0",
+                    "2.5",
+                    "2.08",
+                    "34",
+                    "1.3"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 1200.0,
+                  "error_dan": 4.0,
+                  "k": 2.08,
+                  "vef": 34.0,
+                  "expanded_uncertainty_dan": 1.3,
+                  "raw_cells": [
+                    "1 200.0",
+                    "4.0",
+                    "2.20",
+                    "14",
+                    "1.9"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 1500.0,
+                  "error_dan": 4.3,
+                  "k": 2.2,
+                  "vef": 14.0,
+                  "expanded_uncertainty_dan": 1.9,
+                  "raw_cells": [
+                    "1 500.0",
+                    "4.3",
+                    "2.37",
+                    "8",
+                    "2.7"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 1800.0,
+                  "error_dan": 4.4,
+                  "k": 2.37,
+                  "vef": 8.0,
+                  "expanded_uncertainty_dan": 2.7,
+                  "raw_cells": [
+                    "1 800.0",
+                    "4.4",
+                    "2.37",
+                    "8",
+                    "2.7"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "force_relative_errors": {
+        "columns": [
+          "equipment_force_dan",
+          "q_percent",
+          "b_percent",
+          "a_percent",
+          "fo_percent",
+          "class"
+        ],
+        "rows": [
+          {
+            "equipment_force_dan": 60.0,
+            "q_percent": -0.12,
+            "b_percent": 0.13,
+            "a_percent": 0.17,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "60.0",
+              "-0.12",
+              "0.13",
+              "0.17",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 120.0,
+            "q_percent": -0.06,
+            "b_percent": 0.04,
+            "a_percent": 0.08,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "120.0",
+              "-0.06",
+              "0.04",
+              "0.08",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 180.0,
+            "q_percent": 0.0,
+            "b_percent": 0.01,
+            "a_percent": 0.06,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "180.0",
+              "0.00",
+              "0.01",
+              "0.06",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 240.0,
+            "q_percent": 0.02,
+            "b_percent": 0.02,
+            "a_percent": 0.04,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "240.0",
+              "0.02",
+              "0.02",
+              "0.04",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 300.0,
+            "q_percent": 0.09,
+            "b_percent": 0.22,
+            "a_percent": 0.03,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "300.0",
+              "0.09",
+              "0.22",
+              "0.03",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_02_png",
+            "meta": {
+              "page": "page_02.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 300.0,
+            "q_percent": 0.36,
+            "b_percent": 0.12,
+            "a_percent": 0.03,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "300.0",
+              "0.36",
+              "0.12",
+              "0.03",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 600.0,
+            "q_percent": 0.44,
+            "b_percent": 0.07,
+            "a_percent": 0.02,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "600.0",
+              "0.44",
+              "0.07",
+              "0.02",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 900.0,
+            "q_percent": 0.28,
+            "b_percent": 0.14,
+            "a_percent": 0.01,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "900.0",
+              "0.28",
+              "0.14",
+              "0.01",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 1200.0,
+            "q_percent": 0.34,
+            "b_percent": 0.07,
+            "a_percent": 0.01,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "1 200.0",
+              "0.34",
+              "0.07",
+              "0.01",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 1500.0,
+            "q_percent": 0.29,
+            "b_percent": 0.11,
+            "a_percent": 0.01,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "1 500.0",
+              "0.29",
+              "0.11",
+              "0.01",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          },
+          {
+            "equipment_force_dan": 1800.0,
+            "q_percent": 0.25,
+            "b_percent": 0.15,
+            "a_percent": 0.01,
+            "fo_percent": 0.0,
+            "class": "Classe 0,5",
+            "raw_cells": [
+              "1 800.0",
+              "0.25",
+              "0.15",
+              "0.01",
+              "0.00",
+              "Classe 0,5"
+            ],
+            "table_id": "force_relative_errors_page_03_png",
+            "meta": {
+              "page": "page_03.png",
+              "gama_nominal": null,
+              "divisao": null,
+              "sentido": null,
+              "resolucao": null
+            }
+          }
+        ],
+        "subtables": [
+          {
+            "key": "force_relative_errors_page_02_png",
+            "title": "page_02.png",
+            "table": {
+              "columns": [
+                "equipment_force_dan",
+                "q_percent",
+                "b_percent",
+                "a_percent",
+                "fo_percent",
+                "class"
+              ],
+              "page": "page_02.png",
+              "meta": {
+                "page": "page_02.png",
+                "gama_nominal": null,
+                "divisao": null,
+                "sentido": null,
+                "resolucao": null
+              },
+              "rows": [
+                {
+                  "equipment_force_dan": 60.0,
+                  "q_percent": -0.12,
+                  "b_percent": 0.13,
+                  "a_percent": 0.17,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "60.0",
+                    "-0.12",
+                    "0.13",
+                    "0.17",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 120.0,
+                  "q_percent": -0.06,
+                  "b_percent": 0.04,
+                  "a_percent": 0.08,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "120.0",
+                    "-0.06",
+                    "0.04",
+                    "0.08",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 180.0,
+                  "q_percent": 0.0,
+                  "b_percent": 0.01,
+                  "a_percent": 0.06,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "180.0",
+                    "0.00",
+                    "0.01",
+                    "0.06",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 240.0,
+                  "q_percent": 0.02,
+                  "b_percent": 0.02,
+                  "a_percent": 0.04,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "240.0",
+                    "0.02",
+                    "0.02",
+                    "0.04",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 300.0,
+                  "q_percent": 0.09,
+                  "b_percent": 0.22,
+                  "a_percent": 0.03,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "300.0",
+                    "0.09",
+                    "0.22",
+                    "0.03",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "key": "force_relative_errors_page_03_png",
+            "title": "page_03.png",
+            "table": {
+              "columns": [
+                "equipment_force_dan",
+                "q_percent",
+                "b_percent",
+                "a_percent",
+                "fo_percent",
+                "class"
+              ],
+              "page": "page_03.png",
+              "meta": {
+                "page": "page_03.png",
+                "gama_nominal": null,
+                "divisao": null,
+                "sentido": null,
+                "resolucao": null
+              },
+              "rows": [
+                {
+                  "equipment_force_dan": 300.0,
+                  "q_percent": 0.36,
+                  "b_percent": 0.12,
+                  "a_percent": 0.03,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "300.0",
+                    "0.36",
+                    "0.12",
+                    "0.03",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 600.0,
+                  "q_percent": 0.44,
+                  "b_percent": 0.07,
+                  "a_percent": 0.02,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "600.0",
+                    "0.44",
+                    "0.07",
+                    "0.02",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 900.0,
+                  "q_percent": 0.28,
+                  "b_percent": 0.14,
+                  "a_percent": 0.01,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "900.0",
+                    "0.28",
+                    "0.14",
+                    "0.01",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 1200.0,
+                  "q_percent": 0.34,
+                  "b_percent": 0.07,
+                  "a_percent": 0.01,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "1 200.0",
+                    "0.34",
+                    "0.07",
+                    "0.01",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 1500.0,
+                  "q_percent": 0.29,
+                  "b_percent": 0.11,
+                  "a_percent": 0.01,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "1 500.0",
+                    "0.29",
+                    "0.11",
+                    "0.01",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                },
+                {
+                  "equipment_force_dan": 1800.0,
+                  "q_percent": 0.25,
+                  "b_percent": 0.15,
+                  "a_percent": 0.01,
+                  "fo_percent": 0.0,
+                  "class": "Classe 0,5",
+                  "raw_cells": [
+                    "1 800.0",
+                    "0.25",
+                    "0.15",
+                    "0.01",
+                    "0.00",
+                    "Classe 0,5"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "reference_equipment": {
+        "columns": [
+          "standard",
+          "catim_number",
+          "traceability_certificate_validity"
+        ],
+        "rows": [
+          {
+            "standard": "Unidade de Medida Digital MGC Plus",
+            "catim_number": "03.50615",
+            "traceability_certificate_validity": "HBK (DAkkS) / 113009 / 2025-04",
+            "raw_cells": [
+              "Unidade de Medida Digital MGC Plus",
+              "03.50615",
+              "HBK (DAkkS) / 113009 / 2025-04"
+            ],
+            "table_id": "reference_equipment_page_01_png_1",
+            "meta": {
+              "page": "page_01.png"
+            }
+          },
+          {
+            "standard": "Transdutor de Força TOP-Z4A/20kN Classe 00",
+            "catim_number": "09.501061",
+            "traceability_certificate_validity": "HBK (DAkkS) / 111302 / 2025-02",
+            "raw_cells": [
+              "Transdutor de Força TOP-Z4A/20kN Classe 00",
+              "09.501061",
+              "HBK (DAkkS) / 111302 / 2025-02"
+            ],
+            "table_id": "reference_equipment_page_01_png_1",
+            "meta": {
+              "page": "page_01.png"
+            }
+          },
+          {
+            "standard": "Transdutor de Força C2/10kN Classe 1",
+            "catim_number": "07.50910",
+            "traceability_certificate_validity": "HBK / DAkkS / 101265 / 2025-02",
+            "raw_cells": [
+              "Transdutor de Força C2/10kN Classe 1",
+              "07.50910",
+              "HBK / DAkkS / 101265 / 2025-02"
+            ],
+            "table_id": "reference_equipment_page_01_png_1",
+            "meta": {
+              "page": "page_01.png"
+            }
+          }
+        ],
+        "subtables": [
+          {
+            "key": "reference_equipment_page_01_png_1",
+            "title": "page_01.png - Padrão CATIM N° Rastreabilidade / Certificado / Validade",
+            "table": {
+              "columns": [
+                "standard",
+                "catim_number",
+                "traceability_certificate_validity"
+              ],
+              "page": "page_01.png",
+              "meta": {
+                "page": "page_01.png"
+              },
+              "rows": [
+                {
+                  "standard": "Unidade de Medida Digital MGC Plus",
+                  "catim_number": "03.50615",
+                  "traceability_certificate_validity": "HBK (DAkkS) / 113009 / 2025-04",
+                  "raw_cells": [
+                    "Unidade de Medida Digital MGC Plus",
+                    "03.50615",
+                    "HBK (DAkkS) / 113009 / 2025-04"
+                  ]
+                },
+                {
+                  "standard": "Transdutor de Força TOP-Z4A/20kN Classe 00",
+                  "catim_number": "09.501061",
+                  "traceability_certificate_validity": "HBK (DAkkS) / 111302 / 2025-02",
+                  "raw_cells": [
+                    "Transdutor de Força TOP-Z4A/20kN Classe 00",
+                    "09.501061",
+                    "HBK (DAkkS) / 111302 / 2025-02"
+                  ]
+                },
+                {
+                  "standard": "Transdutor de Força C2/10kN Classe 1",
+                  "catim_number": "07.50910",
+                  "traceability_certificate_validity": "HBK / DAkkS / 101265 / 2025-02",
+                  "raw_cells": [
+                    "Transdutor de Força C2/10kN Classe 1",
+                    "07.50910",
+                    "HBK / DAkkS / 101265 / 2025-02"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

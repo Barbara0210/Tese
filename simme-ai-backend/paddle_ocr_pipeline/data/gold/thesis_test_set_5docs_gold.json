@@ -1,0 +1,124 @@
+{
+  "name": "thesis_test_set_5docs_gold",
+  "description": "Gold set manual compacto para avaliar correcao real nos 5 certificados usados na analise da tese. Valores omitidos nao entram na avaliacao.",
+  "documents": {
+    "CITC_021_CORK SUPPLY PORTUGAL.pdf": {
+      "instrument_type": "force_calibration",
+      "fields": {
+        "header.issue_date": "2024-10-17",
+        "header.certificate_number": "LMF20245017226/10",
+        "header.calibration_date": "2024-10-11",
+        "header.lab_name": "CATIM",
+        "customer.name": "EGITRON-ENGENHARIA E AUTOMACAO INDUSTRIAL, LDA",
+        "customer.address": "RUA CENTRAL DA VERGADA, 1280 4535 - 166 - MOZELOS VFR",
+        "equipment.designation": "Maquina Universal de Ensaio",
+        "equipment.brand": "EGITRON",
+        "equipment.model": "CITC-2018-01",
+        "equipment.serial_number": "021",
+        "equipment.indication": "Digital",
+        "equipment.state": "O equipamento encontra-se em bom estado",
+        "reference.standard_or_procedure": "EN ISO 7500-1:2018"
+      },
+      "tables": {
+        "force_calibration_measurements": {"min_rows": 11},
+        "force_relative_errors": {"min_rows": 11},
+        "reference_equipment": {"min_rows": 3}
+      }
+    },
+    "Dinamómetro EX.001 RED LION.pdf": {
+      "instrument_type": "force_calibration",
+      "fields": {
+        "header.issue_date": "2026-01-05",
+        "header.certificate_number": "LMF20255023164/30",
+        "header.calibration_date": "2026-01-05",
+        "header.lab_name": "CATIM",
+        "customer.name": "EGITRON - ENGENHARIA E AUTOMACAO INDUSTRIAL, LDA",
+        "customer.address": "RUA CENTRAL DA VERGADA, 1280 MOZELOS 4535-166 MOZELOS VFR",
+        "equipment.designation": "Dinamometro",
+        "equipment.brand": "AEP TRANSDUCERS / RED LION",
+        "equipment.model": "TS / ULCC-2005-01",
+        "equipment.serial_number": "0306 / 001",
+        "equipment.internal_ref": "EX.001",
+        "equipment.range": "0 a 200 daN",
+        "equipment.resolution": "0.1 daN",
+        "work_conditions.location": "Porto",
+        "work_conditions.temperature": "(23 +/- 5) C",
+        "work_conditions.humidity": "(35 e 60)%hr",
+        "work_conditions.accreditation_annex": "M0003-1",
+        "reference.standard_or_procedure": "LMF P01 02 Rev.B1 de 2021-03-08 e LMF P01 06 Rev.A1 de 2021-03-08"
+      },
+      "tables": {
+        "force_calibration_measurements": {"min_rows": 22}
+      }
+    },
+    "Extralab2G_025_GRUPO SOLAR DE SAMANIEGO SL.pdf": {
+      "instrument_type": "force_calibration",
+      "fields": {
+        "header.issue_date": "2025-07-14",
+        "header.certificate_number": "LMF20255013026/10",
+        "header.calibration_date": "2025-07-14",
+        "customer.name": "GRUPO SOLAR DE SAMANIEGO SL",
+        "customer.address": "Calle Mateo Inurria, 30 28036 Madrid",
+        "equipment.designation": "Maquina Universal de Ensaio",
+        "equipment.brand": "EGITRON",
+        "equipment.model": "EXT2G-2023-01",
+        "equipment.serial_number": "025",
+        "equipment.indication": "Digital",
+        "work_conditions.location": "nas instalacoes do cliente",
+        "work_conditions.temperature": "27.1 0.1 C",
+        "work_conditions.humidity": "52.5 1.6 %hr",
+        "work_conditions.accreditation_annex": "M0003-1",
+        "reference.standard_or_procedure": "EN ISO 7500-1:2018 e LMF P01 01 Rev.B4 de 2022-05-03"
+      },
+      "tables": {
+        "force_calibration_measurements": {"min_rows": 10},
+        "force_relative_errors": {"min_rows": 10},
+        "reference_equipment": {"min_rows": 2}
+      }
+    },
+    "Medcork_116_HEREDEROS DE TORRENT MIRANDA S.L..pdf": {
+      "instrument_type": "generic_block_table",
+      "fields": {
+        "header.issue_date": "2025-10-03",
+        "header.certificate_number": "LMF20255016302/20",
+        "header.calibration_date": "2025-09-26",
+        "header.lab_name": "CATIM",
+        "customer.name": "HEREDEROS DE TORRENT MIRANDA S.L.",
+        "customer.address": "Parque Empresarial, Calle de la Investigacion, Parc.6, 1 1407 Jerez de la Frontera - Cadiz Espana",
+        "equipment.designation": "MEDCORK",
+        "equipment.brand": "EGITRON",
+        "equipment.model": "MEDC-2016-01",
+        "equipment.serial_number": "116",
+        "equipment.state": "Nao foram identificadas condicoes inadequadas que afetem os resultados",
+        "work_conditions.location": "Instalacoes do cliente",
+        "reference.standard_or_procedure": "LMD P 83"
+      },
+      "tables": {
+        "generic_results_table": {"min_rows": 24}
+      }
+    },
+    "Paquimetro MITUTOYO ns B22034284 - SYMINGTON.pdf": {
+      "instrument_type": "caliper",
+      "fields": {
+        "header.issue_date": "2022-05-18",
+        "header.certificate_number": "LMD20225006488/10",
+        "header.calibration_date": "2022-05-18",
+        "header.lab_name": "CATIM",
+        "customer.name": "EGITRON - ENGENHARIA E AUTOMACAO INDUSTRIAL, LDA",
+        "customer.address": "RUA CENTRAL DA VERGADA, 1280 MOZELOS",
+        "equipment.designation": "Paquimetro",
+        "equipment.brand": "MITUTOYO",
+        "equipment.model": "500-161-30",
+        "equipment.serial_number": "B22034284",
+        "equipment.indication": "Digital",
+        "reference.standard_or_procedure": "ISO 13385-1:2019"
+      },
+      "tables": {
+        "E_contact_partial": {"min_rows": 6},
+        "S_scale_change": {"min_rows": 4},
+        "L_line_contact": {"min_rows": 1},
+        "reference_equipment": {"min_rows": 5}
+      }
+    }
+  }
+}

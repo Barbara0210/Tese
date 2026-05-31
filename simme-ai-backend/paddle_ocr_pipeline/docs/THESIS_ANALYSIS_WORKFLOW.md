@@ -85,6 +85,42 @@ Com os ficheiros:
 - `row_counts`: numero de linhas por tabela extraida.
 - `llm_conflicts`: sugestoes do LLM que divergiram de valores ja preenchidos por OCR/VL.
 
+## Avaliar correcao com gold set manual
+
+Para separar campos simplesmente preenchidos de campos realmente corretos, foi
+criado um gold set manual compacto:
+
+```text
+data/gold/thesis_test_set_5docs_gold.json
+```
+
+Depois de todos os metodos estarem arquivados, correr:
+
+```powershell
+python scripts/evaluate_gold_set.py
+```
+
+Isto cria uma pasta em:
+
+```text
+data/evaluation/<timestamp>__thesis_gold_5docs/
+```
+
+Com os ficheiros:
+
+- `gold_summary.json`: resumo estruturado;
+- `gold_runs.csv`: uma linha por documento/metodo com preenchimento e correcao;
+- `gold_fields.csv`: comparacao campo a campo;
+- `gold_tables.csv`: comparacao tabela a tabela;
+- `gold_report.md`: resumo Markdown para apoiar a escrita da tese.
+
+Metricas principais:
+
+- `field_fill_rate_on_gold`: proporcao dos campos gold em que o metodo devolveu algum valor;
+- `field_accuracy`: proporcao dos campos gold em que o valor devolvido coincide com o gold;
+- `field_precision_when_filled`: dos campos preenchidos, quantos estavam corretos;
+- `table_accuracy`: proporcao das tabelas gold encontradas com pelo menos o numero minimo de linhas definido.
+
 ## O que observar qualitativamente
 
 - Se o metodo leu corretamente o texto mas falhou no parser.

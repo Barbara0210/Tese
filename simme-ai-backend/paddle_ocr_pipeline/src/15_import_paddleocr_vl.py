@@ -77,6 +77,33 @@ def clean_text(text: Any) -> str:
     return repair_portuguese_text(value.strip())
 
 
+def is_page_marker(value: Any) -> bool:
+    normalized = normalize_label(clean_text(value))
+    return bool(re.fullmatch(r"PAGINA\s+\d+\s+DE\s+\d+", normalized))
+
+
+def is_layout_noise_text(value: Any) -> bool:
+    normalized = normalize_label(clean_text(value))
+    if not normalized:
+        return True
+    return is_page_marker(normalized) or normalized in {
+        "CLIENTE",
+        "EQUIPAMENTO CALIBRADO",
+        "DESCRICAO",
+        "DESCRIÇÃO",
+        "RESULTADOS",
+    }
+
+
+def clean_candidate_text(value: Any) -> str | None:
+    cleaned = clean_text(value)
+    if not cleaned:
+        return None
+    lines = [line for line in cleaned.splitlines() if not is_layout_noise_text(line)]
+    cleaned = clean_text("\n".join(lines))
+    return cleaned if cleaned and not is_layout_noise_text(cleaned) else None
+
+
 def parse_number(value: Any) -> float | None:
     text = html.unescape(str(value or "")).strip()
     if not text:
@@ -293,10 +320,14 @@ def value_after_row_label(rows: list[list[str]], labels: set[str]) -> str | None
     for index, row in enumerate(rows):
         if not row_has_label(row, labels):
             continue
-        if len(row) > 1 and clean_text(row[1]):
-            return clean_text(row[1])
+        if len(row) > 1:
+            value = clean_candidate_text(row[1])
+            if value:
+                return value
         if index + 1 < len(rows) and rows[index + 1]:
-            return clean_text(rows[index + 1][0])
+            value = clean_candidate_text(rows[index + 1][0])
+            if value:
+                return value
     return None
 
 
@@ -306,7 +337,7 @@ def values_after_repeated_label(rows: list[list[str]], label: str) -> list[str]:
     for row in rows:
         for index, cell in enumerate(row[:-1]):
             if normalize_label(cell) == wanted:
-                value = clean_text(row[index + 1])
+                value = clean_candidate_text(row[index + 1])
                 if value and value != "---":
                     values.append(value)
     return values
@@ -315,6 +346,7 @@ def values_after_repeated_label(rows: list[list[str]], label: str) -> list[str]:
 def join_values(values: list[str]) -> str | None:
     unique: list[str] = []
     for value in values:
+        value = clean_candidate_text(value)
         if value and value not in unique:
             unique.append(value)
     return " / ".join(unique) if unique else None
@@ -451,7 +483,7 @@ def extract_customer(page: PageResult | None) -> dict[str, Any]:
     if end is None or end <= start:
         end = min(start + 4, len(contents))
 
-    values = [text for text in contents[start + 1 : end] if text]
+    values = [value for text in contents[start + 1 : end] if (value := clean_candidate_text(text))]
     return {
         "name": values[0] if values else None,
         "address": "\n".join(values[1:]) if len(values) > 1 else None,
@@ -465,7 +497,7 @@ def extract_prefixed_value(pages: list[PageResult], label: str) -> str | None:
             text = block_content(block)
             normalized = normalize_label(text)
             if normalized.startswith(wanted):
-                value = value_after_colon(text)
+                value = clean_candidate_text(value_after_colon(text))
                 return value or None
     return None
 
@@ -822,14 +854,26 @@ def page_meta(page: PageResult) -> dict[str, str | None]:
 
 
 def find_measurement_header_index(rows: list[list[str]]) -> int | None:
+    if looks_like_caliper_table(rows):
+        return None
     for index, row in enumerate(rows):
         header = normalize_label(" ".join(row))
-        if "EQUIPAMENTO" in header and "ERRO" in header and "INCERTEZA EXPANDIDA" in header and "RELATIVOS" not in header:
+        if (
+            "EQUIPAMENTO" in header
+            and "ERRO" in header
+            and "INCERTEZA" in header
+            and "RELATIVOS" not in header
+            and "MAXILAS" not in header
+            and "VALOR PADRA" not in header
+            and "LEITURA" not in header
+        ):
             return index
     return None
 
 
 def find_relative_header_index(rows: list[list[str]]) -> int | None:
+    if looks_like_caliper_table(rows):
+        return None
     for index, row in enumerate(rows):
         header = normalize_label(" ".join(" ".join(candidate) for candidate in rows[index:index + 2]))
         if "EQUIPAMENTO" in header and "RELATIVOS" in header and "CLASSE" in header:
@@ -850,6 +894,45 @@ def get_cell(row: list[str], index: int | None) -> str:
     if index is None or index >= len(row):
         return ""
     return row[index]
+
+
+def table_signature(rows: list[list[str]], max_rows: int = 3) -> str:
+    return normalize_label(" ".join(" ".join(row) for row in rows[:max_rows]))
+
+
+def looks_like_caliper_table(rows: list[list[str]]) -> bool:
+    signature = table_signature(rows, 4)
+    return (
+        "MAXILAS" in signature
+        and "ERRO" in signature
+        and ("VALOR PADRA" in signature or "LEITURA" in signature)
+    )
+
+
+def is_caliper_e_table(rows: list[list[str]]) -> bool:
+    signature = table_signature(rows, 4)
+    return looks_like_caliper_table(rows) and ("ERRO E" in signature or "ZONA 1" in signature)
+
+
+def is_caliper_s_table(rows: list[list[str]]) -> bool:
+    signature = table_signature(rows, 4)
+    return looks_like_caliper_table(rows) and "ERRO S" in signature
+
+
+def is_caliper_l_table(rows: list[list[str]]) -> bool:
+    signature = table_signature(rows, 4)
+    return looks_like_caliper_table(rows) and "ERRO L" in signature
+
+
+def is_generic_results_table(rows: list[list[str]]) -> bool:
+    signature = table_signature(rows, 3)
+    return (
+        "PADRA" in signature
+        and "LEITURA" in signature
+        and "ERRO" in signature
+        and "INCERTEZA" in signature
+        and not looks_like_caliper_table(rows)
+    )
 
 
 def is_measurement_table(rows: list[list[str]]) -> bool:
@@ -925,6 +1008,78 @@ def parse_measurement_rows(rows: list[list[str]]) -> list[dict[str, Any]]:
     return parsed_rows
 
 
+def parse_caliper_e_rows(rows: list[list[str]]) -> list[dict[str, Any]]:
+    parsed_rows: list[dict[str, Any]] = []
+    for row in rows[1:]:
+        if len(row) < 8:
+            continue
+        standard = parse_number(get_cell(row, 1))
+        if standard is None:
+            continue
+        parsed_rows.append(
+            {
+                "feature": clean_text(get_cell(row, 0)) or None,
+                "standard_value_mm": standard,
+                "zone_1_mm": parse_number(get_cell(row, 2)),
+                "zone_2_mm": parse_number(get_cell(row, 3)),
+                "zone_3_mm": parse_number(get_cell(row, 4)),
+                "error_E_mm": parse_number(get_cell(row, 5)),
+                "U_mm": parse_number(get_cell(row, 6)),
+                "k": parse_number(get_cell(row, 7)),
+                "vef": parse_number(get_cell(row, 8)),
+                "raw_cells": row,
+            }
+        )
+    return parsed_rows
+
+
+def parse_caliper_s_rows(rows: list[list[str]]) -> list[dict[str, Any]]:
+    parsed_rows: list[dict[str, Any]] = []
+    for row in rows[1:]:
+        if len(row) < 6:
+            continue
+        standard = parse_number(get_cell(row, 1))
+        if standard is None:
+            continue
+        parsed_rows.append(
+            {
+                "feature": clean_text(get_cell(row, 0)) or None,
+                "standard_value_mm": standard,
+                "reading_mm": parse_number(get_cell(row, 2)),
+                "error_S_mm": parse_number(get_cell(row, 3)),
+                "U_mm": parse_number(get_cell(row, 4)),
+                "k": parse_number(get_cell(row, 5)),
+                "vef": parse_number(get_cell(row, 6)),
+                "raw_cells": row,
+            }
+        )
+    return parsed_rows
+
+
+def parse_caliper_l_rows(rows: list[list[str]]) -> list[dict[str, Any]]:
+    parsed_rows: list[dict[str, Any]] = []
+    for row in rows[1:]:
+        if len(row) < 7:
+            continue
+        standard = parse_number(get_cell(row, 1))
+        if standard is None:
+            continue
+        parsed_rows.append(
+            {
+                "feature": clean_text(get_cell(row, 0)) or None,
+                "standard_value_mm": standard,
+                "max_value_mm": parse_number(get_cell(row, 2)),
+                "min_value_mm": parse_number(get_cell(row, 3)),
+                "error_L_mm": parse_number(get_cell(row, 4)),
+                "U_mm": parse_number(get_cell(row, 5)),
+                "k": parse_number(get_cell(row, 6)),
+                "vef": parse_number(get_cell(row, 7)),
+                "raw_cells": row,
+            }
+        )
+    return parsed_rows
+
+
 def max_row_width(rows: list[list[str]]) -> int:
     return max((len(row) for row in rows), default=0)
 
@@ -955,7 +1110,7 @@ def raw_table_records(rows: list[list[str]]) -> tuple[list[str], list[dict[str, 
 def is_reference_equipment_table(rows: list[list[str]]) -> bool:
     for row in rows[:3]:
         header = normalize_label(" ".join(row))
-        if "PADRAO" in header and "CATIM" in header and "RASTREABILIDADE" in header:
+        if "PADR" in header and "CATIM" in header and "RASTREAB" in header:
             return True
     return False
 
@@ -964,7 +1119,7 @@ def parse_reference_equipment_rows(rows: list[list[str]]) -> list[dict[str, Any]
     header_index = None
     for index, row in enumerate(rows[:3]):
         header = normalize_label(" ".join(row))
-        if "PADRAO" in header and "CATIM" in header and "RASTREABILIDADE" in header:
+        if "PADR" in header and "CATIM" in header and "RASTREAB" in header:
             header_index = index
             break
     if header_index is None:
@@ -989,6 +1144,10 @@ def build_tables(pages: list[PageResult], document_name: str) -> dict[str, Any]:
     measurement_subtables: list[dict[str, Any]] = []
     relative_subtables: list[dict[str, Any]] = []
     reference_subtables: list[dict[str, Any]] = []
+    caliper_e_subtables: list[dict[str, Any]] = []
+    caliper_s_subtables: list[dict[str, Any]] = []
+    caliper_l_subtables: list[dict[str, Any]] = []
+    generic_result_subtables: list[dict[str, Any]] = []
     detected_subtables: list[dict[str, Any]] = []
     raw_tables: list[dict[str, Any]] = []
     table_counter = 0
@@ -1011,7 +1170,82 @@ def build_tables(pages: list[PageResult], document_name: str) -> dict[str, Any]:
                 }
             )
             handled_as_structured = False
-            if is_measurement_table(rows):
+            if is_caliper_e_table(rows):
+                parsed_rows = parse_caliper_e_rows(rows)
+                if parsed_rows:
+                    caliper_e_subtables.append(
+                        {
+                            "key": f"E_contact_partial_{normalize_key(page.page_name)}_{table_counter}",
+                            "title": table_title(page.page_name, rows),
+                            "table": {
+                                "columns": [
+                                    "feature",
+                                    "standard_value_mm",
+                                    "zone_1_mm",
+                                    "zone_2_mm",
+                                    "zone_3_mm",
+                                    "error_E_mm",
+                                    "U_mm",
+                                    "k",
+                                    "vef",
+                                ],
+                                "page": page.page_name,
+                                "meta": {"page": page.page_name},
+                                "rows": parsed_rows,
+                            },
+                        }
+                    )
+                    handled_as_structured = True
+            elif is_caliper_s_table(rows):
+                parsed_rows = parse_caliper_s_rows(rows)
+                if parsed_rows:
+                    caliper_s_subtables.append(
+                        {
+                            "key": f"S_scale_change_{normalize_key(page.page_name)}_{table_counter}",
+                            "title": table_title(page.page_name, rows),
+                            "table": {
+                                "columns": [
+                                    "feature",
+                                    "standard_value_mm",
+                                    "reading_mm",
+                                    "error_S_mm",
+                                    "U_mm",
+                                    "k",
+                                    "vef",
+                                ],
+                                "page": page.page_name,
+                                "meta": {"page": page.page_name},
+                                "rows": parsed_rows,
+                            },
+                        }
+                    )
+                    handled_as_structured = True
+            elif is_caliper_l_table(rows):
+                parsed_rows = parse_caliper_l_rows(rows)
+                if parsed_rows:
+                    caliper_l_subtables.append(
+                        {
+                            "key": f"L_line_contact_{normalize_key(page.page_name)}_{table_counter}",
+                            "title": table_title(page.page_name, rows),
+                            "table": {
+                                "columns": [
+                                    "feature",
+                                    "standard_value_mm",
+                                    "max_value_mm",
+                                    "min_value_mm",
+                                    "error_L_mm",
+                                    "U_mm",
+                                    "k",
+                                    "vef",
+                                ],
+                                "page": page.page_name,
+                                "meta": {"page": page.page_name},
+                                "rows": parsed_rows,
+                            },
+                        }
+                    )
+                    handled_as_structured = True
+            elif is_measurement_table(rows):
                 parsed_rows = parse_measurement_rows(rows)
                 slug = normalize_key(meta.get("gama_nominal") or page.page_name)
                 measurement_subtables.append(
@@ -1078,6 +1312,22 @@ def build_tables(pages: list[PageResult], document_name: str) -> dict[str, Any]:
                     )
                     handled_as_structured = True
 
+            if not handled_as_structured and is_generic_results_table(rows):
+                raw_columns, raw_rows = raw_table_records(rows)
+                generic_result_subtables.append(
+                    {
+                        "key": f"generic_results_table_{normalize_key(page.page_name)}_{table_counter}",
+                        "title": table_title(page.page_name, rows),
+                        "table": {
+                            "columns": raw_columns,
+                            "page": page.page_name,
+                            "meta": {"page": page.page_name},
+                            "rows": raw_rows,
+                        },
+                    }
+                )
+                handled_as_structured = True
+
             if not handled_as_structured and is_meaningful_generic_table(rows):
                 raw_columns, raw_rows = raw_table_records(rows)
                 detected_subtables.append(
@@ -1106,6 +1356,26 @@ def build_tables(pages: list[PageResult], document_name: str) -> dict[str, Any]:
     reference_rows = [
         {**row, "table_id": table["key"], "meta": table["table"]["meta"]}
         for table in reference_subtables
+        for row in table["table"]["rows"]
+    ]
+    caliper_e_rows = [
+        {**row, "table_id": table["key"], "meta": table["table"]["meta"]}
+        for table in caliper_e_subtables
+        for row in table["table"]["rows"]
+    ]
+    caliper_s_rows = [
+        {**row, "table_id": table["key"], "meta": table["table"]["meta"]}
+        for table in caliper_s_subtables
+        for row in table["table"]["rows"]
+    ]
+    caliper_l_rows = [
+        {**row, "table_id": table["key"], "meta": table["table"]["meta"]}
+        for table in caliper_l_subtables
+        for row in table["table"]["rows"]
+    ]
+    generic_result_rows = [
+        {**row, "table_id": table["key"], "meta": table["table"]["meta"]}
+        for table in generic_result_subtables
         for row in table["table"]["rows"]
     ]
     detected_rows = [
@@ -1155,6 +1425,58 @@ def build_tables(pages: list[PageResult], document_name: str) -> dict[str, Any]:
             "rows": reference_rows,
             "subtables": reference_subtables,
         }
+    if caliper_e_rows:
+        parsed_tables["E_contact_partial"] = {
+            "columns": [
+                "feature",
+                "standard_value_mm",
+                "zone_1_mm",
+                "zone_2_mm",
+                "zone_3_mm",
+                "error_E_mm",
+                "U_mm",
+                "k",
+                "vef",
+            ],
+            "rows": caliper_e_rows,
+            "subtables": caliper_e_subtables,
+        }
+    if caliper_s_rows:
+        parsed_tables["S_scale_change"] = {
+            "columns": [
+                "feature",
+                "standard_value_mm",
+                "reading_mm",
+                "error_S_mm",
+                "U_mm",
+                "k",
+                "vef",
+            ],
+            "rows": caliper_s_rows,
+            "subtables": caliper_s_subtables,
+        }
+    if caliper_l_rows:
+        parsed_tables["L_line_contact"] = {
+            "columns": [
+                "feature",
+                "standard_value_mm",
+                "max_value_mm",
+                "min_value_mm",
+                "error_L_mm",
+                "U_mm",
+                "k",
+                "vef",
+            ],
+            "rows": caliper_l_rows,
+            "subtables": caliper_l_subtables,
+        }
+    if generic_result_rows:
+        raw_columns = generic_result_subtables[0]["table"]["columns"] if generic_result_subtables else []
+        parsed_tables["generic_results_table"] = {
+            "columns": raw_columns,
+            "rows": generic_result_rows,
+            "subtables": generic_result_subtables,
+        }
     if detected_rows:
         parsed_tables["paddleocr_vl_detected_tables"] = {
             "columns": ["table_id", "page", "row_index", "cells"],
@@ -1162,10 +1484,18 @@ def build_tables(pages: list[PageResult], document_name: str) -> dict[str, Any]:
             "subtables": detected_subtables,
         }
 
+    instrument_type = None
+    if caliper_e_rows or caliper_s_rows or caliper_l_rows:
+        instrument_type = "caliper"
+    elif measurement_rows or relative_rows:
+        instrument_type = "force_calibration"
+    elif generic_result_rows:
+        instrument_type = "generic_block_table"
+
     tables = {
         "source_file": f"{document_name}.pdf",
         "method": "paddleocr_vl",
-        "instrument_type": "force_calibration" if measurement_rows or relative_rows else None,
+        "instrument_type": instrument_type,
         "tables": parsed_tables,
         "raw_tables": raw_tables,
     }

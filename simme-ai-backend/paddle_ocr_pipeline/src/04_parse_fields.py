@@ -55,6 +55,34 @@ def normalize(s: str | None) -> str:
     return s
 
 
+def is_page_marker(value: str | None) -> bool:
+    n = normalize(value)
+    return bool(re.fullmatch(r"P[ÁA]?GINA\s+\d+\s+DE\s+\d+", n))
+
+
+def is_layout_noise_line(value: str | None) -> bool:
+    if not value:
+        return True
+    n = normalize(value)
+    return is_page_marker(value) or n in {
+        "CLIENTE",
+        "EQUIPAMENTO CALIBRADO",
+        "CONDICOES DO TRABALHO REALIZADO",
+        "CONDIÇÕES DO TRABALHO REALIZADO",
+        "DESCRICAO",
+        "DESCRIÇÃO",
+    }
+
+
+def clean_field_value(value: str | None) -> str | None:
+    cleaned = clean_spaces(value)
+    if not cleaned:
+        return None
+    lines = [line for line in split_lines(cleaned) if not is_layout_noise_line(line)]
+    cleaned = clean_spaces("\n".join(lines))
+    return cleaned if cleaned and not is_layout_noise_line(cleaned) else None
+
+
 def safe_date(s: str | None) -> str | None:
     if not s:
         return None
@@ -290,10 +318,12 @@ def parse_key_value_block(text: str) -> dict:
             next_key = canonical_label(lines[j])
             if next_key is not None:
                 break
-            vals.append(lines[j])
+            candidate = clean_field_value(lines[j])
+            if candidate:
+                vals.append(candidate)
             j += 1
 
-        value = clean_spaces(" | ".join(vals)) if vals else None
+        value = clean_field_value(" | ".join(vals)) if vals else None
 
         if key not in parsed:
             parsed[key] = value
@@ -317,7 +347,7 @@ def extract_customer_name_and_address(text: str) -> tuple[str | None, str | None
         ],
     )
     kv = parse_key_value_block(pruned or text)
-    return clean_spaces(kv.get("name")), clean_spaces(kv.get("address"))
+    return clean_field_value(kv.get("name")), clean_field_value(kv.get("address"))
 
 
 def extract_equipment_fields(text: str) -> dict:

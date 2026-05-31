@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import unicodedata
 import urllib.error
 import urllib.request
 from copy import deepcopy
@@ -223,6 +224,8 @@ Rules:
 - Use only the evidence provided in the input JSON.
 - Do not invent values.
 - If a value is not supported by the input, return null.
+- Prefer exact substrings from OCR/VL evidence; do not translate labels into
+  values such as "Customer", "Address" or "Laboratory".
 - Keep technical units and certificate numbers exactly as observed when possible.
 - Do not confuse issue date with calibration date.
 - Return only JSON matching the provided schema.
@@ -253,6 +256,183 @@ def normalize_scalar(value: Any) -> str:
     if value is None:
         return ""
     return re.sub(r"\s+", " ", str(value)).strip().lower()
+
+
+PLACEHOLDER_PATTERNS = [
+    r"^customer$",
+    r"^address$",
+    r"^laboratory$",
+    r"^calibrated$",
+    r"^abc manufacturing\b",
+    r"\bjohn doe\b",
+    r"\bjane doe\b",
+    r"\bprecision calibration lab\b",
+    r"\banytown\b",
+    r"\bcityville\b",
+    r"\bcal-20\d{2}",
+    r"\bcal\s+20\d{2}",
+    r"\bfg-20\d{2}",
+    r"\bfg\s+20\d{2}",
+    r"^pagina\s+\d+\s+de\s+\d+$",
+]
+
+COMMON_EVIDENCE_TOKENS = {
+    "de",
+    "da",
+    "do",
+    "das",
+    "dos",
+    "em",
+    "com",
+    "para",
+    "the",
+    "and",
+    "of",
+    "calibracao",
+    "calibration",
+    "certificado",
+    "certificate",
+    "cliente",
+    "customer",
+    "address",
+    "equipamento",
+    "equipment",
+}
+
+INSTRUMENT_EVIDENCE_TERMS = {
+    "caliper": ["paquimetro"],
+    "pressure_gauge": ["manometro"],
+    "force_calibration": ["maquina universal", "transdutor de forca", "laboratorio de metrologia forca", "en iso 7500"],
+    "generic_block_table": ["medcork"],
+}
+
+
+def normalize_for_evidence(value: Any) -> str:
+    text = str(value or "").lower()
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(char for char in text if not unicodedata.combining(char))
+    text = text.replace("º", " ").replace("°", " ")
+    text = re.sub(r"[^a-z0-9]+", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def is_placeholder_value(value: Any) -> bool:
+    normalized = normalize_for_evidence(value)
+    return any(re.search(pattern, normalized) for pattern in PLACEHOLDER_PATTERNS)
+
+
+def evidence_parts(value: Any) -> list[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, (int, float)):
+        return [str(value)]
+    if isinstance(value, list):
+        parts: list[str] = []
+        for item in value:
+            parts.extend(evidence_parts(item))
+        return parts
+    if isinstance(value, dict):
+        parts = []
+        for key, item in value.items():
+            if key == "ollama_llm":
+                continue
+            parts.extend(evidence_parts(item))
+        return parts
+    return []
+
+
+def build_evidence_text(parsed_doc: dict, tables_doc: dict) -> str:
+    raw_blocks = {
+        key: value
+        for key, value in (parsed_doc.get("raw_blocks") or {}).items()
+        if key != "ollama_llm"
+    }
+    raw_tables = (tables_doc or {}).get("raw_tables") or []
+    return "\n".join(evidence_parts({"raw_blocks": raw_blocks, "raw_tables": raw_tables}))
+
+
+def is_supported_by_evidence(value: Any, evidence_text: str) -> bool:
+    if not is_filled(value):
+        return False
+    if isinstance(value, (dict, list)):
+        return False
+    if is_placeholder_value(value):
+        return False
+
+    candidate = normalize_for_evidence(value)
+    evidence = normalize_for_evidence(evidence_text)
+    if not candidate or not evidence:
+        return False
+    if candidate in evidence:
+        return True
+
+    # Identifier-like values are too risky for fuzzy token matching: a fake
+    # certificate such as CAL-2023-1015 can accidentally share year tokens with
+    # the document. These must occur verbatim after normalization.
+    raw_value = str(value or "")
+    if re.search(r"[A-Za-z]{2,}[-_/ ]*\d|\d[-_/]\d", raw_value):
+        return False
+
+    tokens = [
+        token
+        for token in re.findall(r"[a-z0-9]+", candidate)
+        if len(token) > 2 and token not in COMMON_EVIDENCE_TOKENS
+    ]
+    if not tokens:
+        return False
+
+    matched = sum(1 for token in tokens if token in evidence)
+    return matched >= max(2, int(len(tokens) * 0.8))
+
+
+def scalar_values(value: Any) -> list[Any]:
+    if isinstance(value, (str, int, float)):
+        return [value]
+    if isinstance(value, list):
+        values: list[Any] = []
+        for item in value:
+            values.extend(scalar_values(item))
+        return values
+    if isinstance(value, dict):
+        values = []
+        for key, item in value.items():
+            if key in {"columns", "meta", "table_id", "subtables"}:
+                continue
+            values.extend(scalar_values(item))
+        return values
+    return []
+
+
+def table_supported_by_evidence(table_value: Any, evidence_text: str) -> tuple[bool, list[Any]]:
+    values = []
+    for value in scalar_values(table_value):
+        normalized = normalize_for_evidence(value)
+        if not normalized or normalized in COMMON_EVIDENCE_TOKENS:
+            continue
+        if len(normalized) <= 2 and not re.fullmatch(r"\d+(?:\s\d+)?", normalized):
+            continue
+        values.append(value)
+
+    if not values:
+        return False, []
+
+    unsupported = [value for value in values if not is_supported_by_evidence(value, evidence_text)]
+    allowed_misses = max(1, int(len(values) * 0.1))
+    return len(unsupported) <= allowed_misses, unsupported[:8]
+
+
+def instrument_type_supported(value: Any, evidence_text: str) -> bool:
+    normalized_type = normalize_for_evidence(value)
+    evidence = normalize_for_evidence(evidence_text)
+    terms = INSTRUMENT_EVIDENCE_TERMS.get(normalized_type, [])
+    return bool(terms and any(term in evidence for term in terms))
+
+
+def field_supported_by_evidence(field_name: str, value: Any, evidence_text: str) -> bool:
+    normalized = normalize_for_evidence(value)
+    if field_name == "reference.standard_or_procedure" and "iso iec 17025" in normalized:
+        return False
+    return is_supported_by_evidence(value, evidence_text)
 
 
 def slug_from_source(source_file: str | None) -> str:
@@ -502,25 +682,61 @@ def normalize_llm_payload(value: dict) -> dict:
     return deep_fill_defaults(value if isinstance(value, dict) else {}, default_llm_payload())
 
 
-def merge_section(parsed_doc: dict, llm_doc: dict, section: str) -> None:
+def merge_section(
+    parsed_doc: dict,
+    llm_doc: dict,
+    section: str,
+    evidence_text: str,
+    rejected: list[dict],
+) -> None:
     parsed_doc.setdefault(section, {})
     for key in FIELD_SECTIONS.get(section, []):
         value = (llm_doc.get(section) or {}).get(key)
         existing = parsed_doc[section].get(key)
         if not is_filled(existing) and is_filled(value):
+            field_name = f"{section}.{key}"
+            if not field_supported_by_evidence(field_name, value, evidence_text):
+                rejected.append(
+                    {
+                        "field": field_name,
+                        "llm_suggestion": value,
+                        "reason": "Suggestion was not found in the original OCR/VL evidence.",
+                    }
+                )
+                continue
             parsed_doc[section][key] = value
 
 
-def merge_tables(tables_doc: dict, llm_doc: dict) -> None:
+def merge_tables(tables_doc: dict, llm_doc: dict, evidence_text: str, rejected: list[dict]) -> None:
     tables_doc.setdefault("tables", {})
     llm_tables = llm_doc.get("tables") or {}
 
     for table_name, table_value in llm_tables.items():
         if not is_filled(tables_doc["tables"].get(table_name)) and is_filled(table_value):
+            supported, unsupported = table_supported_by_evidence(table_value, evidence_text)
+            if not supported:
+                rejected.append(
+                    {
+                        "table": table_name,
+                        "reason": "LLM table contains values not found in the original OCR/VL evidence.",
+                        "unsupported_examples": unsupported,
+                    }
+                )
+                continue
             tables_doc["tables"][table_name] = table_value
 
-    if not is_filled(tables_doc.get("instrument_type")) and is_filled(llm_doc.get("instrument_type")):
-        tables_doc["instrument_type"] = llm_doc.get("instrument_type")
+    instrument_type = llm_doc.get("instrument_type")
+    if not is_filled(tables_doc.get("instrument_type")) and is_filled(instrument_type):
+        if instrument_type_supported(instrument_type, evidence_text):
+            tables_doc["instrument_type"] = instrument_type
+        else:
+            rejected.append(
+                {
+                    "field": "tables.instrument_type",
+                    "llm_suggestion": instrument_type,
+                    "reason": "Instrument type was not supported by OCR/VL evidence terms.",
+                }
+            )
 
 
 def collect_conflicts(parsed_doc: dict, llm_doc: dict) -> list[dict]:
@@ -557,18 +773,29 @@ def normalize_document(parsed_path: Path) -> None:
     }
 
     context = build_context(parsed_doc, tables_doc)
+    evidence_text = build_evidence_text(parsed_doc, tables_doc)
     llm_doc = normalize_llm_payload(call_ollama(context))
 
     updated_parsed = deepcopy(parsed_doc)
     updated_tables = deepcopy(tables_doc)
+    rejected_unsupported: list[dict] = []
 
     for section in ["header", "customer", "equipment", "work_conditions", "reference"]:
-        merge_section(updated_parsed, llm_doc, section)
+        merge_section(updated_parsed, llm_doc, section, evidence_text, rejected_unsupported)
 
     updated_parsed["method"] = f"{parsed_doc.get('method', 'unknown')}+ollama_llm"
     existing_instrument_type = updated_tables.get("instrument_type") or parsed_doc.get("instrument_type")
     if not is_filled(existing_instrument_type) and is_filled(llm_doc.get("instrument_type")):
-        updated_parsed["instrument_type"] = llm_doc.get("instrument_type")
+        if instrument_type_supported(llm_doc.get("instrument_type"), evidence_text):
+            updated_parsed["instrument_type"] = llm_doc.get("instrument_type")
+        else:
+            rejected_unsupported.append(
+                {
+                    "field": "parsed.instrument_type",
+                    "llm_suggestion": llm_doc.get("instrument_type"),
+                    "reason": "Instrument type was not supported by OCR/VL evidence terms.",
+                }
+            )
 
     updated_parsed.setdefault("raw_blocks", {})
     updated_parsed["raw_blocks"]["ollama_llm"] = {
@@ -578,6 +805,7 @@ def normalize_document(parsed_path: Path) -> None:
         "notes": llm_doc.get("notes"),
         "policy": "LLM suggestions only fill empty fields; existing OCR/VL values are not overwritten.",
         "conflicts": collect_conflicts(parsed_doc, llm_doc),
+        "rejected_unsupported": rejected_unsupported,
         "suggested_fields": {
             "instrument_type": llm_doc.get("instrument_type"),
             "header": llm_doc.get("header"),
@@ -588,7 +816,7 @@ def normalize_document(parsed_path: Path) -> None:
         },
     }
 
-    merge_tables(updated_tables, llm_doc)
+    merge_tables(updated_tables, llm_doc, evidence_text, rejected_unsupported)
     updated_tables["method"] = f"{tables_doc.get('method', 'unknown')}+ollama_llm"
 
     if table_path is None:
@@ -601,6 +829,7 @@ def normalize_document(parsed_path: Path) -> None:
         "ollama_url": OLLAMA_URL,
         "normalized_at": datetime.now(timezone.utc).isoformat(),
         "llm_output": llm_doc,
+        "rejected_unsupported": rejected_unsupported,
         "context": context,
     })
     write_json(parsed_path, updated_parsed)
