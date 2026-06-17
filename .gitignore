@@ -1,0 +1,143 @@
+########################################
+# Python
+########################################
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+########################################
+# Virtual environments and local config
+########################################
+
+.venv/
+venv/
+env/
+ENV/
+conda-meta/
+*.conda
+
+.env
+.env.*
+!.env.example
+*.local
+
+########################################
+# Node / frontend
+########################################
+
+node_modules/
+dist/
+dist-ssr/
+build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+########################################
+# OS and IDE
+########################################
+
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+########################################
+# Logs and temporary files
+########################################
+
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+
+########################################
+# Generated thesis/export artefacts
+########################################
+
+exports/
+prints/
+tmp_citc_preview/
+Fontes/
+
+########################################
+# Sensitive or generated certificate data
+########################################
+
+# Raw documents and local test data may contain real customer data.
+*.pdf
+*.docx
+*.xlsx
+
+# Pipeline generated data.
+simme-ai-backend/paddle_ocr_pipeline/data/images/
+simme-ai-backend/paddle_ocr_pipeline/data/ocr_text/
+simme-ai-backend/paddle_ocr_pipeline/data/sections/
+simme-ai-backend/paddle_ocr_pipeline/data/tables/
+simme-ai-backend/paddle_ocr_pipeline/data/parsed/
+simme-ai-backend/paddle_ocr_pipeline/data/metrics/
+simme-ai-backend/paddle_ocr_pipeline/data/evaluation/
+simme-ai-backend/paddle_ocr_pipeline/data/analysis/
+simme-ai-backend/paddle_ocr_pipeline/data/crops/
+simme-ai-backend/paddle_ocr_pipeline/data/regions/
+simme-ai-backend/paddle_ocr_pipeline/data/llm/
+simme-ai-backend/paddle_ocr_pipeline/data/paddleocr_vl/
+simme-ai-backend/paddle_ocr_pipeline/data/gold/
+simme-ai-backend/paddle_ocr_pipeline/data/raw_pdfs/
+simme-ai-backend/paddle_ocr_pipeline/data/.ultralytics/
+simme-ai-backend/paddle_ocr_pipeline/data/models/
+simme-ai-backend/paddle_ocr_pipeline/data/yolo/regions/images/
+simme-ai-backend/paddle_ocr_pipeline/data/yolo/regions/labels/
+simme-ai-backend/paddle_ocr_pipeline/data/yolo/regions_ready/
+simme-ai-backend/paddle_ocr_pipeline/data/yolo/*.zip
+
+# Backend runtime artefacts.
+simme-ai-backend/paddle_ocr_pipeline/backend/uploads/
+simme-ai-backend/paddle_ocr_pipeline/backend/outputs/
+simme-ai-backend/paddle_ocr_pipeline/backend/archives/
+simme-ai-backend/paddle_ocr_pipeline/backend/method_runs_summary.json
+simme-ai-backend/paddle_ocr_pipeline/backend/method_comparison_summary.json
+
+# Older experiments with raw certificates.
+simme-ai-backend/ocr_pipeline/data/pdfs/
+simme-ai-backend/ocr_pipeline_test/data/pdfs/
+
+########################################
+# ML/OCR model artefacts
+########################################
+
+.paddleocr/
+Ultralytics/
+*.pt
+*.onnx
+*.pdmodel
+*.pdiparams
+*.pdparams
+*.safetensors
+
+########################################
+# Keep useful documentation placeholders
+########################################
+
+!README.md
+!simme-ai-backend/paddle_ocr_pipeline/data/.gitkeep
+!simme-ai-backend/paddle_ocr_pipeline/docs/**
+!simme-ai-backend/paddle_ocr_pipeline/colab/**
